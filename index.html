@@ -940,31 +940,6 @@
             if (!db) return;
 
             db.collection("prompts").onSnapshot((snapshot) => {
-                if (snapshot.empty) {
-                    const defaultPrompts = [
-                        {
-                            title: "Teal & Neon Cyberpunk Alleyway",
-                            category: "Sci-Fi",
-                            categoryId: "sci_fi",
-                            promptText: "Retro vintage 90s anime style, a dense futuristic skyscraper alleyway in rain-slick Tokyo, hyper detailed neon signage in kanji, reflecting neon purples and teals onto wet asphalt puddles, dynamic camera angle, nostalgic chill ambient vibes, high cinematic style",
-                            tags: "cyberpunk, rain, neon, anime",
-                            aspectRatio: "16:9",
-                            imageUrl: "https://images.unsplash.com/photo-1540959733332-eab4deceeaf7?auto=format&fit=crop&q=80&w=400"
-                        },
-                        {
-                            title: "Mythical Golden Lion Portrait",
-                            category: "Creative",
-                            categoryId: "creative",
-                            promptText: "Professional studio portrait of an intensely majestic lion face sculpted out of fluid liquid gold, high contrast dramatic lighting, soft black procedural volumetric background, highly intricate details, insanely realistic gold foil texture reflections, Unreal Engine 5 render, depth of field, 8k resolution",
-                            tags: "lion, gold, unreal, fantasy",
-                            aspectRatio: "1:1",
-                            imageUrl: "https://images.unsplash.com/photo-1546182990-dffeafbe841d?auto=format&fit=crop&q=80&w=400"
-                        }
-                    ];
-                    defaultPrompts.forEach(p => {
-                        db.collection("prompts").add(p);
-                    });
-                }
                 prompts = [];
                 snapshot.forEach((doc) => {
                     const data = doc.data();
@@ -978,21 +953,6 @@
             });
 
             db.collection("categories").onSnapshot((snapshot) => {
-                if (snapshot.empty) {
-                    const defaults = [
-                        { id: "sci_fi", name: "Sci-Fi", logoUrl: "https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?w=300&auto=format&fit=crop" },
-                        { id: "nature", name: "Nature", logoUrl: "https://images.unsplash.com/photo-1501854140801-50d01698950b?w=300&auto=format&fit=crop" },
-                        { id: "creative", name: "Creative", logoUrl: "https://images.unsplash.com/photo-1515621061946-eff1c2a352bd?w=300&auto=format&fit=crop" },
-                        { id: "abstract", name: "Abstract", logoUrl: "https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=300&auto=format&fit=crop" },
-                        { id: "architecture", name: "Architecture", logoUrl: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=300&auto=format&fit=crop" }
-                    ];
-                    defaults.forEach(c => {
-                        db.collection("categories").doc(c.id).set({
-                            name: c.name,
-                            logoUrl: c.logoUrl
-                        });
-                    });
-                }
                 categories = [];
                 snapshot.forEach((doc) => {
                     categories.push({ id: doc.id, ...doc.data() });
