@@ -3,1832 +3,1172 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prompt House - Admin Panel</title>
+    <title>Premium Admin Workspace</title>
+    
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <!-- Google Fonts: Inter & Plus Jakarta Sans -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Firebase SDK Compat -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            900: '#1e3a8a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
     <style>
-        body {
-            font-family: 'Plus Jakarta Sans', 'Inter', sans-serif;
-            background-color: #f8fafc;
+        body { font-family: 'Inter', sans-serif; }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
         }
-        .fade-in {
-            animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        .fade-in { animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: var(--scroll-track, #f1f5f9); }
+        ::-webkit-scrollbar-thumb { background: var(--scroll-thumb, #cbd5e1); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--scroll-thumb-hover, #94a3b8); }
+        
+        /* Dark Mode Toggle Filter Trick */
+        html.dark-mode {
+            filter: invert(1) hue-rotate(180deg);
         }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(6px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .custom-glass {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+        html.dark-mode img, html.dark-mode i, html.dark-mode iframe {
+            filter: invert(1) hue-rotate(180deg);
         }
     </style>
 </head>
-<body class="overflow-x-hidden text-slate-800 antialiased bg-slate-50/50">
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex hidden" id="app-body">
 
-    <div class="flex h-screen overflow-hidden">
-        <!-- Sidebar -->
-        <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 flex flex-col w-64 bg-slate-900 border-r border-slate-800 text-white transition-transform duration-300 transform -translate-x-full lg:translate-x-0 lg:static lg:inset-auto shrink-0 shadow-xl">
-            <!-- Sidebar Header -->
-            <div class="flex items-center justify-between h-16 px-5 border-b border-slate-800 bg-slate-950/60">
-                <div class="flex items-center gap-3">
-                    <div class="p-2 bg-indigo-600 rounded-xl shadow-lg shadow-indigo-650/30">
-                        <i class="fa-solid fa-wand-magic-sparkles text-sm text-white"></i>
+    <!-- LOGIN SCREEN -->
+    <div id="login-screen" class="fixed inset-0 z-50 bg-slate-900 flex items-center justify-center p-4 transition-all duration-500">
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden glass-panel fade-in p-8">
+            <div class="flex justify-center mb-6">
+                <div class="w-16 h-16 bg-brand-100 text-brand-600 rounded-2xl flex items-center justify-center text-3xl shadow-inner">
+                    <i class="fa-solid fa-lock"></i>
+                </div>
+            </div>
+            <h2 class="text-2xl font-bold text-center text-slate-900 mb-2">Admin Login</h2>
+            <p class="text-sm text-slate-500 text-center mb-8">Sign in to the Premium Workspace</p>
+            <form onsubmit="handleLogin(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 uppercase mb-2">Email</label>
+                    <input type="email" id="login-email" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm focus:ring-brand-500 outline-none" placeholder="admin@example.com">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-600 uppercase mb-2">Password</label>
+                    <input type="password" id="login-password" required class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-sm focus:ring-brand-500 outline-none" placeholder="••••••••">
+                </div>
+                <button type="submit" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-semibold py-3.5 rounded-xl shadow-lg transition-all active:scale-95">
+                    Sign In
+                </button>
+                <p id="login-error" class="text-red-500 text-xs font-semibold text-center hidden flex items-center justify-center gap-1"><i class="fa-solid fa-circle-exclamation"></i> Invalid credentials.</p>
+            </form>
+        </div>
+    </div>
+
+    <!-- SETUP SCREEN (Firebase Connection) -->
+    <div id="setup-screen" class="fixed inset-0 z-50 bg-slate-900 flex items-center justify-center p-4 transition-all duration-500 hidden">
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-xl overflow-hidden glass-panel fade-in">
+            <div class="px-8 py-10">
+                <div class="flex justify-center mb-6">
+                    <div class="w-16 h-16 bg-brand-100 text-brand-600 rounded-2xl flex items-center justify-center text-3xl shadow-inner">
+                        <i class="fa-solid fa-server"></i>
                     </div>
+                </div>
+                <h2 class="text-2xl font-bold text-center text-slate-900 mb-2">Connect Firebase API</h2>
+                <p class="text-sm text-slate-500 text-center mb-8">Enter your Firebase configuration object. You don't need to touch the code.</p>
+                <div class="space-y-4">
                     <div>
-                        <h1 class="text-sm font-extrabold tracking-tight text-white">Prompt House</h1>
-                        <span class="text-[10px] text-indigo-300 font-bold uppercase tracking-wider">Admin Panel</span>
+                        <label class="block text-xs font-semibold text-slate-600 uppercase mb-2">Firebase Config JSON</label>
+                        <textarea id="firebase-config-input" rows="8" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-4 text-sm font-mono text-slate-700 outline-none focus:ring-2 focus:ring-brand-500 transition-all placeholder:text-slate-300" placeholder="{\n  &quot;apiKey&quot;: &quot;AIzaSy...&quot;,\n  &quot;authDomain&quot;: &quot;YOUR_PROJECT.firebaseapp.com&quot;,\n  &quot;projectId&quot;: &quot;YOUR_PROJECT&quot;\n}"></textarea>
                     </div>
-                </div>
-                <button onclick="toggleSidebar()" class="lg:hidden text-slate-400 hover:text-white transition p-1.5 rounded-lg hover:bg-slate-800">
-                    <i class="fa-solid fa-xmark text-lg"></i>
-                </button>
-            </div>
-
-            <!-- Connection Status -->
-            <div class="px-4 py-3 mx-3 my-4 bg-slate-950/40 border border-slate-850 rounded-2xl flex flex-col gap-1.5">
-                <span class="text-[10px] text-slate-400 font-bold tracking-wider uppercase">Connection Status</span>
-                <div id="sidebar-driver-status" class="flex items-center gap-2">
-                    <span class="w-2.5 h-2.5 bg-yellow-500 rounded-full animate-pulse shrink-0"></span>
-                    <span class="text-xs font-bold text-yellow-505">Checking connection...</span>
-                </div>
-            </div>
-
-            <!-- Navigation Links -->
-            <nav class="flex-1 px-3 space-y-1.5 overflow-y-auto">
-                <button onclick="switchView('dashboard')" class="nav-btn w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold rounded-xl text-slate-400 hover:text-slate-105 hover:bg-slate-800/40 transition-all">
-                    <i class="fa-solid fa-chart-pie text-base"></i>
-                    <span>Dashboard</span>
-                </button>
-                <button onclick="switchView('prompts')" class="nav-btn w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold rounded-xl text-slate-400 hover:text-slate-105 hover:bg-slate-800/40 transition-all">
-                    <i class="fa-solid fa-list-check text-base"></i>
-                    <span>Manage Prompts</span>
-                </button>
-                <button onclick="switchView('categories')" class="nav-btn w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold rounded-xl text-slate-400 hover:text-slate-105 hover:bg-slate-800/40 transition-all">
-                    <i class="fa-solid fa-tags text-base"></i>
-                    <span>Categories</span>
-                </button>
-                <button onclick="switchView('app-settings')" class="nav-btn w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold rounded-xl text-slate-400 hover:text-slate-105 hover:bg-slate-800/40 transition-all">
-                    <i class="fa-solid fa-palette text-base"></i>
-                    <span>App Graphics</span>
-                </button>
-                <button onclick="switchView('ad-networks')" class="nav-btn w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold rounded-xl text-slate-400 hover:text-slate-105 hover:bg-slate-800/40 transition-all">
-                    <i class="fa-solid fa-rectangle-ad text-base"></i>
-                    <span>Ad Settings</span>
-                </button>
-                <button onclick="switchView('credentials')" class="nav-btn w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold rounded-xl text-slate-400 hover:text-slate-105 hover:bg-slate-800/40 transition-all">
-                    <i class="fa-solid fa-link text-base"></i>
-                    <span>Database Credentials</span>
-                </button>
-            </nav>
-
-            <!-- Bottom Note -->
-            <div class="p-4 border-t border-slate-800 bg-slate-950/40 text-[11px] text-slate-500 text-center">
-                Prompt House v2.5 &bull; Refined UI
-            </div>
-        </aside>
-
-        <!-- Main Content Area -->
-        <main class="flex-1 flex flex-col min-w-0 overflow-y-auto bg-slate-100/40 relative">
-            <!-- Header -->
-            <header class="flex items-center justify-between h-16 px-6 bg-white border-b border-slate-205 shrink-0 sticky top-0 z-30 shadow-sm">
-                <div class="flex items-center gap-3">
-                    <button onclick="toggleSidebar()" class="lg:hidden p-2 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-xl transition">
-                        <i class="fa-solid fa-bars text-lg"></i>
+                    <button onclick="connectFirebase()" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-semibold py-3.5 rounded-xl shadow-lg shadow-brand-500/30 transition-all active:scale-95 flex justify-center items-center gap-2">
+                        <i class="fa-solid fa-link"></i> Connect to Database
                     </button>
-                    <h2 id="view-title" class="text-base font-extrabold text-slate-900 tracking-tight">Dashboard Overview</h2>
+                    <p id="setup-error" class="text-red-500 text-xs font-semibold text-center hidden"></p>
                 </div>
+            </div>
+            <div class="bg-slate-50 px-8 py-4 border-t border-slate-100 flex items-center justify-center gap-2 text-xs text-slate-400">
+                <i class="fa-solid fa-lock"></i> All keys are safely stored in your browser's LocalStorage.
+            </div>
+        </div>
+    </div>
 
-                <div class="flex items-center gap-4">
-                    <span id="ad-badge" class="hidden sm:inline-flex items-center gap-2 px-3 py-1.5 text-xs font-semibold text-slate-705 bg-slate-100 rounded-xl border border-slate-200">
-                        <span class="w-1.5 h-1.5 bg-green-500 rounded-full animate-ping"></span>
-                        Active Ads: <span id="header-active-ad" class="font-bold uppercase text-indigo-600">Admob</span>
-                    </span>
-                    <button onclick="openConfigGuide()" class="p-2 text-slate-500 hover:text-indigo-650 hover:bg-indigo-50 rounded-xl transition" title="Show setup manual">
-                        <i class="fa-solid fa-circle-info text-lg"></i>
+    <!-- MAIN APP SCREEN -->
+    <div id="main-screen" class="flex-1 flex flex-col h-screen hidden fade-in w-full transition-all">
+        
+        <!-- TOP NAVIGATION -->
+        <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm h-16 flex items-center justify-between px-4 md:px-6">
+            <div class="flex items-center gap-4">
+                <button onclick="document.getElementById('mobile-sidebar').classList.toggle('-translate-x-full')" class="md:hidden text-slate-500 hover:text-slate-800 focus:outline-none">
+                    <i class="fa-solid fa-bars text-xl"></i>
+                </button>
+                <div class="hidden md:flex w-8 h-8 rounded-lg bg-brand-600 text-white items-center justify-center font-bold text-sm shadow shadow-brand-500/50">
+                    <i class="fa-solid fa-layer-group"></i>
+                </div>
+                <h1 class="font-bold text-lg text-slate-800 tracking-tight">Admin<span class="text-slate-400 font-normal">Workspace</span></h1>
+            </div>
+            <div class="flex items-center gap-4 md:gap-6">
+                <span class="hidden md:flex px-3 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-full items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-green-500"></span> Connected
+                </span>
+                <button onclick="toggleDarkMode()" class="text-slate-500 hover:text-brand-600 transition text-lg flex items-center justify-center">
+                    <i class="fa-solid fa-moon" id="dark-mode-icon"></i>
+                </button>
+                <button onclick="disconnectFirebase()" class="text-slate-400 hover:text-red-500 transition text-sm flex items-center gap-2 font-medium">
+                    <i class="fa-solid fa-right-from-bracket"></i> <span class="hidden md:inline">Disconnect</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- LAYOUT CONTENT -->
+        <div class="flex-1 overflow-hidden flex bg-slate-50 relative">
+            <!-- SIDEBAR -->
+            <aside id="mobile-sidebar" class="absolute md:relative w-64 bg-white border-r border-slate-200 flex flex-col h-full z-40 transition-transform duration-300 -translate-x-full md:translate-x-0 shadow-2xl md:shadow-none">
+                <div class="flex md:hidden items-center justify-between p-4 border-b border-slate-100">
+                    <h2 class="font-bold text-sm text-slate-500">Navigation</h2>
+                    <button onclick="document.getElementById('mobile-sidebar').classList.toggle('-translate-x-full')" class="text-slate-400 hover:text-slate-800">
+                        <i class="fa-solid fa-xmark text-lg"></i>
                     </button>
                 </div>
-            </header>
+                <nav class="flex-1 p-4 space-y-2 overflow-y-auto">
+                    <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-100 transition-all active-nav">
+                        <i class="fa-solid fa-chart-pie w-5 text-center"></i> Dashboard
+                    </button>
+                    <button onclick="switchTab('categories')" id="nav-categories" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-100 transition-all">
+                        <i class="fa-solid fa-folder-tree w-5 text-center"></i> Categories
+                    </button>
+                    <button onclick="switchTab('prompts')" id="nav-prompts" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-100 transition-all">
+                        <i class="fa-solid fa-image w-5 text-center"></i> Prompts
+                    </button>
+                    <div class="pt-6 pb-2">
+                        <p class="px-4 text-xs font-bold text-slate-400 uppercase tracking-wider">System Configuration</p>
+                    </div>
+                    <button onclick="switchTab('ads')" id="nav-ads" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-100 transition-all">
+                        <i class="fa-solid fa-bullhorn w-5 text-center"></i> Ads Manager
+                    </button>
+                    <button onclick="switchTab('settings')" id="nav-settings" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-100 transition-all">
+                        <i class="fa-solid fa-sliders w-5 text-center"></i> Global Settings
+                    </button>
+                </nav>
+            </aside>
 
-            <!-- Views Container -->
-            <div id="content" class="flex-1 p-6 max-w-[1400px] w-full mx-auto space-y-6">
-                
-                <!-- 1. DASHBOARD VIEW -->
-                <div id="view-dashboard" class="space-y-6 fade-in">
-                    
-                    <!-- Sandbox Info Banner / Alert Tracker -->
-                    <div id="connection-status-banner" class="hidden p-5 rounded-2xl border transition-all flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                        <div class="flex items-start gap-4">
-                            <div id="banner-icon-box" class="p-3.5 rounded-xl"></div>
+            <!-- MAIN CONTENT AREA -->
+            <main class="flex-1 h-full overflow-y-auto w-full">
+                <div class="p-8 max-w-6xl mx-auto w-full">
+
+                    <!-- NOTIFICATIONS SYSTEM -->
+                    <div id="toast-container" class="fixed bottom-6 right-6 z-50 flex flex-col gap-2"></div>
+
+                    <!-- TAB: DASHBOARD -->
+                    <div id="tab-dashboard" class="tab-content fade-in block space-y-6">
+                        <div class="flex items-center justify-between">
                             <div>
-                                <h4 id="banner-title" class="font-bold text-sm text-slate-900">Database Connection</h4>
-                                <p id="banner-text" class="text-xs mt-1 leading-relaxed text-slate-550"></p>
+                                <h2 class="text-2xl font-bold text-slate-800">Overview</h2>
+                                <p class="text-sm text-slate-500">Live analytics and data status.</p>
                             </div>
                         </div>
-                        <button id="banner-action-btn" class="px-4 py-2 font-bold text-xs rounded-xl shadow-sm transition shrink-0"></button>
-                    </div>
 
-                    <!-- Stats Grid -->
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                        <!-- Stat Card 1 -->
-                        <div class="p-6 bg-white border border-slate-200 rounded-2xl shadow-sm hover:shadow-md transition duration-200 flex items-center justify-between">
-                            <div class="space-y-1">
-                                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Prompts</span>
-                                <h3 id="stat-prompts-count" class="text-3xl font-extrabold text-slate-900">...</h3>
+                        <!-- STATS CARDS -->
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm flex items-center gap-5">
+                                <div class="w-14 h-14 bg-blue-100 text-blue-600 rounded-xl flex items-center justify-center text-2xl shadow-inner">
+                                    <i class="fa-solid fa-layer-group"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-semibold text-slate-400">Total Prompts</p>
+                                    <h3 class="text-3xl font-bold text-slate-800" id="stat-prompts">0</h3>
+                                </div>
                             </div>
-                            <div class="p-3 bg-indigo-50 text-indigo-600 rounded-xl">
-                                <i class="fa-solid fa-images text-xl"></i>
+                            <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm flex items-center gap-5">
+                                <div class="w-14 h-14 bg-purple-100 text-purple-600 rounded-xl flex items-center justify-center text-2xl shadow-inner">
+                                    <i class="fa-solid fa-tags"></i>
+                                </div>
+                                <div>
+                                    <p class="text-sm font-semibold text-slate-400">Total Categories</p>
+                                    <h3 class="text-3xl font-bold text-slate-800" id="stat-categories">0</h3>
+                                </div>
                             </div>
-                        </div>
-                        <!-- Stat Card 2 -->
-                        <div class="p-6 bg-white border border-slate-200 rounded-2xl shadow-sm hover:shadow-md transition duration-200 flex items-center justify-between">
-                            <div class="space-y-1">
-                                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Categories</span>
-                                <h3 id="stat-categories-count" class="text-3xl font-extrabold text-slate-900">...</h3>
-                            </div>
-                            <div class="p-3 bg-violet-50 text-violet-600 rounded-xl">
-                                <i class="fa-solid fa-tags text-xl"></i>
-                            </div>
-                        </div>
-                        <!-- Stat Card 3 -->
-                        <div class="p-6 bg-white border border-slate-200 rounded-2xl shadow-sm hover:shadow-md transition duration-200 flex items-center justify-between">
-                            <div class="space-y-1">
-                                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Ad Network</span>
-                                <h3 id="stat-active-ad" class="text-base font-extrabold uppercase text-slate-900">AdMob</h3>
-                            </div>
-                            <div class="p-3 bg-emerald-50 text-emerald-600 rounded-xl">
-                                <i class="fa-solid fa-rectangle-ad text-xl"></i>
-                            </div>
-                        </div>
-                        <!-- Stat Card 4 -->
-                        <div class="p-6 bg-white border border-slate-200 rounded-2xl shadow-sm hover:shadow-md transition duration-200 flex items-center justify-between">
-                            <div class="space-y-1">
-                                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">System Driver</span>
-                                <h3 id="stat-driver-type" class="text-xs font-extrabold text-slate-700 flex items-center gap-1.5 mt-1 bg-slate-100 px-2 py-1 rounded">
-                                    Offline Demo
-                                </h3>
-                            </div>
-                            <div class="p-3 bg-amber-50 text-amber-600 rounded-xl">
-                                <i class="fa-solid fa-circle-notch text-xl animate-spin"></i>
+                            <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm flex items-center gap-5">
+                                <div class="w-14 h-14 bg-green-100 text-green-600 rounded-xl flex items-center justify-center text-2xl shadow-inner">
+                                    <i class="fa-solid fa-mobile-screen"></i>
+                                </div>
+                                <div class="flex-1 w-full overflow-hidden">
+                                    <p class="text-sm font-semibold text-slate-400">Active Ad Network</p>
+                                    <h3 class="text-2xl font-bold text-slate-800 uppercase truncate" id="stat-active-ad">AdMob</h3>
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Welcome banner -->
-                    <div class="p-6 bg-gradient-to-r from-indigo-900 via-indigo-950 to-indigo-900 text-white rounded-2xl shadow flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-                        <div class="space-y-1.5">
-                            <h3 class="text-lg font-extrabold">Welcome back to Prompt House Dashboard!</h3>
-                            <p class="text-indigo-200 max-w-xl text-xs leading-normal">
-                                Here you can easily manage prompts, add new categories, configure app graphics, change AD settings, and sync everything live with your Android app.
-                            </p>
-                        </div>
-                        <div class="flex gap-3 shrink-0">
-                            <button onclick="switchView('prompts'); openPromptModal()" class="px-4 py-2.5 text-xs font-bold bg-indigo-600 hover:bg-indigo-500 rounded-xl flex items-center gap-1.5 shadow-md shadow-indigo-650/20 active:scale-95 transition-all text-white">
-                                <i class="fa-solid fa-plus"></i> Add New Prompt
-                            </button>
-                            <button onclick="switchView('categories'); openCategoryModal()" class="px-4 py-2.5 text-xs font-bold bg-white/10 hover:bg-white/20 rounded-xl flex items-center gap-1.5 active:scale-95 transition-all text-white">
-                                <i class="fa-solid fa-tags"></i> Add Category
+                    <!-- TAB: CATEGORIES -->
+                    <div id="tab-categories" class="tab-content fade-in hidden space-y-6 w-full">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h2 class="text-2xl font-bold text-slate-800">Categories</h2>
+                                <p class="text-sm text-slate-500">Manage application category tags.</p>
+                            </div>
+                            <button onclick="openCategoryModal()" class="bg-brand-600 hover:bg-brand-700 text-white px-5 py-2.5 rounded-xl font-semibold shadow-md transition-all active:scale-95 flex items-center gap-2 text-sm">
+                                <i class="fa-solid fa-plus"></i> Add Category
                             </button>
                         </div>
-                    </div>
-
-                    <!-- Recent items split lists -->
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        <!-- Recent Prompts -->
-                        <div class="p-6 bg-white border border-slate-200 rounded-2xl shadow-sm flex flex-col">
-                            <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
-                                <h4 class="text-xs font-extrabold text-slate-900 uppercase tracking-widest flex items-center gap-2">
-                                    <i class="fa-solid fa-clock text-indigo-505"></i> Recently Added Prompts
-                                </h4>
-                                <button onclick="switchView('prompts')" class="text-xs font-bold text-indigo-600 hover:text-indigo-500 flex items-center gap-1 transition">
-                                    See All Prompts <i class="fa-solid fa-arrow-right text-[10px]"></i>
-                                </button>
-                            </div>
-                            <div id="recent-prompts-list" class="divide-y divide-slate-100 flex-1 min-h-[220px]">
-                                <div class="py-8 text-center text-slate-400 text-xs">Loading prompts...</div>
-                            </div>
-                        </div>
-
-                        <!-- Recent Categories -->
-                        <div class="p-6 bg-white border border-slate-200 rounded-2xl shadow-sm flex flex-col">
-                            <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
-                                <h4 class="text-xs font-extrabold text-slate-900 uppercase tracking-widest flex items-center gap-2">
-                                    <i class="fa-solid fa-network-wired text-indigo-505"></i> Active Categories
-                                </h4>
-                                <button onclick="switchView('categories')" class="text-xs font-bold text-indigo-600 hover:text-indigo-500 flex items-center gap-1 transition">
-                                    See All Categories <i class="fa-solid fa-arrow-right text-[10px]"></i>
-                                </button>
-                            </div>
-                            <div id="recent-categories-list" class="divide-y divide-slate-100 flex-1 min-h-[220px]">
-                                <div class="py-8 text-center text-slate-400 text-xs">Loading categories...</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 2. PROMPTS VIEW -->
-                <div id="view-prompts" class="hidden space-y-6 fade-in">
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-4 border border-slate-200 rounded-2xl shadow-sm">
-                        <div class="relative max-w-sm w-full">
-                            <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400">
-                                <i class="fa-solid fa-magnifying-glass text-xs"></i>
-                            </span>
-                            <input type="text" id="prompt-search-input" onkeyup="filterPromptsList()" placeholder="Search prompts..." class="pl-10 pr-4 py-2.5 w-full bg-slate-50 border border-slate-220 rounded-xl focus:bg-white focus:border-indigo-505 outline-none transition text-xs">
-                        </div>
-                        <div class="flex flex-wrap gap-3 items-center">
-                            <select id="prompt-category-filter" onchange="filterPromptsList()" class="px-4 py-2.5 bg-slate-50 border border-slate-220 rounded-xl text-xs font-bold outline-none focus:bg-white">
-                                <option value="">All Categories</option>
-                            </select>
-                            <button onclick="openPromptModal()" class="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-505 text-white rounded-xl font-bold flex items-center gap-2 text-xs shadow-md shadow-indigo-650/10 active:scale-95 transition">
-                                <i class="fa-solid fa-plus"></i> New Prompt
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Prompts Grid Table -->
-                    <div class="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-left border-collapse">
+                        
+                        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden w-full">
+                            <table class="w-full text-left border-collapse w-full">
                                 <thead>
-                                    <tr class="bg-slate-50 border-b border-slate-200 text-slate-400 font-bold text-[11px] uppercase tracking-wider">
-                                        <th class="py-4 px-6 w-20">Preview</th>
-                                        <th class="py-4 px-6">Title & Tags</th>
-                                        <th class="py-4 px-6">Category</th>
-                                        <th class="py-4 px-6 max-w-sm">Prompt Text</th>
-                                        <th class="py-4 px-6 text-right w-36">Actions</th>
+                                    <tr class="bg-slate-50 border-b border-slate-200 text-xs uppercase tracking-wider text-slate-500 font-semibold">
+                                        <th class="p-4">Logo</th>
+                                        <th class="p-4">Name (ID)</th>
+                                        <th class="p-4 text-right">Actions</th>
                                     </tr>
                                 </thead>
-                                <tbody id="prompts-table-body" class="divide-y divide-slate-100 text-xs">
-                                    <tr>
-                                        <td colspan="5" class="py-12 text-center text-slate-450 font-medium">Loading prompts...</td>
-                                    </tr>
+                                <tbody id="categories-table-body" class="divide-y divide-slate-100 text-sm">
+                                    <tr><td colspan="3" class="p-8 text-center text-slate-400">Loading...</td></tr>
                                 </tbody>
                             </table>
                         </div>
                     </div>
-                </div>
 
-                <!-- 3. CATEGORIES VIEW -->
-                <div id="view-categories" class="hidden space-y-6 fade-in">
-                    <div class="flex justify-between items-center bg-white p-5 border border-slate-200 rounded-2xl shadow-sm">
+                    <!-- TAB: PROMPTS -->
+                    <div id="tab-prompts" class="tab-content fade-in hidden space-y-6 w-full">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <h2 class="text-2xl font-bold text-slate-800">Prompts Details</h2>
+                                <p class="text-sm text-slate-500">Manage all AI Prompts in your database.</p>
+                            </div>
+                            <button onclick="openPromptModal()" class="bg-brand-600 hover:bg-brand-700 text-white px-5 py-2.5 rounded-xl font-semibold shadow-md transition-all active:scale-95 flex items-center gap-2 text-sm">
+                                <i class="fa-solid fa-plus"></i> Add Prompt
+                            </button>
+                        </div>
+
+                        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden w-full">
+                            <div class="overflow-x-auto w-full">
+                                <table class="w-full text-left border-collapse min-w-[800px]">
+                                    <thead>
+                                        <tr class="bg-slate-50 border-b border-slate-200 text-xs uppercase tracking-wider text-slate-500 font-semibold">
+                                            <th class="p-4 w-20">Preview</th>
+                                            <th class="p-4">Title & Category</th>
+                                            <th class="p-4 w-1/3">Prompt Text</th>
+                                            <th class="p-4 w-24">Ratio</th>
+                                            <th class="p-4 text-right">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="prompts-table-body" class="divide-y divide-slate-100 text-sm">
+                                        <tr><td colspan="5" class="p-8 text-center text-slate-400">Loading...</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TAB: ADS -->
+                    <div id="tab-ads" class="tab-content fade-in hidden space-y-6 w-full">
                         <div>
-                            <h3 class="text-base font-extrabold text-slate-900">App Categories</h3>
-                            <p class="text-xs text-slate-400 mt-1">Manage categories used in the mobile application to list prompts.</p>
+                            <h2 class="text-2xl font-bold text-slate-800">Ads Management</h2>
+                            <p class="text-sm text-slate-500">Configure Ad Networks and Placement IDs.</p>
                         </div>
-                        <button onclick="openCategoryModal()" class="px-4 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-bold flex items-center gap-2 text-xs active:scale-95 transition shadow-sm">
-                            <i class="fa-solid fa-plus text-xs"></i> Add New Category
-                        </button>
-                    </div>
-
-                    <!-- Grid list of categories -->
-                    <div id="categories-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                        <!-- Dynamic items -->
-                    </div>
-                </div>
-
-                <!-- 4. APP SETTINGS VIEW -->
-                <div id="view-app-settings" class="hidden space-y-6 fade-in">
-                    <div class="max-w-4xl max-w-full">
-                        <section class="p-6 bg-white border border-slate-200 rounded-2xl shadow-sm space-y-6">
-                            <div>
-                                <h3 class="text-base font-extrabold text-slate-900 flex items-center gap-2">
-                                    <i class="fa-solid fa-palette text-indigo-550"></i> App Design & Branding Assets
+                        <form id="ads-form" onsubmit="saveAdsSettings(event)" class="space-y-6 w-full">
+                            <!-- Network Settings -->
+                            <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
+                                <h3 class="text-sm font-bold text-slate-800 uppercase tracking-widest mb-4 flex items-center gap-2">
+                                    <i class="fa-solid fa-bullhorn text-brand-500"></i> Advertisement Networks
                                 </h3>
-                                <p class="text-xs text-slate-400 mt-1">Customize the graphics and visual placeholders for your Android app dynamically.</p>
+                                <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                                    <div class="space-y-2">
+                                        <label class="text-xs font-bold text-slate-600 block">Global Default Network</label>
+                                        <select id="setting-activeAd" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm focus:border-brand-500 outline-none">
+                                            <option value="admob">Google AdMob</option>
+                                            <option value="meta">Meta Audience Network</option>
+                                            <option value="unity">Unity Ads</option>
+                                            <option value="none">Turn Off All</option>
+                                        </select>
+                                    </div>
+                                    <div class="space-y-2">
+                                        <label class="text-xs font-bold text-slate-600 block">Banner Ad Network</label>
+                                        <select id="setting-bannerNetwork" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm focus:border-brand-500 outline-none">
+                                            <option value="admob">Google AdMob</option>
+                                            <option value="meta">Meta Audience Network</option>
+                                            <option value="unity">Unity Ads</option>
+                                            <option value="none">Turn Off</option>
+                                        </select>
+                                    </div>
+                                    <div class="space-y-2">
+                                        <label class="text-xs font-bold text-slate-600 block">Interstitial Network</label>
+                                        <select id="setting-interstitialNetwork" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm focus:border-brand-500 outline-none">
+                                            <option value="admob">Google AdMob</option>
+                                            <option value="meta">Meta Audience Network</option>
+                                            <option value="unity">Unity Ads</option>
+                                            <option value="none">Turn Off</option>
+                                        </select>
+                                    </div>
+                                    <div class="space-y-2">
+                                        <label class="text-xs font-bold text-slate-600 block">Native Ad Network</label>
+                                        <select id="setting-nativeNetwork" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm focus:border-brand-500 outline-none">
+                                            <option value="admob">Google AdMob</option>
+                                            <option value="meta">Meta Audience Network</option>
+                                            <option value="unity">Unity Ads</option>
+                                            <option value="none">Turn Off</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- AdMob specific section -->
+                            <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm mt-6">
+                                <h3 class="text-sm font-bold text-slate-800 uppercase tracking-widest mb-4 flex items-center gap-2">
+                                    <i class="fa-brands fa-google text-brand-500"></i> AdMob Placement IDs
+                                </h3>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div class="space-y-2">
+                                        <label class="text-xs font-bold text-slate-600 block">App Open ID</label>
+                                        <input type="text" id="setting-admobAppOpenId" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:border-brand-500 outline-none" placeholder="ca-app-pub-3940256099942544/9257395921">
+                                    </div>
+                                    <div class="space-y-2">
+                                        <label class="text-xs font-bold text-slate-600 block">Interstitial ID</label>
+                                        <input type="text" id="setting-admobInterstitialId" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:border-brand-500 outline-none" placeholder="ca-app-pub-3940256099942544/1033173712">
+                                    </div>
+                                    <div class="space-y-2">
+                                        <label class="text-xs font-bold text-slate-600 block">Native Ad ID</label>
+                                        <input type="text" id="setting-admobNativeId" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:border-brand-500 outline-none" placeholder="ca-app-pub-3940256099942544/2247696110">
+                                    </div>
+                                    <div class="space-y-2">
+                                        <label class="text-xs font-bold text-slate-600 block">Banner ID</label>
+                                        <input type="text" id="setting-admobBannerId" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:border-brand-500 outline-none" placeholder="ca-app-pub-3940256099942544/6300978111">
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="submit" id="btn-save-ads" class="bg-slate-800 hover:bg-slate-900 text-white px-6 py-3 rounded-xl font-bold shadow-md transition-all active:scale-95 flex items-center justify-center gap-2 w-full sm:w-auto ml-auto">
+                                <i class="fa-solid fa-save"></i> Save Ads Configuration
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- TAB: SETTINGS -->
+                    <div id="tab-settings" class="tab-content fade-in hidden space-y-6 w-full">
+                        <div>
+                            <h2 class="text-2xl font-bold text-slate-800">Global Settings</h2>
+                            <p class="text-sm text-slate-500">Manage App assets and configs.</p>
+                        </div>
+
+                        <form id="settings-form" onsubmit="saveGlobalSettings(event)" class="space-y-6 w-full">
+                            
+                            <!-- MENU LINKS CONFIG -->
+                            <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm mt-6">
+                                <h3 class="text-sm font-bold text-slate-800 uppercase tracking-widest mb-4 flex items-center gap-2">
+                                    <i class="fa-solid fa-link text-brand-500"></i> App Menu Action Links
+                                </h3>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div class="space-y-2">
+                                        <label class="text-xs font-bold text-slate-600 block">Follow Me URL (e.g. Social link)</label>
+                                        <input type="url" id="setting-followMeUrl" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:border-brand-500 outline-none" placeholder="https://instagram.com/...">
+                                    </div>
+                                    <div class="space-y-2">
+                                        <label class="text-xs font-bold text-slate-600 block">How to Use URL (YouTube/Blog)</label>
+                                        <input type="url" id="setting-howToUseUrl" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:border-brand-500 outline-none" placeholder="https://youtube.com/...">
+                                    </div>
+                                    <div class="space-y-2">
+                                        <label class="text-xs font-bold text-slate-600 block">Share App URL (Play Store Link)</label>
+                                        <input type="url" id="setting-shareAppUrl" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:border-brand-500 outline-none" placeholder="https://play.google.com/...">
+                                    </div>
+                                    <div class="space-y-2">
+                                        <label class="text-xs font-bold text-slate-600 block">Rate Us URL</label>
+                                        <input type="url" id="setting-rateUsUrl" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:border-brand-500 outline-none" placeholder="https://play.google.com/...">
+                                    </div>
+                                    <div class="space-y-2">
+                                        <label class="text-xs font-bold text-slate-600 block">Contact Email</label>
+                                        <input type="email" id="setting-contactUsEmail" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:border-brand-500 outline-none" placeholder="mailto:your@email.com">
+                                    </div>
+                                    <div class="space-y-2">
+                                        <label class="text-xs font-bold text-slate-600 block">Developer Info URL</label>
+                                        <input type="url" id="setting-developerInfoUrl" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:border-brand-500 outline-none" placeholder="https://yourportfolio.com">
+                                    </div>
+                                    <div class="space-y-2">
+                                        <label class="text-xs font-bold text-slate-600 block">Privacy Policy URL</label>
+                                        <input type="url" id="setting-privacyPolicyUrl" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:border-brand-500 outline-none" placeholder="https://yourwebsite.com/privacy">
+                                    </div>
+                                </div>
                             </div>
 
-                            <form id="branding-settings-form" onsubmit="saveBrandingAssets(event)" class="space-y-6">
+                            <!-- BRAND GRAPHICS CONFIG -->
+                            <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
+                                <h3 class="text-sm font-bold text-slate-800 uppercase tracking-widest mb-4 flex items-center gap-2">
+                                    <i class="fa-solid fa-image text-brand-500"></i> Brand Graphics URL
+                                </h3>
                                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                    <!-- App Logo config -->
-                                    <div class="p-5 border border-slate-200 rounded-2xl space-y-4 bg-slate-50/40 flex flex-col items-center hover:border-slate-300 transition">
-                                        <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider text-center">App Icon/Logo Link</span>
-                                        <div class="w-24 h-24 rounded-2x bg-white flex items-center justify-center border border-slate-150 overflow-hidden relative group shadow-sm">
-                                            <img id="preview-app-logo" src="https://placehold.co/100" class="w-full h-full object-cover rounded-xl">
+                                    
+                                    <div class="space-y-3">
+                                        <label class="text-xs font-bold text-slate-600 block">App Icon/Logo Link</label>
+                                        <div class="border border-slate-200 rounded-xl p-3 flex flex-col gap-3 bg-slate-50 items-center justify-center">
+                                            <div class="w-20 h-20 bg-white rounded-lg border border-slate-200 flex items-center justify-center overflow-hidden">
+                                                <img id="preview-logo" src="https://placehold.co/100" class="w-full h-full object-cover">
+                                            </div>
+                                            <input type="url" id="inp-logo" class="w-full text-xs px-3 py-2 border border-slate-300 rounded-lg outline-none focus:border-brand-500" placeholder="Paste Logo URL...">
                                         </div>
-                                        <input type="text" id="input-app-logo-url" class="text-xs w-full px-3 py-2 bg-white border border-slate-200 rounded-xl outline-none focus:border-indigo-500 transition" placeholder="Paste App Logo URL link...">
+                                    </div>
+                                    
+                                    <div class="space-y-3">
+                                        <label class="text-xs font-bold text-slate-600 block">Splash Hero Graphic Link</label>
+                                        <div class="border border-slate-200 rounded-xl p-3 flex flex-col gap-3 bg-slate-50 items-center justify-center">
+                                            <div class="w-20 h-20 bg-white rounded-lg border border-slate-200 flex items-center justify-center overflow-hidden">
+                                                <img id="preview-splash" src="https://placehold.co/100" class="w-full h-full object-cover">
+                                            </div>
+                                            <input type="url" id="inp-splash" class="w-full text-xs px-3 py-2 border border-slate-300 rounded-lg outline-none focus:border-brand-500" placeholder="Paste Splash URL...">
+                                        </div>
                                     </div>
 
-                                    <!-- Splash Logo config -->
-                                    <div class="p-5 border border-slate-200 rounded-2xl space-y-4 bg-slate-50/40 flex flex-col items-center hover:border-slate-300 transition">
-                                        <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider text-center">Splash Background Graphics Link</span>
-                                        <div class="w-24 h-24 rounded-2x bg-white flex items-center justify-center border border-slate-150 overflow-hidden relative group shadow-sm">
-                                            <img id="preview-splash-logo" src="https://placehold.co/100" class="w-full h-full object-cover rounded-xl">
+                                    <div class="space-y-3">
+                                        <label class="text-xs font-bold text-slate-600 block">Settings Vector Icon Link</label>
+                                        <div class="border border-slate-200 rounded-xl p-3 flex flex-col gap-3 bg-slate-50 items-center justify-center">
+                                            <div class="w-20 h-20 bg-white rounded-lg border border-slate-200 flex items-center justify-center overflow-hidden">
+                                                <img id="preview-settings-ico" src="https://placehold.co/100" class="w-full h-full object-cover">
+                                            </div>
+                                            <input type="url" id="inp-settings-ico" class="w-full text-xs px-3 py-2 border border-slate-300 rounded-lg outline-none focus:border-brand-500" placeholder="Paste Settings Icon URL...">
                                         </div>
-                                        <input type="text" id="input-splash-logo-url" class="text-xs w-full px-3 py-2 bg-white border border-slate-200 rounded-xl outline-none focus:border-indigo-500 transition" placeholder="Paste Splash Image URL link...">
                                     </div>
 
-                                    <!-- Settings Icon config -->
-                                    <div class="p-5 border border-slate-200 rounded-2xl space-y-4 bg-slate-50/40 flex flex-col items-center hover:border-slate-300 transition">
-                                        <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider text-center">Settings Graphic Icon Link</span>
-                                        <div class="w-24 h-24 rounded-2x bg-white flex items-center justify-center border border-slate-150 overflow-hidden relative group shadow-sm">
-                                            <img id="preview-settings-icon" src="https://placehold.co/100" class="w-full h-full object-cover rounded-xl">
-                                        </div>
-                                        <input type="text" id="input-settings-icon-url" class="text-xs w-full px-3 py-2 bg-white border border-slate-200 rounded-xl outline-none focus:border-indigo-500 transition" placeholder="Paste Settings Icon URL link...">
-                                    </div>
                                 </div>
+                            </div>
 
-                                <div class="flex justify-end pt-4 border-t border-slate-100">
-                                    <button type="submit" id="btn-save-branding" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs flex items-center gap-2 active:scale-95 transition shadow">
-                                        <i class="fa-solid fa-save"></i> Save Branding Graphics Links
-                                    </button>
-                                </div>
-                            </form>
-                        </section>
+                            <button type="submit" id="btn-save-settings" class="bg-slate-800 hover:bg-slate-900 text-white px-6 py-3 rounded-xl font-bold shadow-md transition-all active:scale-95 flex items-center justify-center gap-2 w-full sm:w-auto ml-auto">
+                                <i class="fa-solid fa-save"></i> Save Global Configurations
+                            </button>
+
+                        </form>
                     </div>
+
                 </div>
-
-                <!-- 5. AD NETWORKS VIEW -->
-                <div id="view-ad-networks" class="hidden space-y-6 fade-in">
-                    <form id="ads-configuration-form" onsubmit="saveAdsConfig(event)" class="space-y-6 max-w-5xl">
-                        <!-- Global Ad Switch -->
-                        <div class="p-6 bg-white border border-slate-200 rounded-2xl shadow-sm space-y-5">
-                            <div>
-                                <h3 class="text-base font-extrabold text-slate-900 flex items-center gap-2">
-                                    <i class="fa-solid fa-triangle-exclamation text-indigo-500"></i> Active Ad Engine Network
-                                </h3>
-                                <p class="text-xs text-slate-400 mt-1">Select which ad engine you'd like your dynamic mobile applications to show to users.</p>
-                            </div>
-
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                <label class="border border-slate-200 rounded-2xl p-5 flex items-center gap-4 cursor-pointer hover:border-indigo-500 hover:bg-slate-50/50 transition relative">
-                                    <input type="radio" name="activeAd" value="admob" class="w-4 h-4 text-indigo-600 focus:ring-indigo-550">
-                                    <div class="space-y-0.5">
-                                        <span class="font-bold text-slate-900 text-xs block">Google AdMob</span>
-                                        <span class="text-[10px] text-slate-400 leading-normal">Premium high fill rates</span>
-                                    </div>
-                                    <span class="absolute right-5 top-5 text-sky-500"><i class="fa-brands fa-google text-base"></i></span>
-                                </label>
-
-                                <label class="border border-slate-200 rounded-2xl p-5 flex items-center gap-4 cursor-pointer hover:border-indigo-500 hover:bg-slate-50/50 transition relative">
-                                    <input type="radio" name="activeAd" value="meta" class="w-4 h-4 text-indigo-600 focus:ring-indigo-550">
-                                    <div class="space-y-0.5">
-                                        <span class="font-bold text-slate-900 text-xs block">Meta Audience</span>
-                                        <span class="text-[10px] text-slate-400 leading-normal">Social-targeted placements</span>
-                                    </div>
-                                    <span class="absolute right-5 top-5 text-blue-500"><i class="fa-brands fa-meta text-base"></i></span>
-                                </label>
-
-                                <label class="border border-slate-200 rounded-2xl p-5 flex items-center gap-4 cursor-pointer hover:border-indigo-500 hover:bg-slate-50/50 transition relative">
-                                    <input type="radio" name="activeAd" value="unity" class="w-4 h-4 text-indigo-600 focus:ring-indigo-550">
-                                    <div class="space-y-0.5">
-                                        <span class="font-bold text-slate-900 text-xs block">Unity Ads Engine</span>
-                                        <span class="text-[10px] text-slate-400 leading-normal">Interactive video units</span>
-                                    </div>
-                                    <span class="absolute right-5 top-5 text-slate-800"><i class="fa-brands fa-unity text-base"></i></span>
-                                </label>
-                            </div>
-                        </div>
-
-                        <!-- 3 Distinct Config Cards -->
-                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                            <!-- 1. Google AdMob -->
-                            <div class="p-6 bg-white border border-slate-200 rounded-2xl shadow-sm space-y-4">
-                                <div class="flex items-center gap-2 border-b border-slate-100 pb-3">
-                                    <span class="w-8 h-8 rounded-xl bg-sky-50 text-sky-600 flex items-center justify-center text-xs"><i class="fa-brands fa-google"></i></span>
-                                    <h4 class="font-bold text-slate-900 text-xs">AdMob Placement IDs</h4>
-                                </div>
-                                <div class="space-y-3">
-                                    <div class="space-y-1">
-                                        <label class="text-[10px] font-bold text-slate-450 uppercase tracking-wider">App Open ID</label>
-                                        <input type="text" id="admob_appOpenId" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:bg-white focus:border-indigo-500">
-                                    </div>
-                                    <div class="space-y-1">
-                                        <label class="text-[10px] font-bold text-slate-450 uppercase tracking-wider">Interstitial ID</label>
-                                        <input type="text" id="admob_interstitialId" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:bg-white focus:border-indigo-500">
-                                    </div>
-                                    <div class="space-y-1">
-                                        <label class="text-[10px] font-bold text-slate-450 uppercase tracking-wider">Native Ad ID</label>
-                                        <input type="text" id="admob_nativeId" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:bg-white focus:border-indigo-500">
-                                    </div>
-                                    <div class="space-y-1">
-                                        <label class="text-[10px] font-bold text-slate-450 uppercase tracking-wider">Banner ID</label>
-                                        <input type="text" id="admob_collapsibleBannerId" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:bg-white focus:border-indigo-500">
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- 2. Meta Audience Network -->
-                            <div class="p-6 bg-white border border-slate-200 rounded-2xl shadow-sm space-y-4">
-                                <div class="flex items-center gap-2 border-b border-slate-100 pb-3">
-                                    <span class="w-8 h-8 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center text-xs"><i class="fa-brands fa-meta"></i></span>
-                                    <h4 class="font-bold text-slate-900 text-xs">Meta Placement IDs</h4>
-                                </div>
-                                <div class="space-y-3">
-                                    <div class="space-y-1">
-                                        <label class="text-[10px] font-bold text-slate-455 uppercase tracking-wider">Meta Interstitial</label>
-                                        <input type="text" id="meta_interstitialId" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:bg-white focus:border-indigo-500">
-                                    </div>
-                                    <div class="space-y-1">
-                                        <label class="text-[10px] font-bold text-slate-455 uppercase tracking-wider">Meta Native</label>
-                                        <input type="text" id="meta_nativeId" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:bg-white focus:border-indigo-500">
-                                    </div>
-                                    <div class="space-y-1">
-                                        <label class="text-[10px] font-bold text-slate-455 uppercase tracking-wider">Meta Banner</label>
-                                        <input type="text" id="meta_bannerId" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:bg-white focus:border-indigo-500">
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- 3. Unity Ads -->
-                            <div class="p-6 bg-white border border-slate-200 rounded-2xl shadow-sm space-y-4">
-                                <div class="flex items-center gap-2 border-b border-slate-100 pb-3">
-                                    <span class="w-8 h-8 rounded-xl bg-indigo-50 text-indigo-705 flex items-center justify-center text-xs"><i class="fa-brands fa-unity"></i></span>
-                                    <h4 class="font-bold text-slate-900 text-xs">Unity Placement IDs</h4>
-                                </div>
-                                <div class="space-y-3">
-                                    <div class="space-y-1">
-                                        <label class="text-[10px] font-bold text-slate-450 uppercase tracking-wider">Unity Game ID</label>
-                                        <input type="text" id="unity_gameId" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:bg-white focus:border-indigo-500">
-                                    </div>
-                                    <div class="space-y-1">
-                                        <label class="text-[10px] font-bold text-slate-450 uppercase tracking-wider">Interstitial ID</label>
-                                        <input type="text" id="unity_interstitialId" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:bg-white focus:border-indigo-500">
-                                    </div>
-                                    <div class="space-y-1">
-                                        <label class="text-[10px] font-bold text-slate-450 uppercase tracking-wider">Banner Link ID</label>
-                                        <input type="text" id="unity_bannerId" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:bg-white focus:border-indigo-500">
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Save Trigger -->
-                        <div class="flex justify-end pt-4 border-t border-slate-200">
-                            <button type="submit" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs flex items-center gap-2 active:scale-95 transition shadow">
-                                <i class="fa-solid fa-cloud-arrow-up"></i> Save AD Placements
-                            </button>
-                        </div>
-                    </form>
-                </div>
-
-                <!-- 6. API CREDENTIALS VIEW -->
-                <div id="view-credentials" class="hidden space-y-6 fade-in">
-                    <form id="credentials-configuration-form" onsubmit="saveCredentialsConfig(event)" class="space-y-6 max-w-5xl">
-                        <div class="p-6 bg-white border border-slate-200 rounded-2xl shadow-sm space-y-2">
-                            <h3 class="text-base font-extrabold text-slate-900 flex items-center gap-2">
-                                <i class="fa-solid fa-link text-indigo-550"></i> Firebase & Cloud R2 Settings
-                            </h3>
-                            <p class="text-xs text-slate-400 leading-normal">
-                                Update your database connection parameters below to sync real-time alerts. If you leave these completely empty, the admin panel automatically falls back to your built-in offline test sandbox mode.
-                            </p>
-                        </div>
-
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <!-- Firebase Configuration -->
-                            <div class="p-6 bg-white border border-slate-200 rounded-2xl shadow-sm space-y-4">
-                                <div class="flex items-center gap-2 border-b border-slate-100 pb-3">
-                                    <span class="w-8 h-8 rounded-xl bg-orange-50 text-orange-505 flex items-center justify-center text-xs"><i class="fa-solid fa-fire"></i></span>
-                                    <h4 class="font-bold text-slate-900 text-xs">Firestore Parameters (Firebase)</h4>
-                                </div>
-                                <div class="space-y-3">
-                                    <div class="space-y-1">
-                                        <label class="text-[10px] font-bold text-slate-450 uppercase tracking-wider">API Key</label>
-                                        <input type="text" id="creds_firebase_apiKey" placeholder="AIzaSy..." class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:bg-white focus:border-indigo-500">
-                                    </div>
-                                    <div class="space-y-1">
-                                        <label class="text-[10px] font-bold text-slate-450 uppercase tracking-wider">Auth Domain</label>
-                                        <input type="text" id="creds_firebase_authDomain" placeholder="your-project.firebaseapp.com" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:bg-white focus:border-indigo-500">
-                                    </div>
-                                    <div class="space-y-1">
-                                        <label class="text-[10px] font-bold text-slate-450 uppercase tracking-wider">Project ID</label>
-                                        <input type="text" id="creds_firebase_projectId" placeholder="your-project" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:bg-white focus:border-indigo-500">
-                                    </div>
-                                    <div class="space-y-1">
-                                        <label class="text-[10px] font-bold text-slate-450 uppercase tracking-wider">Storage Bucket</label>
-                                        <input type="text" id="creds_firebase_storageBucket" placeholder="your-project.appspot.com" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:bg-white focus:border-indigo-500">
-                                    </div>
-                                    <div class="space-y-1">
-                                        <label class="text-[10px] font-bold text-slate-450 uppercase tracking-wider">Messaging Sender ID</label>
-                                        <input type="text" id="creds_firebase_messagingSenderId" placeholder="Sender ID" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:bg-white focus:border-indigo-500">
-                                    </div>
-                                    <div class="space-y-1">
-                                        <label class="text-[10px] font-bold text-slate-450 uppercase tracking-wider">App ID</label>
-                                        <input type="text" id="creds_firebase_appId" placeholder="1:12345:android:..." class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:bg-white focus:border-indigo-500">
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Cloudflare R2 Credentials -->
-                            <div class="p-6 bg-white border border-slate-200 rounded-2xl shadow-sm space-y-4">
-                                <div class="flex items-center gap-2 border-b border-slate-100 pb-3">
-                                    <span class="w-8 h-8 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-xs"><i class="fa-solid fa-cloud"></i></span>
-                                    <h4 class="font-bold text-slate-900 text-xs">Cloudflare R2 Bucket API (S3)</h4>
-                                </div>
-                                <div class="space-y-3">
-                                    <div class="space-y-1">
-                                        <label class="text-[10px] font-bold text-slate-450 uppercase tracking-wider">Access Key ID</label>
-                                        <input type="text" id="creds_r2_accessKeyId" placeholder="Access key" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:bg-white focus:border-indigo-500">
-                                    </div>
-                                    <div class="space-y-1">
-                                        <label class="text-[10px] font-bold text-slate-450 uppercase tracking-wider">Secret Access Key</label>
-                                        <input type="password" id="creds_r2_secretAccessKey" placeholder="Secret key" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:bg-white focus:border-indigo-500">
-                                    </div>
-                                    <div class="space-y-1">
-                                        <label class="text-[10px] font-bold text-slate-450 uppercase tracking-wider">Endpoint URL</label>
-                                        <input type="text" id="creds_r2_endpoint" placeholder="https://YOUR_ACCOUNT_ID.r2.cloudflarestorage.com" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:bg-white focus:border-indigo-500">
-                                    </div>
-                                    <div class="space-y-1">
-                                        <label class="text-[10px] font-bold text-slate-450 uppercase tracking-wider">Bucket Name</label>
-                                        <input type="text" id="creds_r2_bucketName" placeholder="bucket-name" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:bg-white focus:border-indigo-500">
-                                    </div>
-                                    <div class="space-y-1">
-                                        <label class="text-[10px] font-bold text-slate-450 uppercase tracking-wider">Public Domain Link Prefix</label>
-                                        <input type="text" id="creds_r2_publicDomainUrl" placeholder="https://pub-...r2.dev" class="w-full px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:bg-white focus:border-indigo-500">
-                                    </div>
-                                    <div class="pt-4 text-[10px] text-slate-400 font-medium leading-relaxed bg-slate-50 p-4 rounded-xl border border-slate-100">
-                                         Let your panel connect directly to storage and host dynamic files instantly.
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Save Trigger -->
-                        <div class="flex justify-end pt-4 border-t border-slate-200">
-                            <button type="submit" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs active:scale-95 transition shadow">
-                                <i class="fa-solid fa-save"></i> Save Settings
-                            </button>
-                        </div>
-                    </form>
-                </div>
-
-            </div>
-        </main>
+            </main>
+        </div>
     </div>
 
-    <!-- MODAL: ADD/EDIT PROMPT -->
-    <div id="modal-prompt" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
-        <div class="bg-white rounded-2xl border border-slate-200 shadow-2xl w-full max-w-2xl overflow-hidden animate-zoom-in">
-            <div class="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-slate-50">
-                <h4 id="prompt-modal-title" class="text-sm font-extrabold text-slate-900">Add New Prompt</h4>
-                <button onclick="closePromptModal()" class="text-slate-400 hover:text-slate-600 rounded-lg p-1.5 hover:bg-slate-200 transition">
-                    <i class="fa-solid fa-xmark text-lg"></i>
-                </button>
+    <!-- MODAL: CATEGORY -->
+    <div id="modal-category" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden items-center justify-center p-4">
+        <div class="bg-white rounded-2xl w-full max-w-md shadow-2xl overflow-hidden transform scale-95 transition-all" id="modal-category-content">
+            <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
+                <h3 class="text-lg font-bold text-slate-800" id="cat-modal-title">Add New Category</h3>
+                <button onclick="closeModal('modal-category')" class="text-slate-400 hover:text-red-500 transition"><i class="fa-solid fa-xmark text-xl"></i></button>
             </div>
-            <form id="prompt-form" onsubmit="savePrompt(event)" class="p-6 space-y-4">
-                <input type="hidden" id="prompt-edit-id">
-                <input type="hidden" id="prompt-existing-img-url">
+            <form onsubmit="saveCategory(event)" class="p-6 space-y-5">
+                <input type="hidden" id="cat-edit-id">
                 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="space-y-1">
-                        <label class="text-xs font-bold text-slate-650">Prompt Title</label>
-                        <input type="text" id="prompt-title" required class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs outline-none focus:border-indigo-500 transition" placeholder="e.g. Mythical Golden Lion">
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 uppercase mb-2">Category Name</label>
+                    <input type="text" id="cat-name" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:border-brand-500 outline-none transition" placeholder="e.g. Science Fiction">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 uppercase mb-2">Cover Image URL</label>
+                    <div class="flex gap-4 items-center">
+                        <div class="w-14 h-14 bg-slate-100 border border-slate-200 rounded-xl flex-shrink-0 overflow-hidden">
+                            <img id="cat-img-preview" src="https://placehold.co/100" class="w-full h-full object-cover">
+                        </div>
+                        <input type="url" id="cat-url" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:border-brand-500 outline-none transition" placeholder="Paste image link here...">
                     </div>
-                    <div class="space-y-1">
-                        <label class="text-xs font-bold text-slate-650">Category</label>
-                        <select id="prompt-category" required class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs outline-none focus:border-indigo-500 transition">
-                            <!-- Dynamic Options -->
+                </div>
+
+                <div class="pt-2">
+                    <button type="submit" id="cat-submit-btn" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-bold py-3.5 rounded-xl shadow-lg transition active:scale-95 flex justify-center items-center gap-2">
+                        <i class="fa-solid fa-cloud-arrow-up"></i> Save Category
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: PROMPT -->
+    <div id="modal-prompt" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden items-center justify-center p-4">
+        <div class="bg-white rounded-2xl w-full max-w-2xl shadow-2xl overflow-hidden transform scale-95 transition-all max-h-[90vh] flex flex-col" id="modal-prompt-content">
+            <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between shrink-0">
+                <h3 class="text-lg font-bold text-slate-800" id="prompt-modal-title">Add New Prompt</h3>
+                <button onclick="closeModal('modal-prompt')" class="text-slate-400 hover:text-red-500 transition"><i class="fa-solid fa-xmark text-xl"></i></button>
+            </div>
+            <form onsubmit="savePrompt(event)" class="p-6 space-y-5 overflow-y-auto flex-1">
+                <input type="hidden" id="prompt-edit-id">
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 uppercase mb-2">Title</label>
+                        <input type="text" id="prompt-title" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:border-brand-500 outline-none transition" placeholder="A brief title...">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 uppercase mb-2">Category Assignment</label>
+                        <select id="prompt-category" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:border-brand-500 outline-none transition appearance-none">
+                            <!-- Populated dynamically via JS -->
                         </select>
                     </div>
                 </div>
 
-                <div class="space-y-1">
-                    <label class="text-xs font-bold text-slate-650">Prompt Text Content</label>
-                    <textarea id="prompt-text" required rows="4" class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs outline-none focus:border-indigo-500 transition" placeholder="Type prompt here..."></textarea>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="space-y-1">
-                        <label class="text-xs font-bold text-slate-650">Identifiers / Tags (Comma separated)</label>
-                        <input type="text" id="prompt-tags" class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs outline-none focus:border-indigo-500 transition" placeholder="cyberpunk, lion, gold">
-                    </div>
-                    <div class="space-y-1">
-                        <label class="text-xs font-bold text-slate-650">Aspect Ratio</label>
-                        <select id="prompt-ratio" class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs outline-none focus:border-indigo-500 transition">
-                            <option value="1:1">1:1 Square</option>
-                            <option value="16:9">16:9 Landscape</option>
-                            <option value="9:16">9:16 Portrait</option>
-                            <option value="4:3">4:3 Standard</option>
-                            <option value="3:4">3:4 Book Format</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="space-y-1.5 border border-slate-150 p-4 rounded-xl bg-slate-50/50">
-                    <label class="text-xs font-bold text-slate-700 block fillMaxWidth">Image Representation URL</label>
-                    <div class="flex items-center gap-4">
-                        <div class="w-14 h-14 bg-slate-200 border border-slate-300 rounded-xl overflow-hidden shrink-0 flex items-center justify-center">
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 uppercase mb-2">Display Image URL</label>
+                    <div class="flex gap-4 items-center">
+                        <div class="w-14 h-14 bg-slate-100 border border-slate-200 rounded-xl flex-shrink-0 overflow-hidden">
                             <img id="prompt-img-preview" src="https://placehold.co/100" class="w-full h-full object-cover">
                         </div>
-                        <input type="text" id="prompt-image-url" class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs outline-none focus:border-indigo-500 transition" placeholder="Paste prompt image URL link manually here...">
+                        <input type="url" id="prompt-url" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:border-brand-500 outline-none transition" placeholder="Paste image link here...">
                     </div>
                 </div>
 
-                <div class="flex justify-end gap-3 pt-4 border-t border-slate-100">
-                    <button type="button" onclick="closePromptModal()" class="px-4 py-2 text-slate-600 bg-slate-100 hover:bg-slate-205 rounded-xl text-xs font-bold transition">Cancel</button>
-                    <button type="submit" id="prompt-submit-btn" class="px-5 py-2 hover:bg-indigo-500 bg-indigo-600 text-white font-bold rounded-xl text-xs flex items-center gap-2 active:scale-95 transition shadow-md shadow-indigo-650/10">
-                        <i class="fa-solid fa-save"></i> Save Prompt
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 uppercase mb-2">Full AI Prompt Text</label>
+                    <textarea id="prompt-text" required rows="4" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:border-brand-500 outline-none transition" placeholder="Describe the scene in extreme detail..."></textarea>
+                </div> <!-- END BODY -->
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 uppercase mb-2">Tags (Comma separated)</label>
+                        <input type="text" id="prompt-tags" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:border-brand-500 outline-none transition" placeholder="cyberpunk, futuristic, neon">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 uppercase mb-2">Aspect Ratio target</label>
+                        <select id="prompt-ratio" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:border-brand-500 outline-none transition">
+                            <option value="1:1">1:1 (Square)</option>
+                            <option value="16:9">16:9 (Landscape)</option>
+                            <option value="9:16">9:16 (Portrait)</option>
+                            <option value="4:3">4:3 (Photo)</option>
+                            <option value="3:4">3:4 (Portrait Photo)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="pt-4 mt-auto">
+                    <button type="submit" id="prompt-submit-btn" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-3.5 rounded-xl shadow-lg transition active:scale-95 flex justify-center items-center gap-2">
+                        <i class="fa-solid fa-paper-plane"></i> Publish Prompt Data
                     </button>
                 </div>
             </form>
         </div>
     </div>
-
-    <!-- MODAL: ADD/EDIT CATEGORY -->
-    <div id="modal-category" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
-        <div class="bg-white rounded-2xl border border-slate-200 shadow-2xl w-full max-w-md overflow-hidden animate-zoom-in">
-            <div class="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-slate-50">
-                <h4 id="category-modal-title" class="text-sm font-extrabold text-slate-900">Add Category</h4>
-                <button onclick="closeCategoryModal()" class="text-slate-400 hover:text-slate-600 rounded-lg p-1.5 hover:bg-slate-200 transition">
-                    <i class="fa-solid fa-xmark text-lg"></i>
-                </button>
-            </div>
-            <form id="category-form" onsubmit="saveCategory(event)" class="p-6 space-y-4">
-                <input type="hidden" id="category-edit-id">
-                <input type="hidden" id="category-existing-logo-url">
-
-                <div class="space-y-1">
-                    <label class="text-xs font-bold text-slate-600">Category Name</label>
-                    <input type="text" id="category-name" required class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs outline-none focus:border-indigo-550 transition" placeholder="e.g. Creative Sci-Fi">
-                </div>
-
-                <div class="space-y-1.5 border border-slate-150 p-4 rounded-xl bg-slate-50/50">
-                    <label class="text-xs font-bold text-slate-700 block">Category Cover Image URL</label>
-                    <div class="flex items-center gap-4">
-                        <div class="w-12 h-12 bg-slate-200 border border-slate-300 rounded-xl overflow-hidden shrink-0 flex items-center justify-center">
-                            <img id="category-logo-preview" src="https://placehold.co/100" class="w-full h-full object-cover">
-                        </div>
-                        <input type="text" id="category-logo-url" class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs outline-none focus:border-indigo-550 transition" placeholder="Paste category cover URL link...">
-                    </div>
-                </div>
-
-                <div class="flex justify-end gap-3 pt-4 border-t border-slate-100">
-                    <button type="button" onclick="closeCategoryModal()" class="px-4 py-2 text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-xl text-xs font-bold transition">Cancel</button>
-                    <button type="submit" id="category-submit-btn" class="px-5 py-2 bg-indigo-600 hover:bg-indigo-505 text-white font-bold rounded-xl text-xs flex items-center gap-2 active:scale-95 transition shadow-sm">
-                        <i class="fa-solid fa-save"></i> Save Category
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- TOAST CONTAINER -->
-    <div id="toast-container" class="fixed bottom-6 right-6 z-[200] flex flex-col gap-3.5 max-w-sm w-full font-medium"></div>
-
-
-    <!-- MODAL: APP SETUP AND TECHNICAL GUIDE -->
-    <div id="modal-config-guide" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
-        <div class="bg-white rounded-2xl border border-slate-200 shadow-2xl w-full max-w-lg overflow-hidden animate-zoom-in">
-            <div class="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-slate-50">
-                <h4 class="text-sm font-extrabold text-slate-905 flex items-center gap-2"><i class="fa-solid fa-circle-question text-indigo-500"></i> Setup Quick Info</h4>
-                <button onclick="closeConfigGuide()" class="text-slate-400 hover:text-slate-600 rounded-lg p-1.5 hover:bg-slate-200 transition">
-                    <i class="fa-solid fa-xmark text-lg"></i>
-                </button>
-            </div>
-            <div class="p-6 space-y-4 max-h-[400px] overflow-y-auto text-xs text-slate-600 leading-relaxed">
-                <p>Welcome! This admin panel connects securely and directly to your **Firebase Firestore** and **Cloudflare R2 Storage Bucket** to allow dynamic updates parameters automatically without code rebuilds.</p>
-                <h5 class="font-bold text-slate-900 mt-2">Connecting R2 Bucket:</h5>
-                <p>Add CORS configuration to your Cloudflare R2 bucket settings in order to permit dynamic upload operations from the web browser dashboard.</p>
-                <h5 class="font-bold text-slate-900 mt-2">Offline Sandbox Mode:</h5>
-                <p>If no keys are entered in settings, the panel operates in local sandbox mode using cache to let you preview layouts, save categories, and manage prompt ideas immediately.</p>
-            </div>
-            <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end">
-                <button onclick="closeConfigGuide()" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs transition">Dismiss</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- FIREBASE AND AWS S3 COMPAT SCRIPTS -->
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-    <script src="https://sdk.amazonaws.com/js/aws-sdk-2.1400.0.min.js"></script>
 
     <script>
-        // ==========================================
-        // DUAL ENGINE SYSTEM CONFIGURATION
-        // ==========================================
-        // Plugs Google Services values directly as real baseline config!
-        let firebaseConfig = {
-            apiKey: "AIzaSyDC0UPJAstcS2VVVHmn5WDm0Aqx7VywkdU",
-            authDomain: "prompt-e520c.firebaseapp.com",
-            projectId: "prompt-e520c",
-            storageBucket: "prompt-e520c.firebasestorage.app",
-            messagingSenderId: "664721478037",
-            appId: "1:664721478037:android:a65ea765047e9ddb11a69c"
-        };
-
-        let r2Credentials = {
-            accessKeyId: "YOUR_R2_ACCESS_KEY_ID",
-            secretAccessKey: "YOUR_R2_SECRET_ACCESS_KEY",
-            endpoint: "https://YOUR_CLOUDFLARE_ACCOUNT_ID.r2.cloudflarestorage.com",
-            bucketName: "YOUR_R2_BUCKET_NAME",
-            publicDomainUrl: "https://your-custom-subdomain-or-r2-url.com"
-        };
-
-        // Core Instances
+        /* ======================== 
+           GLOBAL STATE & UTILS
+        ======================== */
         let db = null;
-        let s3 = null;
-        let isSandboxMode = true;
-
-        // State Store variables
-        let prompts = [];
         let categories = [];
-        let globalConfig = {
-            activeAd: "admob",
-            appLogoUrl: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&q=80&w=300",
-            splashScreenUrl: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&q=80&w=600",
-            settingsIconUrl: "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?auto=format&fit=crop&q=80&w=300",
-            admob_appOpenId: "ca-app-pub-3940256099942544/3419835294",
-            admob_interstitialId: "ca-app-pub-3940256099942544/1033173712",
-            admob_nativeId: "ca-app-pub-3940256099942544/2247696110",
-            admob_collapsibleBannerId: "ca-app-pub-3940256099942544/6300978111",
-            meta_interstitialId: "YOUR_META_INTERSTITIAL_ID",
-            meta_nativeId: "YOUR_META_NATIVE_ID",
-            meta_bannerId: "YOUR_META_BANNER_ID",
-            unity_gameId: "YOUR_UNITY_GAME_ID",
-            unity_interstitialId: "YOUR_UNITY_INTERSTITIAL_ID",
-            unity_bannerId: "YOUR_UNITY_BANNER_ID"
-        };
-
-        // Active layout screen navigation pointer
-        let currentView = 'dashboard';
-
-        // Restore custom credentials configurations from local cache
-        function loadSavedCredentials() {
-            try {
-                const storedFb = localStorage.getItem('fb_config');
-                if (storedFb) {
-                    firebaseConfig = JSON.parse(storedFb);
-                }
-                const storedR2 = localStorage.getItem('r2_config');
-                if (storedR2) {
-                    r2Credentials = JSON.parse(storedR2);
-                }
-            } catch (err) {
-                console.error("Credentials cache failed to reload accurately:", err);
-            }
-        }
-
-        async function initializeCloudServices() {
-            try {
-                if (window.firebase && firebaseConfig.apiKey && firebaseConfig.apiKey !== "YOUR_FIREBASE_API_KEY" && firebaseConfig.apiKey !== "") {
-                    // Reset running apps
-                    if (firebase.apps.length > 0) {
-                        await firebase.app().delete();
-                    }
-                    firebase.initializeApp(firebaseConfig);
-                    db = firebase.firestore();
-                    isSandboxMode = false;
-                    console.log("🔥 Firebase initialized dynamically.");
-                } else {
-                    db = null;
-                    isSandboxMode = true;
-                }
-
-                if (window.AWS && r2Credentials.accessKeyId && r2Credentials.accessKeyId !== "YOUR_R2_ACCESS_KEY_ID" && r2Credentials.accessKeyId !== "") {
-                    AWS.config.update({
-                        accessKeyId: r2Credentials.accessKeyId,
-                        secretAccessKey: r2Credentials.secretAccessKey,
-                        region: 'auto',
-                        signatureVersion: 'v4'
-                    });
-
-                    s3 = new AWS.S3({
-                        endpoint: new AWS.Endpoint(r2Credentials.endpoint),
-                        useAccelerateEndpoint: false
-                    });
-                    console.log("☁️ Cloudflare R2 configured successfully.");
-                } else {
-                    s3 = null;
-                }
-            } catch (error) {
-                console.warn("Cloud service activation bypassed: ", error);
-                db = null;
-                s3 = null;
-                isSandboxMode = true;
-            }
-
-            updateDatabaseDriverInterface();
-        }
-
-        // ==========================================
-        // DYNAMIC SANDBOX PLAYGROUND SEEDS
-        // ==========================================
-        const sandboxDefaultCategories = [
-            { id: "photorealistic", name: "Photorealistic Art", logoUrl: "https://images.unsplash.com/photo-1546182990-dffeafbe841d?auto=format&fit=crop&q=80&w=200" },
-            { id: "cyberpunk_anime", name: "Anime & Cyberpunk", logoUrl: "https://images.unsplash.com/photo-1540959733332-eab4deceeaf7?auto=format&fit=crop&q=80&w=200" },
-            { id: "clay_3d", name: "Claymation & 3D render", logoUrl: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=200" },
-            { id: "logo_minimal", name: "Minimal Graphic Logo", logoUrl: "https://images.unsplash.com/photo-1626785774573-4b799315345d?auto=format&fit=crop&q=80&w=200" }
-        ];
-
-        const sandboxDefaultPrompts = [
-            {
-                id: "lion_gold",
-                title: "Mythical Golden Lion Portrait",
-                category: "Photorealistic Art",
-                categoryId: "photorealistic",
-                promptText: "Professional studio portrait of an intensely majestic lion face sculpted out of fluid liquid gold, high contrast dramatic lighting, soft black procedural volumetric background, highly intricate details, insanely realistic gold foil texture reflections, Unreal Engine 5 render, depth of field, 8k resolution",
-                tags: "lion, gold, unreal, fantasy",
-                aspectRatio: "1:1",
-                imageUrl: "https://images.unsplash.com/photo-1546182990-dffeafbe841d?auto=format&fit=crop&q=80&w=400"
-            },
-            {
-                id: "tokyo_rain",
-                title: "Teal & Neon Cyberpunk Alleyway",
-                category: "Anime & Cyberpunk",
-                categoryId: "cyberpunk_anime",
-                promptText: "Retro vintage 90s anime style, a dense futuristic skyscraper alleyway in rain-slick Tokyo, hyper detailed neon signage in kanji, reflecting neon purples and teals onto wet asphalt puddles, dynamic camera angle, nostalgic chill ambient vibes, high cinematic style",
-                tags: "cyberpunk, rain, neon, anime",
-                aspectRatio: "16:9",
-                imageUrl: "https://images.unsplash.com/photo-1540959733332-eab4deceeaf7?auto=format&fit=crop&q=80&w=400"
-            }
-        ];
-
-        // Set up drivers, banners and status elements
-        function updateDatabaseDriverInterface() {
-            const statusIndicator = document.getElementById('sidebar-driver-status');
-            const driverTypeLabel = document.getElementById('stat-driver-type');
-            
-            const banner = document.getElementById('connection-status-banner');
-            const bannerTitle = document.getElementById('banner-title');
-            const bannerText = document.getElementById('banner-text');
-            const bannerIconBox = document.getElementById('banner-icon-box');
-            const bannerActionBtn = document.getElementById('banner-action-btn');
-
-            if (isSandboxMode) {
-                // Sidebar status widget
-                statusIndicator.innerHTML = `
-                    <span class="w-3 h-3 bg-amber-500 rounded-full animate-pulse shrink-0"></span>
-                    <span class="text-xs font-bold text-amber-400">Offline Demo</span>
-                `;
-                // Stats Card
-                driverTypeLabel.innerHTML = `
-                    <span class="px-2 py-0.5 bg-amber-100 text-amber-850 rounded-lg font-bold text-[10px]">Local Sandbox</span>
-                `;
-
-                // Main info banner
-                banner.className = "flex flex-col sm:flex-row items-start sm:items-center justify-between p-5 rounded-2xl border border-amber-200 bg-amber-50/50 text-slate-800 fade-in";
-                bannerIconBox.className = "p-3 bg-amber-100 text-amber-700 rounded-xl";
-                bannerIconBox.innerHTML = `<i class="fa-solid fa-cloud-slash text-lg"></i>`;
-                bannerTitle.textContent = "Offline Demo Mode Activated";
-                bannerText.textContent = "You are currently exploring using the local sandbox. Changes are saved in your browser cache. Wire your firestore credentials to sync live prompts!";
-                bannerActionBtn.className = "px-4 py-2 bg-indigo-605 hover:bg-indigo-500 text-white font-bold text-xs rounded-xl shadow active:scale-95 transition bg-indigo-650";
-                bannerActionBtn.innerHTML = `<i class="fa-solid fa-circle-nodes"></i> Connect database`;
-                bannerActionBtn.onclick = () => switchView('credentials');
-                banner.classList.remove('hidden');
-
-            } else {
-                // Sidebar status widget
-                statusIndicator.innerHTML = `
-                    <span class="w-3 h-3 bg-emerald-500 rounded-full animate-pulse shrink-0"></span>
-                    <span class="text-xs font-bold text-emerald-400">Database Live</span>
-                `;
-                // Stats Card
-                driverTypeLabel.innerHTML = `
-                    <span class="px-2 py-0.5 bg-emerald-100 text-emerald-805 rounded-lg font-bold text-[10px]">Cloud Connected</span>
-                `;
-
-                // Main info banner
-                banner.className = "flex flex-col sm:flex-row items-start sm:items-center justify-between p-5 rounded-2xl border border-emerald-200 bg-emerald-50/30 text-slate-800 fade-in";
-                bannerIconBox.className = "p-3 bg-emerald-100 text-emerald-700 rounded-xl";
-                bannerIconBox.innerHTML = `<i class="fa-solid fa-cloud-bolt text-lg"></i>`;
-                bannerTitle.textContent = "Live Cloud Synced!";
-                bannerText.textContent = "Successfully connected to Firebase database. All changes, prompts, and categories created below will instantly sync to all client devices.";
-                bannerActionBtn.className = "px-4 py-2 border border-slate-250 bg-white hover:bg-slate-50 text-slate-700 font-bold text-xs rounded-xl shadow-sm active:scale-95 transition";
-                bannerActionBtn.innerHTML = `<i class="fa-solid fa-palette"></i> Customize Design`;
-                bannerActionBtn.onclick = () => switchView('app-settings');
-                banner.classList.remove('hidden');
-            }
-        }
-
-        // ==========================================
-        // DYNAMIC SNAPSHOT SYNCHRONIZER
-        // ==========================================
-        function subscribeToGlobalServices() {
-            if (isSandboxMode) {
-                // Initialize local sandbox database from browser Cache
-                let localPrompts = localStorage.getItem('sandbox_prompts');
-                let localCategories = localStorage.getItem('sandbox_categories');
-                let localConfig = localStorage.getItem('sandbox_global_config');
-
-                if (!localPrompts) {
-                    localStorage.setItem('sandbox_prompts', JSON.stringify(sandboxDefaultPrompts));
-                    prompts = sandboxDefaultPrompts;
-                } else {
-                    prompts = JSON.parse(localPrompts);
-                }
-
-                if (!localCategories) {
-                    localStorage.setItem('sandbox_categories', JSON.stringify(sandboxDefaultCategories));
-                    categories = sandboxDefaultCategories;
-                } else {
-                    categories = JSON.parse(localCategories);
-                }
-
-                if (!localConfig) {
-                    localStorage.setItem('sandbox_global_config', JSON.stringify(globalConfig));
-                } else {
-                    globalConfig = JSON.parse(localConfig);
-                }
-
-                // Render views cleanly
-                updateStatsCounter();
-                updateCategorySelects();
-                renderPromptsTable();
-                renderRecentPrompts();
-                renderCategoriesList();
-                renderRecentCategories();
-                updateBrandingPreviews(globalConfig);
-                fillAdsConfigurationInputs(globalConfig);
-                return;
-            }
-
-            // Otherwise, hook Firestore endpoints
-            if (!db) return;
-
-            db.collection("prompts").onSnapshot((snapshot) => {
-                prompts = [];
-                snapshot.forEach((doc) => {
-                    const data = doc.data();
-                    prompts.push({ id: doc.id, ...data });
-                });
-                updateStatsCounter();
-                renderPromptsTable();
-                renderRecentPrompts();
-            }, (error) => {
-                console.warn("Snapshot subscription failed: ", error);
-            });
-
-            db.collection("categories").onSnapshot((snapshot) => {
-                categories = [];
-                snapshot.forEach((doc) => {
-                    categories.push({ id: doc.id, ...doc.data() });
-                });
-                updateStatsCounter();
-                updateCategorySelects();
-                renderCategoriesList();
-                renderRecentCategories();
-            }, (error) => {
-                console.warn("Categories real-time read subscription failed: ", error);
-            });
-
-            db.collection("app_config").doc("global").onSnapshot((doc) => {
-                if (doc.exists) {
-                    globalConfig = doc.data();
-                    updateBrandingPreviews(globalConfig);
-                    fillAdsConfigurationInputs(globalConfig);
-                } else {
-                    initGlobalConfigDocument();
-                }
-            }, (error) => {
-                console.warn("App config read subscription failed: ", error);
-            });
-        }
-
-        function initGlobalConfigDocument() {
-            if (!db) return;
-            db.collection("app_config").doc("global").set(globalConfig)
-                .then(() => console.log("Default dynamic preferences written to cloud."))
-                .catch((e) => console.error("Cloud priming fail: ", e));
-        }
-
-        // Helper to convert dynamic files to local Base64 URLs in sandbox mode cleanly
-        function readAsBase64(file, progressCallback) {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.onload = () => resolve(reader.result);
-                reader.onerror = (e) => reject(e);
-                reader.onprogress = (evt) => {
-                    if (evt.lengthComputable && progressCallback) {
-                        const pct = Math.round((evt.loaded / evt.total) * 100);
-                        progressCallback(pct);
-                    }
-                };
-                reader.readAsDataURL(file);
-            });
-        }
-
-        async function uploadAssetToR2(file, folder, progressCallback) {
-            if (isSandboxMode || !s3) {
-                showToast("Generating local asset path preview...", "success");
-                let base64 = await readAsBase64(file, progressCallback);
-                return base64;
-            }
-
-            return new Promise((resolve, reject) => {
-                const timestamp = Date.now();
-                const cleanName = file.name.replace(/[^a-zA-Z0-9.]/g, "_");
-                const finalFilename = `${folder}/${timestamp}_${cleanName}`;
-
-                const params = {
-                    Bucket: r2Credentials.bucketName,
-                    Key: finalFilename,
-                    Body: file,
-                    ContentType: file.type
-                };
-
-                const upload = s3.upload(params);
-
-                upload.on('httpUploadProgress', (evt) => {
-                    const percent = Math.round((evt.loaded / evt.total) * 100);
-                    if (progressCallback) progressCallback(percent);
-                });
-
-                upload.send((err, data) => {
-                    if (err) {
-                        reject(err);
-                    } else {
-                        let publicUrl = data.Location;
-                        if (r2Credentials.publicDomainUrl) {
-                            const trimmedPrefix = r2Credentials.publicDomainUrl.endsWith('/') ? r2Credentials.publicDomainUrl : r2Credentials.publicDomainUrl + '/';
-                            publicUrl = trimmedPrefix + finalFilename;
-                        }
-                        resolve(publicUrl);
-                    }
-                });
-            });
-        }
-
-        async function deleteAssetFromR2(fileUrl) {
-            if (isSandboxMode || !s3 || !r2Credentials.bucketName) return;
-            try {
-                let keyName = "";
-                let urlObj;
-                try {
-                    urlObj = new URL(fileUrl);
-                } catch(e) {
-                    keyName = fileUrl.substring(fileUrl.lastIndexOf('/') + 1);
-                }
-
-                if (urlObj) {
-                    keyName = urlObj.pathname.slice(1);
-                }
-
-                if (!keyName || keyName.startsWith("data:")) return;
-
-                keyName = decodeURIComponent(keyName);
-
-                const params = {
-                    Bucket: r2Credentials.bucketName,
-                    Key: keyName
-                };
-
-                await s3.deleteObject(params).promise();
-            } catch (err) {
-                console.error("R2 deletion ignored: ", err);
-            }
-        }
-
-        // ==========================================
-        // PROMPTS PRESET CRUD COMPONENT
-        // ==========================================
-        function renderPromptsTable() {
-            const tableBody = document.getElementById('prompts-table-body');
-            tableBody.innerHTML = '';
-
-            if (prompts.length === 0) {
-                tableBody.innerHTML = `<tr><td colspan="5" class="py-12 text-center text-slate-400 font-medium">No prompts available in the database yet.</td></tr>`;
-                return;
-            }
-
-            prompts.forEach((prompt) => {
-                const tr = document.createElement('tr');
-                tr.className = 'hover:bg-slate-50/60 transition border-b border-slate-100';
-                tr.innerHTML = `
-                    <td class="py-4 px-6 md:px-4">
-                        <div class="w-12 h-12 bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm flex-shrink-0">
-                            <img src="${prompt.imageUrl || 'https://placehold.co/100'}" class="w-full h-full object-cover">
-                        </div>
-                    </td>
-                    <td class="py-4 px-6">
-                        <div class="font-extrabold text-slate-900 text-xs min-[320px]:text-sm">${prompt.title || 'Untitled Prompt'}</div>
-                        <div class="flex flex-wrap gap-1.5 mt-1.5">
-                            ${(prompt.tags || '').split(',').map(t => t.trim() ? `<span class="inline-flex py-0.5 px-2 bg-slate-100 text-[10px] font-bold text-slate-500 rounded">${t.trim()}</span>` : '').join('')}
-                            <span class="inline-flex py-0.5 px-2 bg-indigo-50 text-[10px] font-bold text-indigo-700 rounded border border-indigo-100">${prompt.aspectRatio || '1:1'} Format</span>
-                        </div>
-                    </td>
-                    <td class="py-4 px-6 text-slate-650 font-bold">
-                        <span class="px-2.5 py-1 bg-violet-50 border border-violet-100 text-violet-750 text-[10px] font-extrabold rounded-lg">${prompt.category || 'Home'}</span>
-                    </td>
-                    <td class="py-4 px-6 max-w-xs">
-                        <p class="truncate text-slate-450 font-medium text-xs" title="${prompt.promptText}">${prompt.promptText || 'No text content.'}</p>
-                    </td>
-                    <td class="py-4 px-6 text-right space-x-1 whitespace-nowrap">
-                        <button onclick="editPromptAction('${prompt.id}')" class="p-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-600 rounded-xl transition shadow-sm" title="Edit instruction preset">
-                            <i class="fa-solid fa-pencil text-xs"></i>
-                        </button>
-                        <button onclick="deletePromptAction('${prompt.id}')" class="p-2 bg-red-50 border border-red-100 hover:bg-red-100 text-red-500 rounded-xl transition shadow-sm" title="Delete prompt">
-                            <i class="fa-solid fa-trash-can text-xs"></i>
-                        </button>
-                    </td>
-                `;
-                tableBody.appendChild(tr);
-            });
-        }
-
-        function filterPromptsList() {
-            const query = document.getElementById('prompt-search-input').value.toLowerCase();
-            const filterCategory = document.getElementById('prompt-category-filter').value;
-            const rows = document.querySelectorAll('#prompts-table-body tr');
-
-            rows.forEach((row) => {
-                if (row.cells.length < 5) return;
-                
-                const titleText = row.cells[1].innerText.toLowerCase();
-                const categoryText = row.cells[2].innerText;
-                const bodyText = row.cells[3].innerText.toLowerCase();
-
-                const matchesQuery = titleText.includes(query) || bodyText.includes(query);
-                // Matches either ID or Name
-                const matchesCategory = filterCategory === "" || categoryText.includes(filterCategory) || (
-                    categories.find(c => c.id === filterCategory && c.name === categoryText)
-                );
-
-                if (matchesQuery && matchesCategory) {
-                    row.classList.remove('hidden');
-                } else {
-                    row.classList.add('hidden');
-                }
-            });
-        }
-
-        function openPromptModal() {
-            document.getElementById('modal-prompt').classList.remove('hidden');
-            document.getElementById('prompt-form').reset();
-            document.getElementById('prompt-modal-title').textContent = "Upload & Add New Prompt";
-            document.getElementById('prompt-edit-id').value = '';
-            document.getElementById('prompt-image-url').value = '';
-            document.getElementById('prompt-img-preview').src = 'https://placehold.co/100';
-        }
-
-        function closePromptModal() {
-            document.getElementById('modal-prompt').classList.add('hidden');
-        }
-
-        async function savePrompt(event) {
-            event.preventDefault();
-
-            const id = document.getElementById('prompt-edit-id').value;
-            const title = document.getElementById('prompt-title').value;
-            const categoryId = document.getElementById('prompt-category').value;
-            const promptText = document.getElementById('prompt-text').value;
-            const tags = document.getElementById('prompt-tags').value;
-            const aspectRatio = document.getElementById('prompt-ratio').value;
-            const imageUrlVal = document.getElementById('prompt-image-url').value.trim();
-
-            const submitBtn = document.getElementById('prompt-submit-btn');
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Saving...`;
-
-            try {
-                let finalImageUrl = imageUrlVal || "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&q=80&w=400";
-
-                // CATEGORY-MOBILE ALIGNMENT STRATEGY
-                // Convert category doc ID to beautiful human Name to match selected category label in Android
-                const selectedCat = categories.find(c => c.id === categoryId);
-                const categoryNameValue = selectedCat ? selectedCat.name : categoryId;
-
-                const data = {
-                    title: title,
-                    category: categoryNameValue, // Human-readable label (e.g. "Photorealistic Art")
-                    categoryId: categoryId,      // Computer ID (e.g. "photorealistic")
-                    promptText: promptText,
-                    tags: tags,
-                    aspectRatio: aspectRatio,
-                    imageUrl: finalImageUrl
-                };
-
-                if (isSandboxMode) {
-                    if (id) {
-                        const index = prompts.findIndex(p => p.id === id);
-                        if (index !== -1) {
-                            prompts[index] = { id: id, ...data };
-                        }
-                        showToast("Modified local sandbox prompt!", "success");
-                    } else {
-                        const newId = "prompt_" + Date.now();
-                        prompts.push({ id: newId, ...data });
-                        showToast("Added new prompt to offline sandbox!", "success");
-                    }
-                    localStorage.setItem('sandbox_prompts', JSON.stringify(prompts));
-                    updateStatsCounter();
-                    renderPromptsTable();
-                    renderRecentPrompts();
-                } else {
-                    if (id) {
-                        await db.collection("prompts").doc(id).set(data, { merge: true });
-                        showToast("Prompt updated successfully!", "success");
-                    } else {
-                        await db.collection("prompts").add(data);
-                        showToast("Added new prompt to cloud database!", "success");
-                    }
-                }
-
-                closePromptModal();
-            } catch (err) {
-                showToast(`Unable to save: ${err.message}`, "error");
-            } finally {
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = `<i class="fa-solid fa-save"></i> Save Prompt`;
-            }
-        }
-
-        function editPromptAction(id) {
-            const prompt = prompts.find(p => p.id === id);
-            if (!prompt) return;
-
-            openPromptModal();
-            document.getElementById('prompt-modal-title').textContent = "Modify Details";
-            document.getElementById('prompt-edit-id').value = prompt.id;
-            document.getElementById('prompt-title').value = prompt.title || '';
-            
-            // Checks if storing ID or full Name value to match input
-            let matchCatId = prompt.categoryId || '';
-            if (!matchCatId && prompt.category) {
-                const found = categories.find(c => c.name === prompt.category);
-                if (found) matchCatId = found.id;
-            }
-            document.getElementById('prompt-category').value = matchCatId || prompt.category || '';
-            
-            document.getElementById('prompt-text').value = prompt.promptText || '';
-            document.getElementById('prompt-tags').value = prompt.tags || '';
-            document.getElementById('prompt-ratio').value = prompt.aspectRatio || '1:1';
-            document.getElementById('prompt-image-url').value = prompt.imageUrl || '';
-            document.getElementById('prompt-img-preview').src = prompt.imageUrl || 'https://placehold.co/100';
-        }
-
-        async function deletePromptAction(id) {
-            const prompt = prompts.find(p => p.id === id);
-            if (!prompt) return;
-
-            if (confirm(`Do you want to delete "${prompt.title || 'this prompt'}" from the database?`)) {
-                try {
-                    if (isSandboxMode) {
-                        prompts = prompts.filter(p => p.id !== id);
-                        localStorage.setItem('sandbox_prompts', JSON.stringify(prompts));
-                        showToast("Deleted from local sandbox.", "success");
-                        updateStatsCounter();
-                        renderPromptsTable();
-                        renderRecentPrompts();
-                    } else {
-                        if (prompt.imageUrl) {
-                            await deleteAssetFromR2(prompt.imageUrl);
-                        }
-                        await db.collection("prompts").doc(id).delete();
-                        showToast("Prompt deleted successfully.", "success");
-                    }
-                } catch (err) {
-                    showToast(`Failed to delete: ${err.message}`, "error");
-                }
-            }
-        }
-
-        // ==========================================
-        // CATEGORIES MANAGEMENT COMPONENT
-        // ==========================================
-        function renderCategoriesList() {
-            const grid = document.getElementById('categories-grid');
-            grid.innerHTML = '';
-
-            if (categories.length === 0) {
-                grid.innerHTML = `<div class="col-span-full py-12 text-center text-slate-400 font-medium">No available categories. Click the add button to create one!</div>`;
-                return;
-            }
-
-            categories.forEach((cat) => {
-                const countOfAssigned = prompts.filter(p => p.category === cat.name || p.categoryId === cat.id || p.category === cat.id).length;
-                const col = document.createElement('div');
-                col.className = 'p-5 bg-white border border-slate-205 rounded-2xl shadow-sm hover:shadow transition flex flex-col justify-between hover:border-indigo-150 group';
-                col.innerHTML = `
-                    <div class="space-y-3.5">
-                        <div class="w-12 h-12 rounded-xl bg-slate-50 border border-slate-150 overflow-hidden flex items-center justify-center shrink-0 shadow-sm transition group-hover:scale-105">
-                            <img src="${cat.logoUrl || 'https://placehold.co/100'}" class="w-full h-full object-cover">
-                        </div>
-                        <div>
-                            <h4 class="font-extrabold text-slate-900 text-sm leading-snug group-hover:text-indigo-600 transition">${cat.name || 'Category'}</h4>
-                            <span class="text-[10px] text-slate-400 font-mono tracking-wider block mt-1 uppercase">ID: ${cat.id}</span>
-                        </div>
-                    </div>
-                    <div class="flex items-center justify-between border-t border-slate-100 pt-3.5 mt-4">
-                        <span class="text-[11px] font-bold text-slate-450"><i class="fa-solid fa-shapes text-indigo-500 mr-1"></i> ${countOfAssigned} Prompts</span>
-                        <div class="space-x-1 shrink-0">
-                            <button onclick="editCategoryAction('${cat.id}')" class="p-2 border border-slate-200 hover:bg-slate-50 text-slate-650 rounded-xl transition shadow-sm">
-                                <i class="fa-solid fa-pencil text-[11px]"></i>
-                            </button>
-                            <button onclick="deleteCategoryAction('${cat.id}')" class="p-2 border border-red-50 bg-red-50/50 hover:bg-red-100 text-red-500 rounded-xl transition shadow-sm">
-                                <i class="fa-solid fa-trash-can text-[11px]"></i>
-                            </button>
-                        </div>
-                    </div>
-                `;
-                grid.appendChild(col);
-            });
-        }
-
-        function openCategoryModal() {
-            document.getElementById('modal-category').classList.remove('hidden');
-            document.getElementById('category-form').reset();
-            document.getElementById('category-modal-title').textContent = "Add Category";
-            document.getElementById('category-edit-id').value = '';
-            document.getElementById('category-logo-url').value = '';
-            document.getElementById('category-logo-preview').src = 'https://placehold.co/100';
-        }
-
-        function closeCategoryModal() {
-            document.getElementById('modal-category').classList.add('hidden');
-        }
-
-        async function saveCategory(event) {
-            event.preventDefault();
-
-            const id = document.getElementById('category-edit-id').value;
-            const name = document.getElementById('category-name').value;
-            const logoUrlVal = document.getElementById('category-logo-url').value.trim();
-
-            const submitBtn = document.getElementById('category-submit-btn');
-            submitBtn.disabled = true;
-            submitBtn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Saving...`;
-
-            try {
-                let finalLogoUrl = logoUrlVal || "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&q=80&w=200";
-
-                const catId = id ? id : name.toLowerCase().trim().replace(/[^a-z0-9]/g, "_");
-                const data = {
-                    name: name,
-                    logoUrl: finalLogoUrl
-                };
-
-                if (isSandboxMode) {
-                    if (id) {
-                        const index = categories.findIndex(c => c.id === id);
-                        if (index !== -1) {
-                            categories[index] = { id: id, ...data };
-                        }
-                        showToast("Modified local sandbox category!", "success");
-                    } else {
-                        if (categories.some(c => c.id === catId)) {
-                            throw new Error("A folder category with this ID already exists.");
-                        }
-                        categories.push({ id: catId, ...data });
-                        showToast("Created new category successfully!", "success");
-                    }
-                    localStorage.setItem('sandbox_categories', JSON.stringify(categories));
-                    updateStatsCounter();
-                    updateCategorySelects();
-                    renderCategoriesList();
-                    renderRecentCategories();
-                } else {
-                    await db.collection("categories").doc(catId).set(data, { merge: true });
-                    showToast("Category set and synced live!", "success");
-                }
-
-                closeCategoryModal();
-            } catch (err) {
-                showToast(`Operation failed: ${err.message}`, "error");
-            } finally {
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = `<i class="fa-solid fa-save"></i> Save Category`;
-            }
-        }
-
-        function editCategoryAction(id) {
-            const cat = categories.find(c => c.id === id);
-            if (!cat) return;
-
-            openCategoryModal();
-            document.getElementById('category-modal-title').textContent = "Modify Category";
-            document.getElementById('category-edit-id').value = cat.id;
-            document.getElementById('category-name').value = cat.name || '';
-            document.getElementById('category-logo-url').value = cat.logoUrl || '';
-            document.getElementById('category-logo-preview').src = cat.logoUrl || 'https://placehold.co/100';
-        }
-
-        async function deleteCategoryAction(id) {
-            const cat = categories.find(c => c.id === id);
-            if (!cat) return;
-
-            if (confirm(`Do you wish to delete the category "${cat.name || 'this category'}"?`)) {
-                try {
-                    if (isSandboxMode) {
-                        categories = categories.filter(c => c.id !== id);
-                        localStorage.setItem('sandbox_categories', JSON.stringify(categories));
-                        showToast("Deleted from local cache.", "success");
-                        updateStatsCounter();
-                        updateCategorySelects();
-                        renderCategoriesList();
-                        renderRecentCategories();
-                    } else {
-                        if (cat.logoUrl) {
-                            await deleteAssetFromR2(cat.logoUrl);
-                        }
-                        await db.collection("categories").doc(id).delete();
-                        showToast("Category deleted successfully.", "success");
-                    }
-                } catch (err) {
-                    showToast(`Failed to delete category: ${err.message}`, "error");
-                }
-            }
-        }
-
-        // ==========================================
-        // MINI COMPONENT RENDERING ROUTINES
-        // ==========================================
-        function renderRecentPrompts() {
-            const list = document.getElementById('recent-prompts-list');
-            list.innerHTML = '';
-            
-            const recent = prompts.slice(-4).reverse();
-            if (recent.length === 0) {
-                list.innerHTML = `<div class="py-12 text-center text-slate-400 text-xs">No prompts saved yet.</div>`;
-                return;
-            }
-
-            recent.forEach((prompt) => {
-                const item = document.createElement('div');
-                item.className = 'flex items-center justify-between py-3.5 hover:bg-slate-50/50 px-2 rounded-xl transition';
-                item.innerHTML = `
-                    <div class="flex items-center gap-3.5 min-w-0">
-                        <img src="${prompt.imageUrl || 'https://placehold.co/100'}" class="w-9 h-9 object-cover rounded-xl border border-slate-200 shadow-sm flex-shrink-0">
-                        <div class="min-w-0">
-                            <span class="font-extrabold text-slate-900 text-xs block truncate">${prompt.title || 'Untitled'}</span>
-                            <span class="text-[10px] text-slate-400 block mt-0.5">${prompt.aspectRatio || '1:1'} Ratio &bull; ${prompt.category || 'Home'}</span>
-                        </div>
-                    </div>
-                `;
-                list.appendChild(item);
-            });
-        }
-
-        function renderRecentCategories() {
-            const list = document.getElementById('recent-categories-list');
-            list.innerHTML = '';
-
-            const recent = categories.slice(-4).reverse();
-            if (recent.length === 0) {
-                list.innerHTML = `<div class="py-12 text-center text-slate-400 text-xs">No categories index.</div>`;
-                return;
-            }
-
-            recent.forEach((cat) => {
-                const item = document.createElement('div');
-                item.className = 'flex items-center justify-between py-3.5 hover:bg-slate-50/50 px-2 rounded-xl transition';
-                item.innerHTML = `
-                    <div class="flex items-center gap-3.5 min-w-0">
-                        <img src="${cat.logoUrl || 'https://placehold.co/100'}" class="w-9 h-9 object-cover rounded-xl border border-slate-200 shadow-sm flex-shrink-0">
-                        <div class="min-w-0">
-                            <span class="font-extrabold text-slate-900 text-xs block truncate">${cat.name || 'Untitled'}</span>
-                            <span class="text-[10px] text-slate-400 font-mono block mt-0.5 uppercase">${cat.id}</span>
-                        </div>
-                    </div>
-                `;
-                list.appendChild(item);
-            });
-        }
-
-        function updateCategorySelects() {
-            const filters = ['prompt-category-filter', 'prompt-category'];
-            filters.forEach((id) => {
-                const el = document.getElementById(id);
-                if (!el) return;
-                
-                const val = el.value;
-                el.innerHTML = (id === 'prompt-category-filter') ? `<option value="">All Categories</option>` : `<option value="">Select Category</option>`;
-                
-                categories.forEach((c) => {
-                    const opt = document.createElement('option');
-                    // OPTION VALUE IS c.id so that id and dropdown binds properly
-                    opt.value = c.id;
-                    opt.text = c.name;
-                    el.appendChild(opt);
-                });
-
-                el.value = val;
-            });
-        }
-
-        // ==========================================
-        // APP SETUP & ASSETS MONETIZATION PRESETS
-        // ==========================================
-        function updateBrandingPreviews(config) {
-            document.getElementById('preview-app-logo').src = config.appLogoUrl || 'https://placehold.co/100';
-            document.getElementById('preview-splash-logo').src = config.splashScreenUrl || 'https://placehold.co/100';
-            document.getElementById('preview-settings-icon').src = config.settingsIconUrl || 'https://placehold.co/100';
-            
-            const iApp = document.getElementById('input-app-logo-url');
-            if (iApp) iApp.value = config.appLogoUrl || '';
-            const iSplash = document.getElementById('input-splash-logo-url');
-            if (iSplash) iSplash.value = config.splashScreenUrl || '';
-            const iSettings = document.getElementById('input-settings-icon-url');
-            if (iSettings) iSettings.value = config.settingsIconUrl || '';
-        }
-
-        async function saveBrandingAssets(event) {
-            event.preventDefault();
-
-            const btn = document.getElementById('btn-save-branding');
-            btn.disabled = true;
-            btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Syncing...`;
-
-            try {
-                const appLogoUrl = document.getElementById('input-app-logo-url').value.trim();
-                const splashScreenUrl = document.getElementById('input-splash-logo-url').value.trim();
-                const settingsIconUrl = document.getElementById('input-settings-icon-url').value.trim();
-
-                const assetsToUpdate = {
-                    appLogoUrl: appLogoUrl,
-                    splashScreenUrl: splashScreenUrl,
-                    settingsIconUrl: settingsIconUrl
-                };
-
-                globalConfig = { ...globalConfig, ...assetsToUpdate };
-                
-                if (isSandboxMode) {
-                    localStorage.setItem('sandbox_global_config', JSON.stringify(globalConfig));
-                    showToast("Saved local sandbox branding graphics!", "success");
-                } else {
-                    await db.collection("app_config").doc("global").set(assetsToUpdate, { merge: true });
-                    showToast("Brand graphics saved successfully!", "success");
-                }
-
-                updateBrandingPreviews(globalConfig);
-            } catch (err) {
-                showToast(`Unable to save: ${err.message}`, "error");
-            } finally {
-                btn.disabled = false;
-                btn.innerHTML = `<i class="fa-solid fa-save"></i> Save Branding Graphics Links`;
-            }
-        }
-
-        function fillAdsConfigurationInputs(config) {
-            document.getElementById('header-active-ad').textContent = config.activeAd || 'admob';
-            document.getElementById('stat-active-ad').textContent = config.activeAd || 'admob';
-
-            const radios = document.getElementsByName('activeAd');
-            for (let radio of radios) {
-                if (radio.value === config.activeAd) {
-                    radio.checked = true;
-                }
-            }
-
-            document.getElementById('admob_appOpenId').value = config.admob_appOpenId || '';
-            document.getElementById('admob_interstitialId').value = config.admob_interstitialId || '';
-            document.getElementById('admob_nativeId').value = config.admob_nativeId || '';
-            document.getElementById('admob_collapsibleBannerId').value = config.admob_collapsibleBannerId || '';
-
-            document.getElementById('meta_interstitialId').value = config.meta_interstitialId || '';
-            document.getElementById('meta_nativeId').value = config.meta_nativeId || '';
-            document.getElementById('meta_bannerId').value = config.meta_bannerId || '';
-
-            document.getElementById('unity_gameId').value = config.unity_gameId || '';
-            document.getElementById('unity_interstitialId').value = config.unity_interstitialId || '';
-            document.getElementById('unity_bannerId').value = config.unity_bannerId || '';
-        }
-
-        async function saveAdsConfig(event) {
-            event.preventDefault();
-
-            try {
-                const radios = document.getElementsByName('activeAd');
-                let activeAdValue = 'admob';
-                for (let r of radios) {
-                    if (r.checked) activeAdValue = r.value;
-                }
-
-                const dataObj = {
-                    activeAd: activeAdValue,
-                    admob_appOpenId: document.getElementById('admob_appOpenId').value,
-                    admob_interstitialId: document.getElementById('admob_interstitialId').value,
-                    admob_nativeId: document.getElementById('admob_nativeId').value,
-                    admob_collapsibleBannerId: document.getElementById('admob_collapsibleBannerId').value,
-                    meta_interstitialId: document.getElementById('meta_interstitialId').value,
-                    meta_nativeId: document.getElementById('meta_nativeId').value,
-                    meta_bannerId: document.getElementById('meta_bannerId').value,
-                    unity_gameId: document.getElementById('unity_gameId').value,
-                    unity_interstitialId: document.getElementById('unity_interstitialId').value,
-                    unity_bannerId: document.getElementById('unity_bannerId').value
-                };
-
-                globalConfig = { ...globalConfig, ...dataObj };
-
-                if (isSandboxMode) {
-                    localStorage.setItem('sandbox_global_config', JSON.stringify(globalConfig));
-                    showToast("Ad placement settings saved to local sandbox!", "success");
-                } else {
-                    await db.collection("app_config").doc("global").set(dataObj, { merge: true });
-                    showToast("Ad settings saved and synced successfully!", "success");
-                }
-
-                document.getElementById('header-active-ad').textContent = activeAdValue;
-                document.getElementById('stat-active-ad').textContent = activeAdValue;
-
-            } catch (err) {
-                showToast(`Unable to save placements: ${err.message}`, "error");
-            }
-        }
-
-        async function saveCredentialsConfig(event) {
-            event.preventDefault();
-
-            const fbValues = {
-                apiKey: document.getElementById('creds_firebase_apiKey').value.trim() || "YOUR_FIREBASE_API_KEY",
-                authDomain: document.getElementById('creds_firebase_authDomain').value.trim() || "YOUR_PROJECT_ID.firebaseapp.com",
-                projectId: document.getElementById('creds_firebase_projectId').value.trim() || "YOUR_PROJECT_ID",
-                storageBucket: document.getElementById('creds_firebase_storageBucket').value.trim() || "YOUR_PROJECT_ID.appspot.com",
-                messagingSenderId: document.getElementById('creds_firebase_messagingSenderId').value.trim() || "YOUR_MESSAGING_SENDER_ID",
-                appId: document.getElementById('creds_firebase_appId').value.trim() || "YOUR_APP_ID"
-            };
-
-            const r2Values = {
-                accessKeyId: document.getElementById('creds_r2_accessKeyId').value.trim() || "YOUR_R2_ACCESS_KEY_ID",
-                secretAccessKey: document.getElementById('creds_r2_secretAccessKey').value.trim() || "YOUR_R2_SECRET_ACCESS_KEY",
-                endpoint: document.getElementById('creds_r2_endpoint').value.trim() || "https://YOUR_CLOUDFLARE_ACCOUNT_ID.r2.cloudflarestorage.com",
-                bucketName: document.getElementById('creds_r2_bucketName').value.trim() || "YOUR_R2_BUCKET_NAME",
-                publicDomainUrl: document.getElementById('creds_r2_publicDomainUrl').value.trim() || "https://your-custom-subdomain-or-r2-url.com"
-            };
-
-            try {
-                localStorage.setItem('fb_config', JSON.stringify(fbValues));
-                localStorage.setItem('r2_config', JSON.stringify(r2Values));
-                
-                firebaseConfig = fbValues;
-                r2Credentials = r2Values;
-
-                showToast("System configurations saved!", "success");
-
-                await initializeCloudServices();
-                subscribeToGlobalServices();
-
-                switchView('dashboard');
-            } catch (err) {
-                showToast(`Unable to establish connection: ${err.message}`, "error");
-            }
-        }
-
-        function populateCredentialsInputs() {
-            document.getElementById('creds_firebase_apiKey').value = firebaseConfig.apiKey === "YOUR_FIREBASE_API_KEY" ? "" : firebaseConfig.apiKey;
-            document.getElementById('creds_firebase_authDomain').value = firebaseConfig.authDomain.includes("YOUR_PROJECT_ID") ? "" : firebaseConfig.authDomain;
-            document.getElementById('creds_firebase_projectId').value = firebaseConfig.projectId === "YOUR_PROJECT_ID" ? "" : firebaseConfig.projectId;
-            document.getElementById('creds_firebase_storageBucket').value = firebaseConfig.storageBucket.includes("YOUR_PROJECT_ID") ? "" : firebaseConfig.storageBucket;
-            document.getElementById('creds_firebase_messagingSenderId').value = firebaseConfig.messagingSenderId === "YOUR_MESSAGING_SENDER_ID" ? "" : firebaseConfig.messagingSenderId;
-            document.getElementById('creds_firebase_appId').value = firebaseConfig.appId === "YOUR_APP_ID" ? "" : firebaseConfig.appId;
-
-            document.getElementById('creds_r2_accessKeyId').value = r2Credentials.accessKeyId === "YOUR_R2_ACCESS_KEY_ID" ? "" : r2Credentials.accessKeyId;
-            document.getElementById('creds_r2_secretAccessKey').value = r2Credentials.secretAccessKey === "YOUR_R2_SECRET_ACCESS_KEY" ? "" : r2Credentials.secretAccessKey;
-            document.getElementById('creds_r2_endpoint').value = r2Credentials.endpoint.includes("YOUR_CLOUDFLARE_ACCOUNT_ID") ? "" : r2Credentials.endpoint;
-            document.getElementById('creds_r2_bucketName').value = r2Credentials.bucketName === "YOUR_R2_BUCKET_NAME" ? "" : r2Credentials.bucketName;
-            document.getElementById('creds_r2_publicDomainUrl').value = r2Credentials.publicDomainUrl.includes("your-custom-subdomain") ? "" : r2Credentials.publicDomainUrl;
-        }
-
-        // ==========================================
-        // UI AND VISUAL FEEDBACK UTILITIES
-        // ==========================================
-        function switchView(viewId) {
-            currentView = viewId;
-            const views = ['dashboard', 'prompts', 'categories', 'app-settings', 'ad-networks', 'credentials'];
-            
-            views.forEach((v) => {
-                const el = document.getElementById(`view-${v}`);
-                if (el) el.classList.add('hidden');
-            });
-
-            const targetViewEl = document.getElementById(`view-${viewId}`);
-            if (targetViewEl) targetViewEl.classList.remove('hidden');
-
-            const titleMap = {
-                'dashboard': 'Control Center',
-                'prompts': 'Manage Prompts',
-                'categories': 'Categories',
-                'app-settings': 'Design & Brand Graphics',
-                'ad-networks': 'ADS Settings & Placement',
-                'credentials': 'Cloud Connections & database'
-            };
-            document.getElementById('view-title').textContent = titleMap[viewId] || 'Overview';
-
-            if (viewId === 'credentials') {
-                populateCredentialsInputs();
-            }
-
-            // Sync menu select lists
-            const buttons = document.querySelectorAll('.nav-btn');
-            buttons.forEach((btn) => {
-                const txt = btn.querySelector('span').textContent.toLowerCase();
-                if (txt.includes(viewId.replace('-', ' ')) ||
-                    (viewId === 'app-settings' && txt.includes('graphics')) ||
-                    (viewId === 'ad-networks' && txt.includes('ad settings')) ||
-                    (viewId === 'credentials' && txt.includes('database'))
-                ) {
-                    btn.className = "nav-btn w-full flex items-center gap-3 px-4 py-3 text-sm font-bold rounded-xl text-indigo-400 bg-slate-950/60 transition shadow-inner border-l-4 border-indigo-500";
-                } else {
-                    btn.className = "nav-btn w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold rounded-xl text-slate-400 hover:text-slate-100 hover:bg-slate-800/40 transition border-l-4 border-transparent";
-                }
-            });
-
-            // Auto toggle responsive sidebar on mobile view selection
-            const sidebar = document.getElementById('sidebar');
-            if (sidebar && !sidebar.classList.contains('-translate-x-full')) {
-                sidebar.classList.add('-translate-x-full');
-            }
-        }
-
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            if (sidebar.classList.contains('-translate-x-full')) {
-                sidebar.classList.remove('-translate-x-full');
-            } else {
-                sidebar.classList.add('-translate-x-full');
-            }
-        }
-
-        function updateStatsCounter() {
-            document.getElementById('stat-prompts-count').textContent = prompts.length;
-            document.getElementById('stat-categories-count').textContent = categories.length;
-        }
+        let promptsList = [];
+        let globalConfig = null;
 
         function showToast(message, type = 'success') {
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
-            toast.className = `p-4 flex items-center gap-3 rounded-2xl border shadow-xl bg-white transition-all transform translate-y-3 opacity-0 duration-300 ${
-                type === 'success' ? 'border-emerald-100 text-slate-800' : 'border-red-100 text-slate-800'
-            }`;
+            
+            const colors = {
+                success: 'bg-green-600',
+                error: 'bg-red-600',
+                warning: 'bg-orange-500'
+            };
+            const icon = {
+                success: '<i class="fa-solid fa-circle-check"></i>',
+                error: '<i class="fa-solid fa-circle-exclamation"></i>',
+                warning: '<i class="fa-solid fa-triangle-exclamation"></i>'
+            };
 
-            const icon = type === 'success' ? 
-                `<span class="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-500 shrink-0 flex items-center justify-center text-sm"><i class="fa-solid fa-circle-check"></i></span>` : 
-                `<span class="w-8 h-8 rounded-xl bg-red-50 text-red-500 shrink-0 flex items-center justify-center text-sm"><i class="fa-solid fa-circle-exclamation"></i></span>`;
-
-            toast.innerHTML = `
-                ${icon}
-                <div class="flex-1 text-xs font-bold leading-normal">${message}</div>
-                <button class="text-slate-400 hover:text-slate-600 focus:outline-none transition"><i class="fa-solid fa-xmark text-sm"></i></button>
-            `;
-
+            toast.className = `${colors[type]} text-white px-5 py-3 rounded-xl shadow-lg flex items-center gap-3 text-sm font-semibold fade-in`;
+            toast.innerHTML = `${icon[type]} <span>${message}</span>`;
+            
             container.appendChild(toast);
-
             setTimeout(() => {
-                toast.classList.remove('translate-y-3', 'opacity-0');
-            }, 20);
-
-            toast.querySelector('button').addEventListener('click', () => dismissToast(toast));
-            setTimeout(() => dismissToast(toast), 4000);
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateY(10px)';
+                toast.style.transition = 'all 0.3s ease';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
         }
 
-        function dismissToast(toast) {
-            toast.classList.add('translate-y-3', 'opacity-0');
-            setTimeout(() => {
-                if (toast.parentNode) {
-                    toast.parentNode.removeChild(toast);
+        /* ======================== 
+           FIREBASE INITIALIZATION
+        ======================== */
+        function toggleDarkMode() {
+            const html = document.documentElement;
+            const icon = document.getElementById('dark-mode-icon');
+            html.classList.toggle('dark-mode');
+            if (html.classList.contains('dark-mode')) {
+                icon.className = "fa-solid fa-sun";
+                localStorage.setItem('__admin_dark_mode', 'true');
+            } else {
+                icon.className = "fa-solid fa-moon";
+                localStorage.setItem('__admin_dark_mode', 'false');
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            document.body.classList.remove('hidden');
+            
+            // Check dark mode
+            if (localStorage.getItem('__admin_dark_mode') === 'true') {
+                document.documentElement.classList.add('dark-mode');
+                const icon = document.getElementById('dark-mode-icon');
+                if(icon) icon.className = "fa-solid fa-sun";
+            }
+
+            const isLoggedIn = localStorage.getItem('__admin_logged_in');
+            
+            if (!isLoggedIn) {
+                showLoginScreen();
+            } else {
+                checkFirebaseConfig();
+            }
+
+            // Bind Live URL Image Preview events
+            bindLivePreviews();
+        });
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const pass = document.getElementById('login-password').value;
+            
+            if (email && pass) {
+                localStorage.setItem('__admin_logged_in', 'true');
+                checkFirebaseConfig();
+            } else {
+                document.getElementById('login-error').classList.remove('hidden');
+            }
+        }
+
+        function checkFirebaseConfig() {
+            document.getElementById('login-screen').classList.add('hidden');
+            const savedConfig = localStorage.getItem('__admin_fb_config');
+            if (savedConfig) {
+                try {
+                    const config = JSON.parse(savedConfig);
+                    initializeFirebase(config);
+                } catch (e) {
+                    showSetupScreen();
                 }
-            }, 300);
+            } else {
+                showSetupScreen();
+            }
         }
 
-        function openConfigGuide() {
-            document.getElementById('modal-config-guide').classList.remove('hidden');
+        function showLoginScreen() {
+            document.getElementById('login-screen').classList.remove('hidden');
+            document.getElementById('setup-screen').classList.add('hidden');
+            document.getElementById('main-screen').classList.add('hidden');
         }
 
-        function dismissToast(toast) {
-            toast.classList.add('translate-y-3', 'opacity-0');
-            setTimeout(() => {
-                if (toast.parentNode) {
-                    toast.parentNode.removeChild(toast);
+        function showSetupScreen() {
+            document.getElementById('login-screen').classList.add('hidden');
+            document.getElementById('setup-screen').classList.remove('hidden');
+            document.getElementById('main-screen').classList.add('hidden');
+        }
+
+        function showMainScreen() {
+            document.getElementById('setup-screen').classList.add('hidden');
+            document.getElementById('main-screen').classList.remove('hidden');
+        }
+
+        function connectFirebase() {
+            const btn = document.querySelector('#setup-screen button');
+            const errorTxt = document.getElementById('setup-error');
+            const inp = document.getElementById('firebase-config-input').value.trim();
+            
+            errorTxt.classList.add('hidden');
+            btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Connecting...`;
+            
+            try {
+                // To allow users using raw JS object without quotes in keys (like config snippet), we do a slight regex cleanup or soft eval. Standard JSON.parse is strict.
+                // Using a safe alternative for developer UX:
+                let config;
+                try {
+                    config = JSON.parse(inp);
+                } catch(e) {
+                    // Soft parsing fallback if they copy-pasted raw JS object
+                    const createFunc = new Function('return ' + inp);
+                    config = createFunc();
                 }
-            }, 300);
+                
+                if (!config || !config.apiKey || !config.projectId) {
+                    throw new Error("Invalid Configuration. Missing apiKey or projectId.");
+                }
+
+                initializeFirebase(config);
+                localStorage.setItem('__admin_fb_config', JSON.stringify(config));
+                showToast("Connected to Firebase Successfully!");
+
+            } catch(e) {
+                errorTxt.textContent = e.message;
+                errorTxt.classList.remove('hidden');
+            } finally {
+                if(!db) {
+                     btn.innerHTML = `<i class="fa-solid fa-link"></i> Connect to Database`;
+                }
+            }
         }
 
-        function closeConfigGuide() {
-            document.getElementById('modal-config-guide').classList.add('hidden');
+        function disconnectFirebase() {
+            if(confirm("Are you sure you want to disconnect? You will need your Firebase Config to log in again.")) {
+                localStorage.removeItem('__admin_fb_config');
+                location.reload();
+            }
         }
 
-        // Real-time direct image URL preview bindings
-        document.getElementById('prompt-image-url').addEventListener('input', function() {
-            const preview = document.getElementById('prompt-img-preview');
-            const value = this.value.trim();
-            preview.src = value || 'https://placehold.co/100';
-        });
+        function initializeFirebase(config) {
+            // Check if app is already initialized
+            if (!firebase.apps.length) {
+                firebase.initializeApp(config);
+            }
+            db = firebase.firestore();
+            showMainScreen();
+            startDataListeners();
+        }
 
-        document.getElementById('category-logo-url').addEventListener('input', function() {
-            const preview = document.getElementById('category-logo-preview');
-            const value = this.value.trim();
-            preview.src = value || 'https://placehold.co/100';
-        });
+        /* ======================== 
+           DATA FETCHING (FIREBASE)
+        ======================== */
+        function startDataListeners() {
+            // CATEGORIES
+            db.collection("categories").onSnapshot((snapshot) => {
+                categories = [];
+                snapshot.forEach(doc => categories.push({ id: doc.id, ...doc.data() }));
+                updateCategoriesSelect();
+                renderCategoriesTable();
+                document.getElementById('stat-categories').textContent = categories.length;
+            }, (err) => showToast("Error reading categories.", "error"));
 
-        document.getElementById('input-app-logo-url').addEventListener('input', function() {
-            const preview = document.getElementById('preview-app-logo');
-            const value = this.value.trim();
-            preview.src = value || 'https://placehold.co/100';
-        });
+            // PROMPTS
+            db.collection("prompts").onSnapshot((snapshot) => {
+                promptsList = [];
+                snapshot.forEach(doc => promptsList.push({ id: doc.id, ...doc.data() }));
+                renderPromptsTable();
+                document.getElementById('stat-prompts').textContent = promptsList.length;
+            }, (err) => showToast("Error reading prompts.", "error"));
 
-        document.getElementById('input-splash-logo-url').addEventListener('input', function() {
-            const preview = document.getElementById('preview-splash-logo');
-            const value = this.value.trim();
-            preview.src = value || 'https://placehold.co/100';
-        });
+            // APP CONFIG
+            db.collection("app_config").doc("global").onSnapshot(doc => {
+                if (doc.exists) {
+                    globalConfig = doc.data();
+                    populateSettingsForm(globalConfig);
+                }
+            });
+        }
 
-        document.getElementById('input-settings-icon-url').addEventListener('input', function() {
-            const preview = document.getElementById('preview-settings-icon');
-            const value = this.value.trim();
-            preview.src = value || 'https://placehold.co/100';
-        });
+        /* ======================== 
+           UI LOGIC & TABS
+        ======================== */
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('bg-indigo-50', 'text-brand-700');
+                btn.classList.add('hover:bg-slate-100');
+            });
 
-        // Initialize dynamic sequences
-        (async () => {
-            loadSavedCredentials();
-            await initializeCloudServices();
-            subscribeToGlobalServices();
-            switchView('dashboard');
-        })();
+            document.getElementById(`tab-${tabId}`).classList.remove('hidden');
+            const activeBtn = document.getElementById(`nav-${tabId}`);
+            activeBtn.classList.remove('hover:bg-slate-100');
+            activeBtn.classList.add('bg-indigo-50', 'text-brand-700');
+            
+            // Close mobile sidebar if open
+            const mobileSidebar = document.getElementById('mobile-sidebar');
+            if (mobileSidebar && !mobileSidebar.classList.contains('-translate-x-full')) {
+                mobileSidebar.classList.add('-translate-x-full');
+            }
+        }
 
+        /* ======================== 
+           MODAL UTILITIES
+        ======================== */
+        function openModal(modalId) {
+            const modal = document.getElementById(modalId);
+            const content = document.getElementById(modalId + '-content');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+            setTimeout(() => {
+                content.classList.remove('scale-95');
+                content.classList.add('scale-100');
+            }, 10);
+        }
+
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            const content = document.getElementById(modalId + '-content');
+            content.classList.remove('scale-100');
+            content.classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }, 200);
+        }
+
+        function bindLivePreviews() {
+            const binders = [
+                { inp: 'cat-url', pre: 'cat-img-preview' },
+                { inp: 'prompt-url', pre: 'prompt-img-preview' },
+                { inp: 'inp-logo', pre: 'preview-logo' },
+                { inp: 'inp-splash', pre: 'preview-splash' },
+                { inp: 'inp-settings-ico', pre: 'preview-settings-ico' }
+            ];
+
+            binders.forEach(b => {
+                const el = document.getElementById(b.inp);
+                if (el) {
+                    el.addEventListener('input', function() {
+                        const val = this.value.trim();
+                        document.getElementById(b.pre).src = val || 'https://placehold.co/100';
+                    });
+                }
+            });
+        }
+
+        /* ======================== 
+           CATEGORIES LOGIC
+        ======================== */
+        function renderCategoriesTable() {
+            const tbody = document.getElementById('categories-table-body');
+            tbody.innerHTML = '';
+            
+            if (categories.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="3" class="p-8 text-center text-slate-400">No categories found. Create one above.</td></tr>`;
+                return;
+            }
+
+            categories.forEach(cat => {
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50/50 transition">
+                        <td class="p-4 w-20">
+                            <div class="w-12 h-12 rounded-xl bg-slate-100 overflow-hidden border border-slate-200">
+                                <img src="${cat.logoUrl || 'https://placehold.co/100'}" class="w-full h-full object-cover">
+                            </div>
+                        </td>
+                        <td class="p-4">
+                            <p class="font-bold text-slate-800">${cat.name}</p>
+                            <p class="text-[10px] text-slate-400 font-mono tracking-tighter">${cat.id}</p>
+                        </td>
+                        <td class="p-4 text-right space-x-2">
+                            <button onclick='editCategory(${JSON.stringify(cat).replace(/'/g,"&#39;")})' class="w-8 h-8 rounded-lg bg-orange-50 text-orange-600 hover:bg-orange-100 transition"><i class="fa-solid fa-pen text-xs"></i></button>
+                            <button onclick="deleteCategory('${cat.id}')" class="w-8 h-8 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 transition"><i class="fa-solid fa-trash text-xs"></i></button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function openCategoryModal() {
+            document.getElementById('cat-modal-title').textContent = "Add Category";
+            document.getElementById('cat-edit-id').value = '';
+            document.getElementById('cat-name').value = '';
+            document.getElementById('cat-url').value = '';
+            document.getElementById('cat-img-preview').src = 'https://placehold.co/100';
+            openModal('modal-category');
+        }
+
+        function editCategory(cat) {
+            document.getElementById('cat-modal-title').textContent = "Edit Category";
+            document.getElementById('cat-edit-id').value = cat.id;
+            document.getElementById('cat-name').value = cat.name || '';
+            document.getElementById('cat-url').value = cat.logoUrl || '';
+            document.getElementById('cat-img-preview').src = cat.logoUrl || 'https://placehold.co/100';
+            openModal('modal-category');
+        }
+
+        async function saveCategory(e) {
+            e.preventDefault();
+            const id = document.getElementById('cat-edit-id').value;
+            const name = document.getElementById('cat-name').value.trim();
+            const url = document.getElementById('cat-url').value.trim() || 'https://placehold.co/100';
+            
+            const btn = document.getElementById('cat-submit-btn');
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Saving...`;
+
+            try {
+                const docId = id || name.toLowerCase().replace(/[^a-z0-9]/g, "_");
+                await db.collection('categories').doc(docId).set({ name: name, logoUrl: url }, { merge: true });
+                showToast(`Category ${name} saved successfully.`);
+                closeModal('modal-category');
+            } catch (err) {
+                showToast(`Error: ${err.message}`, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = `<i class="fa-solid fa-cloud-arrow-up"></i> Save Category`;
+            }
+        }
+
+        async function deleteCategory(id) {
+            if (confirm("Permanently delete this category? Devices using it will fail to load contents properly.")) {
+                try {
+                    await db.collection("categories").doc(id).delete();
+                    showToast("Category removed successfully.");
+                } catch(e) {
+                    showToast(`Error: ${e.message}`, 'error');
+                }
+            }
+        }
+
+        /* ======================== 
+           PROMPTS LOGIC
+        ======================== */
+        function updateCategoriesSelect() {
+            const select = document.getElementById('prompt-category');
+            select.innerHTML = '';
+            
+            if (categories.length === 0) {
+                select.innerHTML = '<option value="" disabled selected>No categories exist!</option>';
+                return;
+            }
+
+            select.innerHTML = '<option value="" disabled selected>Select a Category</option>';
+            categories.forEach(cat => {
+                select.innerHTML += `<option value="${cat.id}">${cat.name}</option>`;
+            });
+        }
+
+        function renderPromptsTable() {
+            const tbody = document.getElementById('prompts-table-body');
+            tbody.innerHTML = '';
+            
+            if (promptsList.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-slate-400">No prompts found. Add one above.</td></tr>`;
+                return;
+            }
+
+            promptsList.forEach(prompt => {
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-50/50 transition">
+                        <td class="p-4">
+                            <div class="w-14 h-14 rounded-xl shadow-sm overflow-hidden border border-slate-200">
+                                <img src="${prompt.imageUrl || 'https://placehold.co/100'}" class="w-full h-full object-cover">
+                            </div>
+                        </td>
+                        <td class="p-4">
+                            <p class="font-bold text-slate-800 line-clamp-1">${prompt.title || 'Untitled'}</p>
+                            <span class="inline-block mt-1 px-2 py-0.5 bg-indigo-50 text-indigo-700 text-[10px] font-bold uppercase rounded-md tracking-wider">${prompt.category || 'N/A'}</span>
+                        </td>
+                        <td class="p-4">
+                            <p class="text-xs text-slate-500 line-clamp-2">${prompt.promptText || ''}</p>
+                        </td>
+                        <td class="p-4 text-xs font-mono font-semibold text-slate-500">
+                            ${prompt.aspectRatio || '1:1'}
+                        </td>
+                        <td class="p-4 text-right space-x-2 whitespace-nowrap">
+                            <button onclick='editPrompt(${JSON.stringify(prompt).replace(/'/g,"&#39;")})' class="w-8 h-8 rounded-lg bg-orange-50 text-orange-600 hover:bg-orange-100 transition"><i class="fa-solid fa-pen text-xs"></i></button>
+                            <button onclick="deletePrompt('${prompt.id}')" class="w-8 h-8 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 transition"><i class="fa-solid fa-trash text-xs"></i></button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function openPromptModal() {
+            if (categories.length === 0) {
+                showToast("You must create a Category first!", "warning");
+                return;
+            }
+            document.getElementById('prompt-modal-title').textContent = "Add Prompt";
+            document.getElementById('prompt-edit-id').value = '';
+            document.getElementById('prompt-title').value = '';
+            document.getElementById('prompt-category').selectedIndex = 0;
+            document.getElementById('prompt-text').value = '';
+            document.getElementById('prompt-tags').value = '';
+            document.getElementById('prompt-ratio').value = '1:1';
+            document.getElementById('prompt-url').value = '';
+            document.getElementById('prompt-img-preview').src = 'https://placehold.co/100';
+            openModal('modal-prompt');
+        }
+
+        function editPrompt(prompt) {
+            document.getElementById('prompt-modal-title').textContent = "Edit Prompt";
+            document.getElementById('prompt-edit-id').value = prompt.id;
+            document.getElementById('prompt-title').value = prompt.title || '';
+            document.getElementById('prompt-category').value = prompt.categoryId || '';
+            document.getElementById('prompt-text').value = prompt.promptText || '';
+            document.getElementById('prompt-tags').value = prompt.tags || '';
+            document.getElementById('prompt-ratio').value = prompt.aspectRatio || '1:1';
+            document.getElementById('prompt-url').value = prompt.imageUrl || '';
+            document.getElementById('prompt-img-preview').src = prompt.imageUrl || 'https://placehold.co/100';
+            openModal('modal-prompt');
+        }
+
+        async function savePrompt(e) {
+            e.preventDefault();
+            const id = document.getElementById('prompt-edit-id').value;
+            const title = document.getElementById('prompt-title').value.trim();
+            const categoryElement = document.getElementById('prompt-category');
+            
+            const categoryId = categoryElement.value;
+            const categoryName = categoryElement.options[categoryElement.selectedIndex].text;
+            
+            const ptext = document.getElementById('prompt-text').value.trim();
+            const tags = document.getElementById('prompt-tags').value.trim();
+            const ratio = document.getElementById('prompt-ratio').value;
+            const url = document.getElementById('prompt-url').value.trim() || 'https://placehold.co/100';
+            
+            if(!categoryId) {
+                showToast("Please select a category.", "warning"); return;
+            }
+
+            const btn = document.getElementById('prompt-submit-btn');
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Processing...`;
+
+            try {
+                const data = {
+                    title: title,
+                    category: categoryName,
+                    categoryId: categoryId,
+                    promptText: ptext,
+                    tags: tags,
+                    aspectRatio: ratio,
+                    imageUrl: url
+                };
+
+                if (id) {
+                    await db.collection('prompts').doc(id).update(data);
+                } else {
+                    await db.collection('prompts').add(data);
+                }
+                showToast(`Prompt "${title}" synchronized!`);
+                closeModal('modal-prompt');
+            } catch (err) {
+                showToast(`Error: ${err.message}`, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = `<i class="fa-solid fa-paper-plane"></i> Publish Prompt Data`;
+            }
+        }
+
+        async function deletePrompt(id) {
+            if (confirm("Discard this Prompt forever?")) {
+                try {
+                    await db.collection("prompts").doc(id).delete();
+                    showToast("Prompt successfully erased.");
+                } catch(e) {
+                    showToast(`Error: ${e.message}`, 'error');
+                }
+            }
+        }
+
+        /* ======================== 
+           GLOBAL SETTINGS
+        ======================== */
+        function populateSettingsForm(config) {
+            if (!config) return;
+            
+            // Ad network selections & AdMob IDs
+            const adFields = [
+                'activeAd', 'bannerNetwork', 'interstitialNetwork', 'nativeNetwork',
+                'admobAppOpenId', 'admobInterstitialId', 'admobNativeId', 'admobBannerId'
+            ];
+            adFields.forEach(field => {
+                if (config[field]) {
+                    const el = document.getElementById(`setting-${field}`);
+                    if (el) el.value = config[field];
+                }
+            });
+            
+            if (config.activeAd) {
+                const displayNode = document.getElementById('stat-active-ad');
+                if(displayNode) displayNode.textContent = config.activeAd;
+            }
+
+            // Url inputs (Graphics)
+            const setters = [
+                { inp: 'inp-logo', pre: 'preview-logo', field: 'appLogoUrl' },
+                { inp: 'inp-splash', pre: 'preview-splash', field: 'splashScreenUrl' },
+                { inp: 'inp-settings-ico', pre: 'preview-settings-ico', field: 'settingsIconUrl' }
+            ];
+
+            setters.forEach(s => {
+                const url = config[s.field] || '';
+                const i = document.getElementById(s.inp);
+                if(i) i.value = url;
+                const p = document.getElementById(s.pre);
+                if(p) p.src = url || 'https://placehold.co/100';
+            });
+            
+            // Menu Action Links
+            const linkFields = ['followMeUrl', 'howToUseUrl', 'shareAppUrl', 'rateUsUrl', 'contactUsEmail', 'developerInfoUrl', 'privacyPolicyUrl'];
+            linkFields.forEach(field => {
+                if (config[field]) {
+                    const inp = document.getElementById(`setting-${field}`);
+                    if (inp) inp.value = config[field];
+                }
+            });
+        }
+
+        async function saveAdsSettings(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btn-save-ads');
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Saving...`;
+
+            try {
+                const data = {
+                    activeAd: document.getElementById('setting-activeAd').value,
+                    bannerNetwork: document.getElementById('setting-bannerNetwork').value,
+                    interstitialNetwork: document.getElementById('setting-interstitialNetwork').value,
+                    nativeNetwork: document.getElementById('setting-nativeNetwork').value,
+                    admobAppOpenId: document.getElementById('setting-admobAppOpenId').value.trim(),
+                    admobInterstitialId: document.getElementById('setting-admobInterstitialId').value.trim(),
+                    admobNativeId: document.getElementById('setting-admobNativeId').value.trim(),
+                    admobBannerId: document.getElementById('setting-admobBannerId').value.trim()
+                };
+
+                await db.collection("app_config").doc("global").set(data, { merge: true });
+                showToast("Ad configurations applied successfully.", "success");
+            } catch (err) {
+                showToast(err.message, "error");
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = `<i class="fa-solid fa-save"></i> Save Ads Configuration`;
+            }
+        }
+
+        async function saveGlobalSettings(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btn-save-settings');
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Saving...`;
+
+            try {
+                const data = {
+                    appLogoUrl: document.getElementById('inp-logo').value.trim(),
+                    splashScreenUrl: document.getElementById('inp-splash').value.trim(),
+                    settingsIconUrl: document.getElementById('inp-settings-ico').value.trim(),
+                    followMeUrl: document.getElementById('setting-followMeUrl').value.trim(),
+                    howToUseUrl: document.getElementById('setting-howToUseUrl').value.trim(),
+                    shareAppUrl: document.getElementById('setting-shareAppUrl').value.trim(),
+                    rateUsUrl: document.getElementById('setting-rateUsUrl').value.trim(),
+                    contactUsEmail: document.getElementById('setting-contactUsEmail').value.trim(),
+                    developerInfoUrl: document.getElementById('setting-developerInfoUrl').value.trim(),
+                    privacyPolicyUrl: document.getElementById('setting-privacyPolicyUrl').value.trim()
+                };
+
+                await db.collection("app_config").doc("global").set(data, { merge: true });
+                showToast("Global configurations applied securely.", "success");
+            } catch(err) {
+                showToast(`Failed: ${err.message}`, "error");
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = `<i class="fa-solid fa-save"></i> Save Global Configurations`;
+            }
+        }
     </script>
 </body>
 </html>
