@@ -305,47 +305,35 @@
                                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                                     <!-- App Logo config -->
                                     <div class="p-5 border border-slate-200 rounded-2xl space-y-4 bg-slate-50/40 flex flex-col items-center hover:border-slate-300 transition">
-                                        <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider text-center">App Icon/Logo</span>
+                                        <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider text-center">App Icon/Logo Link</span>
                                         <div class="w-24 h-24 rounded-2x bg-white flex items-center justify-center border border-slate-150 overflow-hidden relative group shadow-sm">
                                             <img id="preview-app-logo" src="https://placehold.co/100" class="w-full h-full object-cover rounded-xl">
-                                            <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center text-white text-[10px] font-bold transition rounded-xl pointer-events-none">Click File Below</div>
                                         </div>
-                                        <input type="file" id="input-app-logo" accept="image/*" class="text-xs w-full cursor-pointer file:mr-2 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 transition">
-                                        <div id="progress-app-logo" class="hidden w-full bg-slate-200 rounded-full h-1">
-                                            <div class="bg-indigo-600 h-1 rounded-full w-0 transition-all"></div>
-                                        </div>
+                                        <input type="text" id="input-app-logo-url" class="text-xs w-full px-3 py-2 bg-white border border-slate-200 rounded-xl outline-none focus:border-indigo-500 transition" placeholder="Paste App Logo URL link...">
                                     </div>
 
                                     <!-- Splash Logo config -->
                                     <div class="p-5 border border-slate-200 rounded-2xl space-y-4 bg-slate-50/40 flex flex-col items-center hover:border-slate-300 transition">
-                                        <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider text-center">Splash Background Graphics</span>
+                                        <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider text-center">Splash Background Graphics Link</span>
                                         <div class="w-24 h-24 rounded-2x bg-white flex items-center justify-center border border-slate-150 overflow-hidden relative group shadow-sm">
                                             <img id="preview-splash-logo" src="https://placehold.co/100" class="w-full h-full object-cover rounded-xl">
-                                            <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center text-white text-[10px] font-bold transition rounded-xl pointer-events-none">Click File Below</div>
                                         </div>
-                                        <input type="file" id="input-splash-logo" accept="image/*" class="text-xs w-full cursor-pointer file:mr-2 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 transition">
-                                        <div id="progress-splash-logo" class="hidden w-full bg-slate-200 rounded-full h-1">
-                                            <div class="bg-indigo-600 h-1 rounded-full w-0 transition-all"></div>
-                                        </div>
+                                        <input type="text" id="input-splash-logo-url" class="text-xs w-full px-3 py-2 bg-white border border-slate-200 rounded-xl outline-none focus:border-indigo-500 transition" placeholder="Paste Splash Image URL link...">
                                     </div>
 
                                     <!-- Settings Icon config -->
                                     <div class="p-5 border border-slate-200 rounded-2xl space-y-4 bg-slate-50/40 flex flex-col items-center hover:border-slate-300 transition">
-                                        <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider text-center">Settings Graphic Icon</span>
+                                        <span class="text-[11px] font-bold text-slate-400 uppercase tracking-wider text-center">Settings Graphic Icon Link</span>
                                         <div class="w-24 h-24 rounded-2x bg-white flex items-center justify-center border border-slate-150 overflow-hidden relative group shadow-sm">
                                             <img id="preview-settings-icon" src="https://placehold.co/100" class="w-full h-full object-cover rounded-xl">
-                                            <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center text-white text-[10px] font-bold transition rounded-xl pointer-events-none">Click File Below</div>
                                         </div>
-                                        <input type="file" id="input-settings-icon" accept="image/*" class="text-xs w-full cursor-pointer file:mr-2 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 transition">
-                                        <div id="progress-settings-icon" class="hidden w-full bg-slate-200 rounded-full h-1">
-                                            <div class="bg-indigo-600 h-1 rounded-full w-0 transition-all"></div>
-                                        </div>
+                                        <input type="text" id="input-settings-icon-url" class="text-xs w-full px-3 py-2 bg-white border border-slate-200 rounded-xl outline-none focus:border-indigo-500 transition" placeholder="Paste Settings Icon URL link...">
                                     </div>
                                 </div>
 
                                 <div class="flex justify-end pt-4 border-t border-slate-100">
                                     <button type="submit" id="btn-save-branding" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs flex items-center gap-2 active:scale-95 transition shadow">
-                                        <i class="fa-solid fa-cloud-arrow-up"></i> Upload & Save Branding
+                                        <i class="fa-solid fa-save"></i> Save Branding Graphics Links
                                     </button>
                                 </div>
                             </form>
@@ -620,22 +608,12 @@
                 </div>
 
                 <div class="space-y-1.5 border border-slate-150 p-4 rounded-xl bg-slate-50/50">
-                    <label class="text-xs font-bold text-slate-700 block fillMaxWidth">Image Preview representation</label>
+                    <label class="text-xs font-bold text-slate-700 block fillMaxWidth">Image Representation URL</label>
                     <div class="flex items-center gap-4">
                         <div class="w-14 h-14 bg-slate-200 border border-slate-300 rounded-xl overflow-hidden shrink-0 flex items-center justify-center">
                             <img id="prompt-img-preview" src="https://placehold.co/100" class="w-full h-full object-cover">
                         </div>
-                        <input type="file" id="prompt-file" accept="image/*" class="text-xs w-full cursor-pointer file:mr-2 file:py-2 file:px-4 file:rounded-xl file:border-0 file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 transition">
-                    </div>
-                    <!-- Upload Progress -->
-                    <div id="prompt-upload-progress-container" class="hidden space-y-1 pt-2">
-                        <div class="flex justify-between text-[11px] font-bold text-slate-550">
-                            <span>Uploading image...</span>
-                            <span id="prompt-upload-pct">0%</span>
-                        </div>
-                        <div class="w-full bg-slate-200 rounded-full h-1">
-                            <div id="prompt-upload-bar" class="bg-indigo-600 h-1 rounded-full w-0 transition-all"></div>
-                        </div>
+                        <input type="text" id="prompt-image-url" class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs outline-none focus:border-indigo-500 transition" placeholder="Paste prompt image URL link manually here...">
                     </div>
                 </div>
 
@@ -668,22 +646,12 @@
                 </div>
 
                 <div class="space-y-1.5 border border-slate-150 p-4 rounded-xl bg-slate-50/50">
-                    <label class="text-xs font-bold text-slate-700 block">Category Cover Logo File</label>
+                    <label class="text-xs font-bold text-slate-700 block">Category Cover Image URL</label>
                     <div class="flex items-center gap-4">
                         <div class="w-12 h-12 bg-slate-200 border border-slate-300 rounded-xl overflow-hidden shrink-0 flex items-center justify-center">
                             <img id="category-logo-preview" src="https://placehold.co/100" class="w-full h-full object-cover">
                         </div>
-                        <input type="file" id="category-file" accept="image/*" class="text-xs w-full cursor-pointer file:mr-2 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 transition">
-                    </div>
-                    <!-- Upload Progress -->
-                    <div id="category-upload-progress-container" class="hidden space-y-1 pt-2">
-                        <div class="flex justify-between text-[11px] font-bold text-slate-550">
-                            <span>Uploading logo...</span>
-                            <span id="category-upload-pct">0%</span>
-                        </div>
-                        <div class="w-full bg-slate-200 rounded-full h-1">
-                            <div id="category-upload-bar" class="bg-indigo-600 h-10 rounded-full w-0 transition-all"></div>
-                        </div>
+                        <input type="text" id="category-logo-url" class="w-full px-4 py-2.5 bg-white border border-slate-200 rounded-xl text-xs outline-none focus:border-indigo-550 transition" placeholder="Paste category cover URL link...">
                     </div>
                 </div>
 
@@ -972,6 +940,31 @@
             if (!db) return;
 
             db.collection("prompts").onSnapshot((snapshot) => {
+                if (snapshot.empty) {
+                    const defaultPrompts = [
+                        {
+                            title: "Teal & Neon Cyberpunk Alleyway",
+                            category: "Sci-Fi",
+                            categoryId: "sci_fi",
+                            promptText: "Retro vintage 90s anime style, a dense futuristic skyscraper alleyway in rain-slick Tokyo, hyper detailed neon signage in kanji, reflecting neon purples and teals onto wet asphalt puddles, dynamic camera angle, nostalgic chill ambient vibes, high cinematic style",
+                            tags: "cyberpunk, rain, neon, anime",
+                            aspectRatio: "16:9",
+                            imageUrl: "https://images.unsplash.com/photo-1540959733332-eab4deceeaf7?auto=format&fit=crop&q=80&w=400"
+                        },
+                        {
+                            title: "Mythical Golden Lion Portrait",
+                            category: "Creative",
+                            categoryId: "creative",
+                            promptText: "Professional studio portrait of an intensely majestic lion face sculpted out of fluid liquid gold, high contrast dramatic lighting, soft black procedural volumetric background, highly intricate details, insanely realistic gold foil texture reflections, Unreal Engine 5 render, depth of field, 8k resolution",
+                            tags: "lion, gold, unreal, fantasy",
+                            aspectRatio: "1:1",
+                            imageUrl: "https://images.unsplash.com/photo-1546182990-dffeafbe841d?auto=format&fit=crop&q=80&w=400"
+                        }
+                    ];
+                    defaultPrompts.forEach(p => {
+                        db.collection("prompts").add(p);
+                    });
+                }
                 prompts = [];
                 snapshot.forEach((doc) => {
                     const data = doc.data();
@@ -985,6 +978,21 @@
             });
 
             db.collection("categories").onSnapshot((snapshot) => {
+                if (snapshot.empty) {
+                    const defaults = [
+                        { id: "sci_fi", name: "Sci-Fi", logoUrl: "https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?w=300&auto=format&fit=crop" },
+                        { id: "nature", name: "Nature", logoUrl: "https://images.unsplash.com/photo-1501854140801-50d01698950b?w=300&auto=format&fit=crop" },
+                        { id: "creative", name: "Creative", logoUrl: "https://images.unsplash.com/photo-1515621061946-eff1c2a352bd?w=300&auto=format&fit=crop" },
+                        { id: "abstract", name: "Abstract", logoUrl: "https://images.unsplash.com/photo-1541701494587-cb58502866ab?w=300&auto=format&fit=crop" },
+                        { id: "architecture", name: "Architecture", logoUrl: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=300&auto=format&fit=crop" }
+                    ];
+                    defaults.forEach(c => {
+                        db.collection("categories").doc(c.id).set({
+                            name: c.name,
+                            logoUrl: c.logoUrl
+                        });
+                    });
+                }
                 categories = [];
                 snapshot.forEach((doc) => {
                     categories.push({ id: doc.id, ...doc.data() });
@@ -1182,9 +1190,8 @@
             document.getElementById('prompt-form').reset();
             document.getElementById('prompt-modal-title').textContent = "Upload & Add New Prompt";
             document.getElementById('prompt-edit-id').value = '';
-            document.getElementById('prompt-existing-img-url').value = '';
+            document.getElementById('prompt-image-url').value = '';
             document.getElementById('prompt-img-preview').src = 'https://placehold.co/100';
-            document.getElementById('prompt-upload-progress-container').classList.add('hidden');
         }
 
         function closePromptModal() {
@@ -1200,33 +1207,14 @@
             const promptText = document.getElementById('prompt-text').value;
             const tags = document.getElementById('prompt-tags').value;
             const aspectRatio = document.getElementById('prompt-ratio').value;
-            const existingImgUrl = document.getElementById('prompt-existing-img-url').value;
-            const fileInput = document.getElementById('prompt-file');
+            const imageUrlVal = document.getElementById('prompt-image-url').value.trim();
 
             const submitBtn = document.getElementById('prompt-submit-btn');
             submitBtn.disabled = true;
             submitBtn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Saving...`;
 
             try {
-                let finalImageUrl = existingImgUrl || "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&q=80&w=400";
-
-                if (fileInput.files.length > 0) {
-                    const progressContainer = document.getElementById('prompt-upload-progress-container');
-                    const progressPct = document.getElementById('prompt-upload-pct');
-                    const progressBar = document.getElementById('prompt-upload-bar');
-                    progressContainer.classList.remove('hidden');
-
-                    if (existingImgUrl && !isSandboxMode) {
-                        await deleteAssetFromR2(existingImgUrl);
-                    }
-
-                    finalImageUrl = await uploadAssetToR2(fileInput.files[0], 'prompts', (pct) => {
-                        progressPct.textContent = `${pct}%`;
-                        progressBar.style.width = `${pct}%`;
-                    });
-
-                    progressContainer.classList.add('hidden');
-                }
+                let finalImageUrl = imageUrlVal || "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&q=80&w=400";
 
                 // CATEGORY-MOBILE ALIGNMENT STRATEGY
                 // Convert category doc ID to beautiful human Name to match selected category label in Android
@@ -1298,7 +1286,7 @@
             document.getElementById('prompt-text').value = prompt.promptText || '';
             document.getElementById('prompt-tags').value = prompt.tags || '';
             document.getElementById('prompt-ratio').value = prompt.aspectRatio || '1:1';
-            document.getElementById('prompt-existing-img-url').value = prompt.imageUrl || '';
+            document.getElementById('prompt-image-url').value = prompt.imageUrl || '';
             document.getElementById('prompt-img-preview').src = prompt.imageUrl || 'https://placehold.co/100';
         }
 
@@ -1373,11 +1361,10 @@
         function openCategoryModal() {
             document.getElementById('modal-category').classList.remove('hidden');
             document.getElementById('category-form').reset();
-            document.getElementById('category-modal-title').textContent = "Upload & Add Category";
+            document.getElementById('category-modal-title').textContent = "Add Category";
             document.getElementById('category-edit-id').value = '';
-            document.getElementById('category-existing-logo-url').value = '';
+            document.getElementById('category-logo-url').value = '';
             document.getElementById('category-logo-preview').src = 'https://placehold.co/100';
-            document.getElementById('category-upload-progress-container').classList.add('hidden');
         }
 
         function closeCategoryModal() {
@@ -1389,33 +1376,14 @@
 
             const id = document.getElementById('category-edit-id').value;
             const name = document.getElementById('category-name').value;
-            const existingLogoUrl = document.getElementById('category-existing-logo-url').value;
-            const fileInput = document.getElementById('category-file');
+            const logoUrlVal = document.getElementById('category-logo-url').value.trim();
 
             const submitBtn = document.getElementById('category-submit-btn');
             submitBtn.disabled = true;
             submitBtn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Saving...`;
 
             try {
-                let finalLogoUrl = existingLogoUrl || "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&q=80&w=200";
-
-                if (fileInput.files.length > 0) {
-                    const progressContainer = document.getElementById('category-upload-progress-container');
-                    const progressPct = document.getElementById('category-upload-pct');
-                    const progressBar = document.getElementById('category-upload-bar');
-                    progressContainer.classList.remove('hidden');
-
-                    if (existingLogoUrl && !isSandboxMode) {
-                        await deleteAssetFromR2(existingLogoUrl);
-                    }
-
-                    finalLogoUrl = await uploadAssetToR2(fileInput.files[0], 'categories', (pct) => {
-                        progressPct.textContent = `${pct}%`;
-                        progressBar.style.width = `${pct}%`;
-                    });
-
-                    progressContainer.classList.add('hidden');
-                }
+                let finalLogoUrl = logoUrlVal || "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&q=80&w=200";
 
                 const catId = id ? id : name.toLowerCase().trim().replace(/[^a-z0-9]/g, "_");
                 const data = {
@@ -1464,7 +1432,7 @@
             document.getElementById('category-modal-title').textContent = "Modify Category";
             document.getElementById('category-edit-id').value = cat.id;
             document.getElementById('category-name').value = cat.name || '';
-            document.getElementById('category-existing-logo-url').value = cat.logoUrl || '';
+            document.getElementById('category-logo-url').value = cat.logoUrl || '';
             document.getElementById('category-logo-preview').src = cat.logoUrl || 'https://placehold.co/100';
         }
 
@@ -1578,6 +1546,13 @@
             document.getElementById('preview-app-logo').src = config.appLogoUrl || 'https://placehold.co/100';
             document.getElementById('preview-splash-logo').src = config.splashScreenUrl || 'https://placehold.co/100';
             document.getElementById('preview-settings-icon').src = config.settingsIconUrl || 'https://placehold.co/100';
+            
+            const iApp = document.getElementById('input-app-logo-url');
+            if (iApp) iApp.value = config.appLogoUrl || '';
+            const iSplash = document.getElementById('input-splash-logo-url');
+            if (iSplash) iSplash.value = config.splashScreenUrl || '';
+            const iSettings = document.getElementById('input-settings-icon-url');
+            if (iSettings) iSettings.value = config.settingsIconUrl || '';
         }
 
         async function saveBrandingAssets(event) {
@@ -1588,83 +1563,32 @@
             btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Syncing...`;
 
             try {
-                let assetsToUpdate = {};
+                const appLogoUrl = document.getElementById('input-app-logo-url').value.trim();
+                const splashScreenUrl = document.getElementById('input-splash-logo-url').value.trim();
+                const settingsIconUrl = document.getElementById('input-settings-icon-url').value.trim();
 
-                // 1. App Logo File
-                const logoFile = document.getElementById('input-app-logo').files[0];
-                if (logoFile) {
-                    const progress = document.getElementById('progress-app-logo');
-                    progress.classList.remove('hidden');
-                    const bar = progress.querySelector('div');
+                const assetsToUpdate = {
+                    appLogoUrl: appLogoUrl,
+                    splashScreenUrl: splashScreenUrl,
+                    settingsIconUrl: settingsIconUrl
+                };
 
-                    if (globalConfig.appLogoUrl && !isSandboxMode) {
-                        await deleteAssetFromR2(globalConfig.appLogoUrl);
-                    }
-                    const url = await uploadAssetToR2(logoFile, 'brand', (pct) => {
-                        bar.style.width = `${pct}%`;
-                    });
-                    assetsToUpdate.appLogoUrl = url;
-                    progress.classList.add('hidden');
-                }
-
-                // 2. Splash hero payload file
-                const splashFile = document.getElementById('input-splash-logo').files[0];
-                if (splashFile) {
-                    const progress = document.getElementById('progress-splash-logo');
-                    progress.classList.remove('hidden');
-                    const bar = progress.querySelector('div');
-
-                    if (globalConfig.splashScreenUrl && !isSandboxMode) {
-                        await deleteAssetFromR2(globalConfig.splashScreenUrl);
-                    }
-                    const url = await uploadAssetToR2(splashFile, 'brand', (pct) => {
-                        bar.style.width = `${pct}%`;
-                    });
-                    assetsToUpdate.splashScreenUrl = url;
-                    progress.classList.add('hidden');
-                }
-
-                // 3. Settings UI icon payload
-                const settingsFile = document.getElementById('input-settings-icon').files[0];
-                if (settingsFile) {
-                    const progress = document.getElementById('progress-settings-icon');
-                    progress.classList.remove('hidden');
-                    const bar = progress.querySelector('div');
-
-                    if (globalConfig.settingsIconUrl && !isSandboxMode) {
-                        await deleteAssetFromR2(globalConfig.settingsIconUrl);
-                    }
-                    const url = await uploadAssetToR2(settingsFile, 'brand', (pct) => {
-                        bar.style.width = `${pct}%`;
-                    });
-                    assetsToUpdate.settingsIconUrl = url;
-                    progress.classList.add('hidden');
-                }
-
-                if (Object.keys(assetsToUpdate).length > 0) {
-                    globalConfig = { ...globalConfig, ...assetsToUpdate };
-                    
-                    if (isSandboxMode) {
-                        localStorage.setItem('sandbox_global_config', JSON.stringify(globalConfig));
-                        showToast("Saved local sandbox branding graphics!", "success");
-                    } else {
-                        await db.collection("app_config").doc("global").set(assetsToUpdate, { merge: true });
-                        showToast("Brand graphics saved successfully!", "success");
-                    }
-
-                    updateBrandingPreviews(globalConfig);
-                    // Reset fields
-                    document.getElementById('input-app-logo').value = '';
-                    document.getElementById('input-splash-logo').value = '';
-                    document.getElementById('input-settings-icon').value = '';
+                globalConfig = { ...globalConfig, ...assetsToUpdate };
+                
+                if (isSandboxMode) {
+                    localStorage.setItem('sandbox_global_config', JSON.stringify(globalConfig));
+                    showToast("Saved local sandbox branding graphics!", "success");
                 } else {
-                    showToast("Please select a file to replace first.", "warning");
+                    await db.collection("app_config").doc("global").set(assetsToUpdate, { merge: true });
+                    showToast("Brand graphics saved successfully!", "success");
                 }
+
+                updateBrandingPreviews(globalConfig);
             } catch (err) {
-                showToast(`Unable to upload: ${err.message}`, "error");
+                showToast(`Unable to save: ${err.message}`, "error");
             } finally {
                 btn.disabled = false;
-                btn.innerHTML = `<i class="fa-solid fa-cloud-arrow-up"></i> Upload & Save Branding`;
+                btn.innerHTML = `<i class="fa-solid fa-save"></i> Save Branding Graphics Links`;
             }
         }
 
@@ -1906,21 +1830,35 @@
             document.getElementById('modal-config-guide').classList.add('hidden');
         }
 
-        // Live file selection preview bindings
-        document.getElementById('prompt-file').addEventListener('change', function() {
+        // Real-time direct image URL preview bindings
+        document.getElementById('prompt-image-url').addEventListener('input', function() {
             const preview = document.getElementById('prompt-img-preview');
-            const file = this.files[0];
-            if (file) {
-                preview.src = URL.createObjectURL(file);
-            }
+            const value = this.value.trim();
+            preview.src = value || 'https://placehold.co/100';
         });
 
-        document.getElementById('category-file').addEventListener('change', function() {
+        document.getElementById('category-logo-url').addEventListener('input', function() {
             const preview = document.getElementById('category-logo-preview');
-            const file = this.files[0];
-            if (file) {
-                preview.src = URL.createObjectURL(file);
-            }
+            const value = this.value.trim();
+            preview.src = value || 'https://placehold.co/100';
+        });
+
+        document.getElementById('input-app-logo-url').addEventListener('input', function() {
+            const preview = document.getElementById('preview-app-logo');
+            const value = this.value.trim();
+            preview.src = value || 'https://placehold.co/100';
+        });
+
+        document.getElementById('input-splash-logo-url').addEventListener('input', function() {
+            const preview = document.getElementById('preview-splash-logo');
+            const value = this.value.trim();
+            preview.src = value || 'https://placehold.co/100';
+        });
+
+        document.getElementById('input-settings-icon-url').addEventListener('input', function() {
+            const preview = document.getElementById('preview-settings-icon');
+            const value = this.value.trim();
+            preview.src = value || 'https://placehold.co/100';
         });
 
         // Initialize dynamic sequences
