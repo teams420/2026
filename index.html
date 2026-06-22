@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prompt House - Admin Panel</title>
+    <title>Prompt House - Elite Admin Panel</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
@@ -15,68 +15,96 @@
             background-color: #f8fafc;
         }
         .fade-in {
-            animation: fadeIn 0.3s ease-in-out;
+            animation: fadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
+            from { opacity: 0; transform: translateY(8px); }
             to { opacity: 1; transform: translateY(0); }
+        }
+        .sidebar-active {
+            background-color: #1e1b4b; /* Indigo 950 */
+            border-left: 4px solid #6366f1; /* Indigo 500 */
+            color: #ffffff;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
         }
     </style>
 </head>
-<body class="overflow-x-hidden text-slate-800">
+<body class="overflow-x-hidden text-slate-800 antialiased">
 
     <div class="flex h-screen overflow-hidden">
         <!-- Sidebar -->
-        <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 flex flex-col w-56 bg-slate-900 border-r border-slate-800 text-white transition-transform duration-300 transform -translate-x-full lg:translate-x-0 lg:static lg:inset-auto">
+        <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 flex flex-col w-64 bg-slate-900 border-r border-slate-800 text-white transition-transform duration-300 transform -translate-x-full lg:translate-x-0 lg:static lg:inset-auto shrink-0 shadow-xl">
             <!-- Sidebar Header -->
-            <div class="flex items-center justify-between h-14 px-4 border-b border-slate-800">
-                <div class="flex items-center gap-2.5">
-                    <div class="p-1.5 bg-indigo-600 rounded-lg">
-                        <i class="fa-solid fa-terminal text-xs text-white"></i>
+            <div class="flex items-center justify-between h-16 px-5 border-b border-slate-800 bg-slate-950/60">
+                <div class="flex items-center gap-3">
+                    <div class="p-2 bg-indigo-600 rounded-xl shadow-lg shadow-indigo-600/30">
+                        <i class="fa-solid fa-terminal text-sm text-white"></i>
                     </div>
                     <div>
-                        <h1 class="text-sm font-bold tracking-tight">Prompt House</h1>
-                        <span class="text-[10px] text-slate-400 font-mono">Control Center</span>
+                        <h1 class="text-sm font-extrabold tracking-tight text-white uppercase">Prompt House</h1>
+                        <span class="text-[11px] text-indigo-300 font-bold uppercase tracking-wider">Control Center</span>
                     </div>
                 </div>
-                <button onclick="toggleSidebar()" class="lg:hidden text-slate-400 hover:text-white">
+                <button onclick="toggleSidebar()" class="lg:hidden text-slate-400 hover:text-white transition p-1 rounded-lg hover:bg-slate-800">
                     <i class="fa-solid fa-xmark text-lg"></i>
                 </button>
             </div>
 
+            <!-- Active Database Status Widget -->
+            <div class="px-4 py-3 mx-3 my-4 bg-slate-950/50 border border-slate-800 rounded-2xl flex flex-col gap-1.5">
+                <span class="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Environment Connection</span>
+                <div id="sidebar-driver-status" class="flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 bg-yellow-500 rounded-full animate-pulse shrink-0"></span>
+                    <span class="text-xs font-bold text-yellow-500">Checking...</span>
+                </div>
+            </div>
+
             <!-- Navigation Links -->
-            <nav class="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
-                <button onclick="switchView('dashboard')" class="nav-btn w-full flex items-center gap-2.5 px-3 py-2 text-xs font-semibold rounded-lg text-indigo-400 bg-slate-800/80 transition-all">
-                    <i class="fa-solid fa-chart-pie text-sm"></i>
+            <nav class="flex-1 px-3 space-y-1 overflow-y-auto">
+                <button onclick="switchView('dashboard')" class="nav-btn w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold rounded-xl text-slate-400 hover:text-slate-100 hover:bg-slate-800/50 transition-all">
+                    <i class="fa-solid fa-chart-pie text-base"></i>
                     <span>Dashboard</span>
                 </button>
-                <button onclick="switchView('prompts')" class="nav-btn w-full flex items-center gap-2.5 px-3 py-2 text-xs font-semibold rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 transition-all">
-                    <i class="fa-solid fa-wand-magic-sparkles text-sm"></i>
+                <button onclick="switchView('prompts')" class="nav-btn w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold rounded-xl text-slate-400 hover:text-slate-100 hover:bg-slate-800/50 transition-all">
+                    <i class="fa-solid fa-wand-magic-sparkles text-base"></i>
                     <span>Manage Prompts</span>
                 </button>
-                <button onclick="switchView('categories')" class="nav-btn w-full flex items-center gap-2.5 px-3 py-2 text-xs font-semibold rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 transition-all">
-                    <i class="fa-solid fa-shapes text-sm"></i>
+                <button onclick="switchView('categories')" class="nav-btn w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold rounded-xl text-slate-400 hover:text-slate-100 hover:bg-slate-800/50 transition-all">
+                    <i class="fa-solid fa-shapes text-base"></i>
                     <span>Manage Categories</span>
                 </button>
-                <button onclick="switchView('app-settings')" class="nav-btn w-full flex items-center gap-2.5 px-3 py-2 text-xs font-semibold rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 transition-all">
-                    <i class="fa-solid fa-sliders text-sm"></i>
+                <button onclick="switchView('app-settings')" class="nav-btn w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold rounded-xl text-slate-400 hover:text-slate-100 hover:bg-slate-800/50 transition-all">
+                    <i class="fa-solid fa-sliders text-base"></i>
                     <span>App Settings</span>
                 </button>
-                <button onclick="switchView('ad-networks')" class="nav-btn w-full flex items-center gap-2.5 px-3 py-2 text-xs font-semibold rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 transition-all">
-                    <i class="fa-solid fa-rectangle-ad text-sm"></i>
+                <button onclick="switchView('ad-networks')" class="nav-btn w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold rounded-xl text-slate-400 hover:text-slate-100 hover:bg-slate-800/50 transition-all">
+                    <i class="fa-solid fa-rectangle-ad text-base"></i>
                     <span>Ad Networks</span>
                 </button>
-                <button onclick="switchView('credentials')" class="nav-btn w-full flex items-center gap-2.5 px-3 py-2 text-xs font-semibold rounded-lg text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 transition-all">
-                    <i class="fa-solid fa-key text-sm"></i>
-                    <span>API Credentials</span>
+                <button onclick="switchView('credentials')" class="nav-btn w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold rounded-xl text-slate-400 hover:text-slate-100 hover:bg-slate-800/50 transition-all">
+                    <i class="fa-solid fa-key-skeleton text-base"></i>
+                    <span>API Connections</span>
                 </button>
             </nav>
 
             <!-- Sidebar Footer -->
-            <div class="p-3 border-t border-slate-800 bg-slate-950/40">
-                <div class="flex items-center gap-2 px-1.5 py-0.5">
-                    <div class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></div>
-                    <span class="text-[10px] text-slate-400 font-medium">Real-time Connection OK</span>
+            <div class="p-4 border-t border-slate-800 bg-slate-950/40">
+                <div class="flex items-center gap-2 px-1 py-0.5">
+                    <span class="text-xs text-slate-400 font-medium">Prompt Hub Panel v2.0</span>
                 </div>
             </div>
         </aside>
@@ -84,163 +112,176 @@
         <!-- Main Content Area -->
         <main class="flex-1 flex flex-col min-w-0 overflow-y-auto bg-slate-50 relative">
             <!-- Header -->
-            <header class="flex items-center justify-between h-14 px-4 lg:px-6 bg-white border-b border-slate-200 shrink-0 sticky top-0 z-30">
+            <header class="flex items-center justify-between h-16 px-6 bg-white border-b border-slate-200 shrink-0 sticky top-0 z-30 shadow-sm">
                 <div class="flex items-center gap-3">
-                    <button onclick="toggleSidebar()" class="lg:hidden p-1.5 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition">
+                    <button onclick="toggleSidebar()" class="lg:hidden p-2 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-xl transition">
                         <i class="fa-solid fa-bars text-lg"></i>
                     </button>
-                    <h2 id="view-title" class="text-sm font-bold text-slate-900 leading-tight">Dashboard Overview</h2>
+                    <h2 id="view-title" class="text-base font-extrabold text-slate-900 tracking-tight">Dashboard Overview</h2>
                 </div>
 
-                <div class="flex items-center gap-3">
-                    <span id="ad-badge" class="hidden sm:inline-flex items-center gap-1 px-2 py-1 text-[10px] font-semibold text-slate-700 bg-slate-100 rounded-md">
-                        <span class="w-1 h-1 bg-slate-400 rounded-full"></span>
-                        Active Ad: <span id="header-active-ad" class="font-bold uppercase text-indigo-600">Unknown</span>
+                <div class="flex items-center gap-4">
+                    <span id="ad-badge" class="hidden sm:inline-flex items-center gap-2 px-3 py-1.5 text-xs font-semibold text-slate-700 bg-slate-100 rounded-xl">
+                        <span class="w-1.5 h-1.5 bg-indigo-500 rounded-full animate-ping"></span>
+                        Active Ad Engine: <span id="header-active-ad" class="font-bold uppercase text-indigo-600">Admob</span>
                     </span>
-                    <button onclick="openConfigGuide()" class="p-1.5 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition" title="Configuration Guide">
-                        <i class="fa-solid fa-circle-question text-base"></i>
+                    <button onclick="openConfigGuide()" class="p-2 text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition" title="Connection Setup Manual">
+                        <i class="fa-solid fa-circle-question text-lg"></i>
                     </button>
                 </div>
             </header>
 
             <!-- Views Container -->
-            <div id="content" class="flex-1 p-4 lg:p-6 max-w-[1500px] w-full mx-auto">
+            <div id="content" class="flex-1 p-6 max-w-[1500px] w-full mx-auto space-y-6">
                 
                 <!-- 1. DASHBOARD VIEW -->
-                <div id="view-dashboard" class="space-y-5 fade-in">
-                    <!-- Stats Grid -->
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                        <!-- Stat Card 1 -->
-                        <div class="p-4 bg-white border border-slate-200 rounded-xl shadow-sm flex items-center justify-between">
-                            <div class="space-y-1">
-                                <span class="text-xs font-semibold text-slate-500">Total Prompts</span>
-                                <h3 id="stat-prompts-count" class="text-xl font-bold text-slate-900">...</h3>
+                <div id="view-dashboard" class="space-y-6 fade-in">
+                    
+                    <!-- Sandbox Info Banner / Alert Tracker -->
+                    <div id="connection-status-banner" class="hidden p-5 rounded-2xl border transition-all flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                        <div class="flex items-start gap-3.5">
+                            <div id="banner-icon-box" class="p-3 rounded-2xl"></div>
+                            <div>
+                                <h4 id="banner-title" class="font-bold text-sm">Connection Status</h4>
+                                <p id="banner-text" class="text-xs text-slate-500 mt-1 leading-relaxed"></p>
                             </div>
-                            <div class="p-2.5 bg-indigo-50 text-indigo-600 rounded-lg">
-                                <i class="fa-solid fa-wand-magic-sparkles text-lg"></i>
+                        </div>
+                        <button id="banner-action-btn" class="px-4 py-2 font-bold text-xs rounded-xl shadow transition shrink-0"></button>
+                    </div>
+
+                    <!-- Stats Grid -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <!-- Stat Card 1 -->
+                        <div class="p-6 bg-white border border-slate-200/80 rounded-2xl shadow-sm hover:shadow-md transition duration-200 flex items-center justify-between">
+                            <div class="space-y-1">
+                                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Prompts</span>
+                                <h3 id="stat-prompts-count" class="text-3xl font-extrabold text-slate-900">...</h3>
+                            </div>
+                            <div class="p-3.5 bg-indigo-50 text-indigo-600 rounded-2xl">
+                                <i class="fa-solid fa-wand-magic-sparkles text-2xl"></i>
                             </div>
                         </div>
                         <!-- Stat Card 2 -->
-                        <div class="p-4 bg-white border border-slate-200 rounded-xl shadow-sm flex items-center justify-between">
+                        <div class="p-6 bg-white border border-slate-200/80 rounded-2xl shadow-sm hover:shadow-md transition duration-200 flex items-center justify-between">
                             <div class="space-y-1">
-                                <span class="text-xs font-semibold text-slate-500">Categories</span>
-                                <h3 id="stat-categories-count" class="text-xl font-bold text-slate-900">...</h3>
+                                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Categories</span>
+                                <h3 id="stat-categories-count" class="text-3xl font-extrabold text-slate-900">...</h3>
                             </div>
-                            <div class="p-2.5 bg-violet-50 text-violet-600 rounded-lg">
-                                <i class="fa-solid fa-shapes text-lg"></i>
+                            <div class="p-3.5 bg-violet-50 text-violet-600 rounded-2xl">
+                                <i class="fa-solid fa-shapes text-2xl"></i>
                             </div>
                         </div>
                         <!-- Stat Card 3 -->
-                        <div class="p-4 bg-white border border-slate-200 rounded-xl shadow-sm flex items-center justify-between">
+                        <div class="p-6 bg-white border border-slate-200/80 rounded-2xl shadow-sm hover:shadow-md transition duration-200 flex items-center justify-between">
                             <div class="space-y-1">
-                                <span class="text-xs font-semibold text-slate-500">Active Ad Engine</span>
-                                <h3 id="stat-active-ad" class="text-sm font-bold uppercase text-slate-900">...</h3>
+                                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Monetization Active</span>
+                                <h3 id="stat-active-ad" class="text-lg font-extrabold uppercase text-slate-900">...</h3>
                             </div>
-                            <div class="p-2.5 bg-emerald-50 text-emerald-600 rounded-lg">
-                                <i class="fa-solid fa-rectangle-ad text-lg"></i>
+                            <div class="p-3.5 bg-emerald-50 text-emerald-600 rounded-2xl">
+                                <i class="fa-solid fa-rectangle-ad text-2xl"></i>
                             </div>
                         </div>
                         <!-- Stat Card 4 -->
-                        <div class="p-4 bg-white border border-slate-200 rounded-xl shadow-sm flex items-center justify-between">
+                        <div class="p-6 bg-white border border-slate-200/80 rounded-2xl shadow-sm hover:shadow-md transition duration-200 flex items-center justify-between">
                             <div class="space-y-1">
-                                <span class="text-xs font-semibold text-slate-500">System Status</span>
-                                <h3 class="text-xs font-bold text-emerald-600 flex items-center gap-1">
-                                    <span class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-ping"></span> Live & Synced
+                                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">System Driver</span>
+                                <h3 id="stat-driver-type" class="text-xs font-bold text-slate-800 flex items-center gap-1.5 mt-1">
+                                    Offline Sandboxed Mode
                                 </h3>
                             </div>
-                            <div class="p-2.5 bg-slate-50 text-slate-600 rounded-lg">
-                                <i class="fa-solid fa-cloud-arrow-up text-lg"></i>
+                            <div class="p-3.5 bg-amber-50 text-amber-600 rounded-2xl">
+                                <i class="fa-solid fa-circle-nodes text-2xl"></i>
                             </div>
                         </div>
                     </div>
 
                     <!-- Welcome banner -->
-                    <div class="p-4 bg-gradient-to-r from-slate-900 via-slate-800 to-indigo-950 text-white rounded-xl shadow-sm border border-slate-800 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-                        <div class="space-y-1">
-                            <h3 class="text-sm font-bold">Welcome back, Control Specialist!</h3>
-                            <p class="text-slate-300 max-w-xl text-xs leading-relaxed">
-                                Real-time syncing is active. Updates, uploads, and deletions sync instantly with the users' Android client app. Ensure API configs are set.
+                    <div class="p-6 bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white rounded-2xl shadow-md flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+                        <div class="space-y-1.5">
+                            <h3 class="text-base font-extrabold">Welcome back, Specialist!</h3>
+                            <p class="text-slate-300 max-w-xl text-sm leading-relaxed">
+                                You are viewing the live administration panel of your Prompt App. Update branding graphics, switch active ad providers, and categorize styling assets dynamically.
                             </p>
                         </div>
-                        <div class="flex gap-2">
-                            <button onclick="switchView('prompts'); openPromptModal()" class="px-3 py-1.5 text-xs font-semibold bg-indigo-600 hover:bg-indigo-500 rounded-lg flex items-center gap-1.5 shadow active:scale-95 transition-all">
-                                <i class="fa-solid fa-plus text-[10px]"></i> Add Prompt
+                        <div class="flex gap-3 shrink-0">
+                            <button onclick="switchView('prompts'); openPromptModal()" class="px-4 py-2.5 text-xs font-bold bg-indigo-600 hover:bg-indigo-500 rounded-xl flex items-center gap-1.5 shadow-lg shadow-indigo-600/20 active:scale-95 transition-all">
+                                <i class="fa-solid fa-plus font-bold"></i> Add Prompt
                             </button>
-                            <button onclick="switchView('categories'); openCategoryModal()" class="px-3 py-1.5 text-xs font-semibold bg-white/10 hover:bg-white/20 rounded-lg flex items-center gap-1.5 active:scale-95 transition-all">
-                                <i class="fa-solid fa-shapes text-[10px]"></i> Create Category
+                            <button onclick="switchView('categories'); openCategoryModal()" class="px-4 py-2.5 text-xs font-bold bg-white/15 hover:bg-white/25 rounded-xl flex items-center gap-1.5 active:scale-95 transition-all">
+                                <i class="fa-solid fa-shapes"></i> Create Category
                             </button>
                         </div>
                     </div>
 
                     <!-- Recent items split lists -->
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                         <!-- Recent Prompts -->
-                        <div class="p-4 bg-white border border-slate-200 rounded-xl shadow-sm">
-                            <div class="flex items-center justify-between mb-3">
-                                <h4 class="text-xs font-bold text-slate-900 flex items-center gap-1.5">
-                                    <i class="fa-solid fa-clock-rotate-left text-indigo-500 text-xs"></i> New Prompts Added
+                        <div class="p-6 bg-white border border-slate-200/80 rounded-2xl shadow-sm flex flex-col">
+                            <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
+                                <h4 class="text-sm font-extrabold text-slate-900 flex items-center gap-2">
+                                    <i class="fa-solid fa-clock-rotate-left text-indigo-500"></i> New Prompt Assets
                                 </h4>
-                                <button onclick="switchView('prompts')" class="text-[10px] font-bold text-indigo-600 hover:text-indigo-500 flex items-center gap-1">
-                                    View All <i class="fa-solid fa-arrow-right-long text-[9px]"></i>
+                                <button onclick="switchView('prompts')" class="text-xs font-bold text-indigo-600 hover:text-indigo-500 flex items-center gap-1 transition">
+                                    View Repository <i class="fa-solid fa-arrow-right-long text-[10px]"></i>
                                 </button>
                             </div>
-                            <div id="recent-prompts-list" class="divide-y divide-slate-100 max-h-[300px] overflow-y-auto">
-                                <div class="py-4 text-center text-slate-400 text-xs">Loading prompts...</div>
+                            <div id="recent-prompts-list" class="divide-y divide-slate-100 flex-1 min-h-[220px]">
+                                <div class="py-8 text-center text-slate-400 text-sm">Loading prompts...</div>
                             </div>
                         </div>
 
                         <!-- Recent Categories -->
-                        <div class="p-4 bg-white border border-slate-200 rounded-xl shadow-sm">
-                            <div class="flex items-center justify-between mb-3">
-                                <h4 class="text-xs font-bold text-slate-900 flex items-center gap-1.5">
-                                    <i class="fa-solid fa-network-wired text-indigo-500 text-xs"></i> Category Index
+                        <div class="p-6 bg-white border border-slate-200/80 rounded-2xl shadow-sm flex flex-col">
+                            <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
+                                <h4 class="text-sm font-extrabold text-slate-900 flex items-center gap-2">
+                                    <i class="fa-solid fa-network-wired text-indigo-500"></i> Active Group Categories
                                 </h4>
-                                <button onclick="switchView('categories')" class="text-[10px] font-bold text-indigo-600 hover:text-indigo-500 flex items-center gap-1">
-                                    View All <i class="fa-solid fa-arrow-right-long text-[9px]"></i>
+                                <button onclick="switchView('categories')" class="text-xs font-bold text-indigo-600 hover:text-indigo-500 flex items-center gap-1 transition">
+                                    View All <i class="fa-solid fa-arrow-right-long text-[10px]"></i>
                                 </button>
                             </div>
-                            <div id="recent-categories-list" class="divide-y divide-slate-100 max-h-[300px] overflow-y-auto">
-                                <div class="py-4 text-center text-slate-400 text-xs">Loading categories...</div>
+                            <div id="recent-categories-list" class="divide-y divide-slate-100 flex-1 min-h-[220px]">
+                                <div class="py-8 text-center text-slate-400 text-sm">Loading categories...</div>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <!-- 2. PROMPTS VIEW -->
-                <div id="view-prompts" class="hidden space-y-4 fade-in">
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                        <div class="relative max-w-xs w-full">
-                            <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
-                                <i class="fa-solid fa-magnifying-glass text-xs"></i>
+                <div id="view-prompts" class="hidden space-y-6 fade-in">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-4 border border-slate-200 rounded-2xl shadow-sm">
+                        <div class="relative max-w-sm w-full">
+                            <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center text-slate-400">
+                                <i class="fa-solid fa-magnifying-glass text-sm"></i>
                             </span>
-                            <input type="text" id="prompt-search-input" onkeyup="filterPromptsList()" placeholder="Search title, tags, text..." class="pl-8 pr-3 py-1.5 w-full bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 outline-none transition text-xs">
+                            <input type="text" id="prompt-search-input" onkeyup="filterPromptsList()" placeholder="Type search query matching title, body tags..." class="pl-10 pr-4 py-2.5 w-full bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:ring-4 focus:ring-indigo-100 focus:border-indigo-500 outline-none transition text-sm">
                         </div>
-                        <div class="flex gap-2 justify-end">
-                            <select id="prompt-category-filter" onchange="filterPromptsList()" class="px-2.5 py-1.5 bg-white border border-slate-200 rounded-lg text-xs font-semibold outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500">
+                        <div class="flex flex-wrap gap-3 items-center">
+                            <select id="prompt-category-filter" onchange="filterPromptsList()" class="px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold opacity-80 outline-none focus:bg-white focus:ring-4 focus:ring-indigo-100 focus:border-indigo-500">
                                 <option value="">All Categories</option>
                             </select>
-                            <button onclick="openPromptModal()" class="px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg font-bold flex items-center gap-1.5 text-xs shadow active:scale-95 transition">
-                                <i class="fa-solid fa-plus text-[10px]"></i> New Prompt
+                            <button onclick="openPromptModal()" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-bold flex items-center gap-2 text-sm shadow-md shadow-indigo-600/10 active:scale-95 transition">
+                                <i class="fa-solid fa-plus"></i> New Prompt
                             </button>
                         </div>
                     </div>
 
                     <!-- Prompts Grid Table -->
-                    <div class="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden animate-fade-in">
+                    <div class="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
                         <div class="overflow-x-auto">
                             <table class="w-full text-left border-collapse">
                                 <thead>
-                                    <tr class="bg-slate-50 border-b border-slate-200 text-slate-500 font-bold text-[10px] uppercase tracking-wider">
-                                        <th class="py-2.5 px-4 w-16">Image</th>
-                                        <th class="py-2.5 px-4">Title & Tags</th>
-                                        <th class="py-2.5 px-4">Category</th>
-                                        <th class="py-2.5 px-4">Prompt Body Text</th>
-                                        <th class="py-2.5 px-4 text-right">Actions</th>
+                                    <tr class="bg-slate-50/80 border-b border-slate-200 text-slate-500 font-bold text-xs uppercase tracking-wider">
+                                        <th class="py-4 px-6 w-20">Media</th>
+                                        <th class="py-4 px-6">Title & Identity</th>
+                                        <th class="py-4 px-6">Category Tag</th>
+                                        <th class="py-4 px-6 max-w-sm">Prompt Text Content</th>
+                                        <th class="py-4 px-6 text-right w-36">Actions</th>
                                     </tr>
                                 </thead>
-                                <tbody id="prompts-table-body" class="divide-y divide-slate-100 text-xs font-medium">
+                                <tbody id="prompts-table-body" class="divide-y divide-slate-100 text-sm">
                                     <tr>
-                                        <td colspan="5" class="py-10 text-center text-slate-400">Loading your prompts database...</td>
+                                        <td colspan="5" class="py-12 text-center text-slate-400">Loading prompt registry tables...</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -249,79 +290,79 @@
                 </div>
 
                 <!-- 3. CATEGORIES VIEW -->
-                <div id="view-categories" class="hidden space-y-4 fade-in">
-                    <div class="flex justify-between items-center bg-white p-3 border border-slate-200 rounded-xl shadow-sm">
+                <div id="view-categories" class="hidden space-y-6 fade-in">
+                    <div class="flex justify-between items-center bg-white p-5 border border-slate-200 rounded-2xl shadow-sm">
                         <div>
-                            <h3 class="text-xs font-bold text-slate-900">App Categories Repository</h3>
-                            <p class="text-[10px] text-slate-400">Classify, structure, and group prompts for visual sorting.</p>
+                            <h3 class="text-base font-extrabold text-slate-900">App Categories Repository</h3>
+                            <p class="text-xs text-slate-400 mt-0.5">Bundle your client-facing prompts into gorgeous directory cards.</p>
                         </div>
-                        <button onclick="openCategoryModal()" class="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-lg font-bold flex items-center gap-1 text-[11px] shadow active:scale-95 transition">
-                            <i class="fa-solid fa-plus text-[9px]"></i> Create Category
+                        <button onclick="openCategoryModal()" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-xl font-bold flex items-center gap-2 text-sm shadow active:scale-95 transition">
+                            <i class="fa-solid fa-plus text-xs"></i> Create Category
                         </button>
                     </div>
 
                     <!-- Grid list of categories -->
-                    <div id="categories-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div id="categories-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                         <!-- Dynamic items -->
                     </div>
                 </div>
 
                 <!-- 4. APP SETTINGS VIEW -->
-                <div id="view-app-settings" class="hidden space-y-4 fade-in">
+                <div id="view-app-settings" class="hidden space-y-6 fade-in">
                     <div class="max-w-4xl">
-                        <section class="p-5 bg-white border border-slate-200 rounded-xl shadow-sm space-y-4">
+                        <section class="p-6 bg-white border border-slate-200 rounded-2xl shadow-sm space-y-5">
                             <div>
-                                <h3 class="text-xs font-bold text-slate-900 flex items-center gap-1.5">
-                                    <i class="fa-solid fa-palette text-indigo-500 text-xs"></i> UI & Brand Branding Assets
+                                <h3 class="text-base font-extrabold text-slate-900 flex items-center gap-2">
+                                    <i class="fa-solid fa-palette text-indigo-500"></i> Branding Assets Configuration
                                 </h3>
-                                <p class="text-[10px] text-slate-500 mt-0.5">Configure static graphics saved in Cloudflare R2 and synced dynamically with clients.</p>
+                                <p class="text-xs text-slate-400 mt-0.5">Customize default placeholders and interface graphics synced in real-time with the client app device view.</p>
                             </div>
 
-                            <form id="branding-settings-form" onsubmit="saveBrandingAssets(event)" class="space-y-4">
-                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <form id="branding-settings-form" onsubmit="saveBrandingAssets(event)" class="space-y-6">
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                                     <!-- App Logo config -->
-                                    <div class="p-3 border border-slate-200 rounded-xl space-y-3 bg-slate-50/55 flex flex-col items-center">
-                                        <span class="text-[10px] font-bold text-slate-600 uppercase tracking-wider text-center">App Logo</span>
-                                        <div class="w-16 h-16 rounded-xl bg-slate-100 flex items-center justify-center border border-slate-200 overflow-hidden relative group">
+                                    <div class="p-5 border border-slate-200/80 rounded-2xl space-y-4 bg-slate-50/50 flex flex-col items-center hover:border-slate-350 transition">
+                                        <span class="text-xs font-bold text-slate-400 uppercase tracking-widest text-center">App Icon Logo</span>
+                                        <div class="w-24 h-24 rounded-2xl bg-white flex items-center justify-center border border-slate-200 overflow-hidden relative group shadow-sm transition">
                                             <img id="preview-app-logo" src="https://placehold.co/100" class="w-full h-full object-cover">
-                                            <div class="absolute inset-0 bg-black/40 hidden group-hover:flex items-center justify-center text-white text-[10px] font-bold transition">Replace</div>
+                                            <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center text-white text-xs font-bold transition">Replace</div>
                                         </div>
-                                        <input type="file" id="input-app-logo" accept="image/*" class="text-[10px] w-full cursor-pointer file:mr-1.5 file:py-0.5 file:px-1.5 file:rounded file:border-0 file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
-                                        <div id="progress-app-logo" class="hidden w-full bg-slate-200 rounded-full h-1">
-                                            <div class="bg-indigo-600 h-1 rounded-full w-0 transition-all"></div>
+                                        <input type="file" id="input-app-logo" accept="image/*" class="text-xs w-full cursor-pointer file:mr-2 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 transition">
+                                        <div id="progress-app-logo" class="hidden w-full bg-slate-200 rounded-full h-1.5">
+                                            <div class="bg-indigo-600 h-1.5 rounded-full w-0 transition-all"></div>
                                         </div>
                                     </div>
 
                                     <!-- Splash Logo config -->
-                                    <div class="p-3 border border-slate-200 rounded-xl space-y-3 bg-slate-50/55 flex flex-col items-center">
-                                        <span class="text-[10px] font-bold text-slate-600 uppercase tracking-wider text-center">Splash Screen</span>
-                                        <div class="w-16 h-16 rounded-xl bg-slate-100 flex items-center justify-center border border-slate-200 overflow-hidden relative group">
+                                    <div class="p-5 border border-slate-200/80 rounded-2xl space-y-4 bg-slate-50/50 flex flex-col items-center hover:border-slate-350 transition">
+                                        <span class="text-xs font-bold text-slate-400 uppercase tracking-widest text-center">Splash Hero Cover</span>
+                                        <div class="w-24 h-24 rounded-2xl bg-white flex items-center justify-center border border-slate-200 overflow-hidden relative group shadow-sm transition">
                                             <img id="preview-splash-logo" src="https://placehold.co/100" class="w-full h-full object-cover">
-                                            <div class="absolute inset-0 bg-black/40 hidden group-hover:flex items-center justify-center text-white text-[10px] font-bold transition">Replace</div>
+                                            <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center text-white text-xs font-bold transition">Replace</div>
                                         </div>
-                                        <input type="file" id="input-splash-logo" accept="image/*" class="text-[10px] w-full cursor-pointer file:mr-1.5 file:py-0.5 file:px-1.5 file:rounded file:border-0 file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
-                                        <div id="progress-splash-logo" class="hidden w-full bg-slate-200 rounded-full h-1">
-                                            <div class="bg-indigo-600 h-1 rounded-full w-0 transition-all"></div>
+                                        <input type="file" id="input-splash-logo" accept="image/*" class="text-xs w-full cursor-pointer file:mr-2 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 transition">
+                                        <div id="progress-splash-logo" class="hidden w-full bg-slate-200 rounded-full h-1.5">
+                                            <div class="bg-indigo-600 h-1.5 rounded-full w-0 transition-all"></div>
                                         </div>
                                     </div>
 
                                     <!-- Settings Icon config -->
-                                    <div class="p-3 border border-slate-200 rounded-xl space-y-3 bg-slate-50/55 flex flex-col items-center">
-                                        <span class="text-[10px] font-bold text-slate-600 uppercase tracking-wider text-center">Settings Icon</span>
-                                        <div class="w-16 h-16 rounded-xl bg-slate-100 flex items-center justify-center border border-slate-200 overflow-hidden relative group">
+                                    <div class="p-5 border border-slate-200/80 rounded-2xl space-y-4 bg-slate-50/50 flex flex-col items-center hover:border-slate-350 transition">
+                                        <span class="text-xs font-bold text-slate-400 uppercase tracking-widest text-center">Settings UI Icon</span>
+                                        <div class="w-24 h-24 rounded-2xl bg-white flex items-center justify-center border border-slate-200 overflow-hidden relative group shadow-sm transition">
                                             <img id="preview-settings-icon" src="https://placehold.co/100" class="w-full h-full object-cover">
-                                            <div class="absolute inset-0 bg-black/40 hidden group-hover:flex items-center justify-center text-white text-[10px] font-bold transition">Replace</div>
+                                            <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center text-white text-xs font-bold transition">Replace</div>
                                         </div>
-                                        <input type="file" id="input-settings-icon" accept="image/*" class="text-[10px] w-full cursor-pointer file:mr-1.5 file:py-0.5 file:px-1.5 file:rounded file:border-0 file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
-                                        <div id="progress-settings-icon" class="hidden w-full bg-slate-200 rounded-full h-1">
-                                            <div class="bg-indigo-600 h-1 rounded-full w-0 transition-all"></div>
+                                        <input type="file" id="input-settings-icon" accept="image/*" class="text-xs w-full cursor-pointer file:mr-2 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 transition">
+                                        <div id="progress-settings-icon" class="hidden w-full bg-slate-200 rounded-full h-1.5">
+                                            <div class="bg-indigo-600 h-1.5 rounded-full w-0 transition-all"></div>
                                         </div>
                                     </div>
                                 </div>
 
-                                <div class="flex justify-end pt-3 border-t border-slate-100">
-                                    <button type="submit" id="btn-save-branding" class="px-3.5 py-1.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-lg text-xs flex items-center gap-1.5 shadow active:scale-95 transition">
-                                        <i class="fa-solid fa-cloud-arrow-up text-[10px]"></i> Upload & Sync branding Assets
+                                <div class="flex justify-end pt-4 border-t border-slate-100">
+                                    <button type="submit" id="btn-save-branding" class="px-5 py-3/5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-sm flex items-center gap-2 shadow-lg shadow-indigo-600/10 active:scale-95 transition">
+                                        <i class="fa-solid fa-cloud-arrow-up"></i> Upload & Sync branding Assets
                                     </button>
                                 </div>
                             </form>
@@ -330,214 +371,215 @@
                 </div>
 
                 <!-- 5. AD NETWORKS VIEW -->
-                <div id="view-ad-networks" class="hidden space-y-4 fade-in">
-                    <form id="ads-configuration-form" onsubmit="saveAdsConfig(event)" class="space-y-4 max-w-5xl">
+                <div id="view-ad-networks" class="hidden space-y-6 fade-in">
+                    <form id="ads-configuration-form" onsubmit="saveAdsConfig(event)" class="space-y-6 max-w-5xl">
                         <!-- Global Ad Switch -->
-                        <div class="p-4 bg-white border border-slate-200 rounded-xl shadow-sm space-y-4">
+                        <div class="p-6 bg-white border border-slate-200 rounded-2xl shadow-sm space-y-5">
                             <div>
-                                <h3 class="text-xs font-bold text-slate-900 flex items-center gap-1.5">
-                                    <i class="fa-solid fa-power-off text-indigo-500 text-xs"></i> Global Active Ad Network engine
+                                <h3 class="text-base font-extrabold text-slate-900 flex items-center gap-2">
+                                    <i class="fa-solid fa-power-off text-indigo-500"></i> Global Active Ad Network Switch
                                 </h3>
-                                <p class="text-[10px] text-slate-500 mt-0.5">Choose the single ads service that client apps query for dynamic ads layouts.</p>
+                                <p class="text-xs text-slate-400 mt-0.5">Toggle the single SDK network loaded dynamically by the Android applications.</p>
                             </div>
 
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-                                <label class="border border-slate-200 rounded-xl p-3 flex items-center gap-3 cursor-pointer hover:border-indigo-500 hover:bg-indigo-50/10 transition-all relative">
-                                    <input type="radio" name="activeAd" value="admob" class="w-4 h-4 accent-indigo-600">
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <label class="border-2 border-slate-200 rounded-2xl p-5 flex items-center gap-4 cursor-pointer hover:border-indigo-500 hover:bg-slate-50/50 transition relative">
+                                    <input type="radio" name="activeAd" value="admob" class="w-5 h-5 text-indigo-650 focus:ring-indigo-500">
                                     <div class="space-y-0.5">
-                                        <span class="font-bold text-slate-900 text-xs block">Google AdMob</span>
-                                        <span class="text-[10px] text-slate-500">Premium global fill rate ads</span>
+                                        <span class="font-bold text-slate-900 text-sm block">Google AdMob</span>
+                                        <span class="text-xs text-slate-400 leading-normal">Premium global high fill-rate</span>
                                     </div>
-                                    <span class="absolute right-3 top-3 text-sky-500"><i class="fa-brands fa-google text-xs"></i></span>
+                                    <span class="absolute right-5 top-5 text-sky-550"><i class="fa-brands fa-google text-lg"></i></span>
                                 </label>
 
-                                <label class="border border-slate-200 rounded-xl p-3 flex items-center gap-3 cursor-pointer hover:border-indigo-500 hover:bg-indigo-50/10 transition-all relative">
-                                    <input type="radio" name="activeAd" value="meta" class="w-4 h-4 accent-indigo-600">
+                                <label class="border-2 border-slate-200 rounded-2xl p-5 flex items-center gap-4 cursor-pointer hover:border-indigo-500 hover:bg-slate-50/50 transition relative">
+                                    <input type="radio" name="activeAd" value="meta" class="w-5 h-5 text-indigo-650 focus:ring-indigo-500">
                                     <div class="space-y-0.5">
-                                        <span class="font-bold text-slate-900 text-xs block">Meta Audience</span>
-                                        <span class="text-[10px] text-slate-500">Social placements and banners</span>
+                                        <span class="font-bold text-slate-900 text-sm block">Meta Audience</span>
+                                        <span class="text-xs text-slate-400 leading-normal">Social-graph targeted native ads</span>
                                     </div>
-                                    <span class="absolute right-3 top-3 text-blue-600"><i class="fa-brands fa-meta text-xs"></i></span>
+                                    <span class="absolute right-5 top-5 text-blue-600"><i class="fa-brands fa-meta text-lg"></i></span>
                                 </label>
 
-                                <label class="border border-slate-200 rounded-xl p-3 flex items-center gap-3 cursor-pointer hover:border-indigo-500 hover:bg-indigo-50/10 transition-all relative">
-                                    <input type="radio" name="activeAd" value="unity" class="w-4 h-4 accent-indigo-600">
+                                <label class="border-2 border-slate-200 rounded-2xl p-5 flex items-center gap-4 cursor-pointer hover:border-indigo-500 hover:bg-slate-50/50 transition relative">
+                                    <input type="radio" name="activeAd" value="unity" class="w-5 h-5 text-indigo-650 focus:ring-indigo-500">
                                     <div class="space-y-0.5">
-                                        <span class="font-bold text-slate-900 text-xs block">Unity Ads</span>
-                                        <span class="text-[10px] text-slate-500">Video integrations and interstitials</span>
+                                        <span class="font-bold text-slate-900 text-sm block">Unity Ads Engine</span>
+                                        <span class="text-xs text-slate-400 leading-normal">Fast video reward interstitials</span>
                                     </div>
-                                    <span class="absolute right-3 top-3 text-slate-800"><i class="fa-brands fa-unity text-xs"></i></span>
+                                    <span class="absolute right-5 top-5 text-slate-800"><i class="fa-brands fa-unity text-lg"></i></span>
                                 </label>
                             </div>
                         </div>
 
                         <!-- 3 Distinct Config Cards -->
-                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                             <!-- 1. Google AdMob -->
-                            <div class="p-4 bg-white border border-slate-200 rounded-xl shadow-sm space-y-3">
-                                <div class="flex items-center gap-1.5 border-b border-slate-100 pb-2">
-                                    <span class="w-6 h-6 rounded bg-sky-100 text-sky-600 flex items-center justify-center text-xs"><i class="fa-brands fa-google"></i></span>
-                                    <h4 class="font-bold text-slate-900 text-xs">Google AdMob Setup</h4>
+                            <div class="p-6 bg-white border border-slate-200 rounded-2xl shadow-sm space-y-4">
+                                <div class="flex items-center gap-2 border-b border-slate-100 pb-3">
+                                    <span class="w-8 h-8 rounded-xl bg-sky-100 text-sky-600 flex items-center justify-center text-sm"><i class="fa-brands fa-google"></i></span>
+                                    <h4 class="font-extrabold text-slate-900 text-sm">Google AdMob Setup</h4>
                                 </div>
-                                <div class="space-y-2">
-                                    <div class="space-y-0.5">
-                                        <label class="text-[10px] font-bold text-slate-500">App Open ID</label>
-                                        <input type="text" id="admob_appOpenId" class="w-full px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs outline-none focus:bg-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500">
+                                <div class="space-y-3">
+                                    <div class="space-y-1">
+                                        <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wide">App Open ID</label>
+                                        <input type="text" id="admob_appOpenId" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:bg-white focus:ring-4 focus:ring-indigo-100">
                                     </div>
-                                    <div class="space-y-0.5">
-                                        <label class="text-[10px] font-bold text-slate-500">Interstitial ID</label>
-                                        <input type="text" id="admob_interstitialId" class="w-full px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs outline-none focus:bg-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500">
+                                    <div class="space-y-1">
+                                        <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wide">Interstitial ID</label>
+                                        <input type="text" id="admob_interstitialId" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:bg-white focus:ring-4 focus:ring-indigo-100">
                                     </div>
-                                    <div class="space-y-0.5">
-                                        <label class="text-[10px] font-bold text-slate-500">Native Ad ID</label>
-                                        <input type="text" id="admob_nativeId" class="w-full px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs outline-none focus:bg-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500">
+                                    <div class="space-y-1">
+                                        <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wide">Native Ad ID</label>
+                                        <input type="text" id="admob_nativeId" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:bg-white focus:ring-4 focus:ring-indigo-100">
                                     </div>
-                                    <div class="space-y-0.5">
-                                        <label class="text-[10px] font-bold text-slate-500">Collapsible Banner ID</label>
-                                        <input type="text" id="admob_collapsibleBannerId" class="w-full px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs outline-none focus:bg-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500">
+                                    <div class="space-y-1">
+                                        <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wide">Collapsible Banner ID</label>
+                                        <input type="text" id="admob_collapsibleBannerId" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:bg-white focus:ring-4 focus:ring-indigo-100">
                                     </div>
                                 </div>
                             </div>
 
                             <!-- 2. Meta Audience Network -->
-                            <div class="p-4 bg-white border border-slate-200 rounded-xl shadow-sm space-y-3">
-                                <div class="flex items-center gap-1.5 border-b border-slate-100 pb-2">
-                                    <span class="w-6 h-6 rounded bg-blue-100 text-blue-600 flex items-center justify-center text-xs"><i class="fa-brands fa-meta"></i></span>
-                                    <h4 class="font-bold text-slate-900 text-xs">Meta Audience Network</h4>
+                            <div class="p-6 bg-white border border-slate-200 rounded-2xl shadow-sm space-y-4">
+                                <div class="flex items-center gap-2 border-b border-slate-100 pb-3">
+                                    <span class="w-8 h-8 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center text-sm"><i class="fa-brands fa-meta"></i></span>
+                                    <h4 class="font-extrabold text-slate-900 text-sm">Meta Audience Details</h4>
                                 </div>
-                                <div class="space-y-2">
-                                    <div class="space-y-0.5">
-                                        <label class="text-[10px] font-bold text-slate-500">Meta Interstitial ID</label>
-                                        <input type="text" id="meta_interstitialId" class="w-full px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs outline-none focus:bg-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500">
+                                <div class="space-y-3">
+                                    <div class="space-y-1">
+                                        <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wide">Meta Interstitial Placement</label>
+                                        <input type="text" id="meta_interstitialId" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:bg-white focus:ring-4 focus:ring-indigo-100">
                                     </div>
-                                    <div class="space-y-0.5">
-                                        <label class="text-[10px] font-bold text-slate-500">Meta Native ID</label>
-                                        <input type="text" id="meta_nativeId" class="w-full px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs outline-none focus:bg-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500">
+                                    <div class="space-y-1">
+                                        <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wide">Meta Native Placement</label>
+                                        <input type="text" id="meta_nativeId" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:bg-white focus:ring-4 focus:ring-indigo-100">
                                     </div>
-                                    <div class="space-y-0.5">
-                                        <label class="text-[10px] font-bold text-slate-500">Meta Banner ID</label>
-                                        <input type="text" id="meta_bannerId" class="w-full px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs outline-none focus:bg-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500">
+                                    <div class="space-y-1">
+                                        <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wide">Meta Banner Placement</label>
+                                        <input type="text" id="meta_bannerId" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:bg-white focus:ring-4 focus:ring-indigo-100">
                                     </div>
                                 </div>
                             </div>
 
                             <!-- 3. Unity Ads -->
-                            <div class="p-4 bg-white border border-slate-200 rounded-xl shadow-sm space-y-3">
-                                <div class="flex items-center gap-1.5 border-b border-slate-100 pb-2">
-                                    <span class="w-6 h-6 rounded bg-slate-100 text-slate-800 flex items-center justify-center text-xs"><i class="fa-brands fa-unity"></i></span>
-                                    <h4 class="font-bold text-slate-900 text-xs">Unity Ads Engine</h4>
+                            <div class="p-6 bg-white border border-slate-200 rounded-2xl shadow-sm space-y-4">
+                                <div class="flex items-center gap-2 border-b border-slate-100 pb-3">
+                                    <span class="w-8 h-8 rounded-xl bg-slate-100 text-slate-800 flex items-center justify-center text-sm"><i class="fa-brands fa-unity"></i></span>
+                                    <h4 class="font-extrabold text-slate-900 text-sm">Unity Ads Engine</h4>
                                 </div>
-                                <div class="space-y-2">
-                                    <div class="space-y-0.5">
-                                        <label class="text-[10px] font-bold text-slate-500">Unity Game ID</label>
-                                        <input type="text" id="unity_gameId" class="w-full px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs outline-none focus:bg-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500">
+                                <div class="space-y-3">
+                                    <div class="space-y-1">
+                                        <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wide">Unity Game ID</label>
+                                        <input type="text" id="unity_gameId" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:bg-white focus:ring-4 focus:ring-indigo-100">
                                     </div>
-                                    <div class="space-y-0.5">
-                                        <label class="text-[10px] font-bold text-slate-500">Unity Interstitial ID</label>
-                                        <input type="text" id="unity_interstitialId" class="w-full px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs outline-none focus:bg-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500">
+                                    <div class="space-y-1">
+                                        <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wide">Interstitial Placement ID</label>
+                                        <input type="text" id="unity_interstitialId" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:bg-white focus:ring-4 focus:ring-indigo-100">
                                     </div>
-                                    <div class="space-y-0.5">
-                                        <label class="text-[10px] font-bold text-slate-500">Unity Banner ID</label>
-                                        <input type="text" id="unity_bannerId" class="w-full px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs outline-none focus:bg-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500">
+                                    <div class="space-y-1">
+                                        <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wide">Banner Placement ID</label>
+                                        <input type="text" id="unity_bannerId" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs outline-none focus:bg-white focus:ring-4 focus:ring-indigo-100">
                                     </div>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Save Trigger -->
-                        <div class="flex justify-end pt-3 border-t border-slate-200">
-                            <button type="submit" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-lg text-xs flex items-center gap-1.5 shadow active:scale-95 transition">
-                                <i class="fa-solid fa-cloud-arrow-up text-[10px]"></i> Save & Sync Ad Network Setup
+                        <div class="flex justify-end pt-4 border-t border-slate-200">
+                            <button type="submit" class="px-5 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-sm flex items-center gap-2 shadow-lg shadow-indigo-600/20 active:scale-95 transition">
+                                <i class="fa-solid fa-cloud-arrow-up"></i> Save & Sync Ad Placements
                             </button>
                         </div>
                     </form>
                 </div>
 
                 <!-- 6. API CREDENTIALS VIEW -->
-                <div id="view-credentials" class="hidden space-y-4 fade-in">
-                    <form id="credentials-configuration-form" onsubmit="saveCredentialsConfig(event)" class="space-y-4 max-w-5xl">
-                        <div class="p-4 bg-white border border-slate-200 rounded-xl shadow-sm space-y-2">
-                            <h3 class="text-xs font-bold text-slate-900 flex items-center gap-1.5">
-                                <i class="fa-solid fa-key-skeleton text-indigo-500 text-xs"></i> Cloud Service Credentials & Connections
+                <div id="view-credentials" class="hidden space-y-6 fade-in">
+                    <form id="credentials-configuration-form" onsubmit="saveCredentialsConfig(event)" class="space-y-6 max-w-5xl">
+                        <div class="p-6 bg-white border border-slate-200 rounded-2xl shadow-sm space-y-2.5">
+                            <h3 class="text-base font-extrabold text-slate-900 flex items-center gap-2">
+                                <i class="fa-solid fa-key-skeleton text-indigo-500 text-lg"></i> Dynamic Cloud Credentials Setup
                             </h3>
-                            <p class="text-[10px] text-slate-500 leading-relaxed">
-                                Avoid direct code changes! Configure your personal Firebase Firestore configurations and Cloudflare R2 connection parameters directly right here. They store securely in your browser's persistent cache.
+                            <p class="text-xs text-slate-400 leading-relaxed">
+                                Enter your Firebase Firestore variables and Cloudflare R2 connection parameters here to establish a live connection with your Android client apps. 
+                                Leaving these empty allows the panel to operate seamlessly in a full featured local sandbox mode!
                             </p>
                         </div>
 
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <!-- Firebase Configuration -->
-                            <div class="p-4 bg-white border border-slate-200 rounded-xl shadow-sm space-y-3">
-                                <div class="flex items-center gap-1.5 border-b border-slate-100 pb-2">
-                                    <span class="w-6 h-6 rounded bg-amber-50 text-amber-500 flex items-center justify-center text-xs"><i class="fa-solid fa-fire"></i></span>
-                                    <h4 class="font-bold text-slate-900 text-xs">Firebase config</h4>
+                            <div class="p-6 bg-white border border-slate-200 rounded-2xl shadow-sm space-y-4">
+                                <div class="flex items-center gap-2 border-b border-slate-100 pb-3">
+                                    <span class="w-8 h-8 rounded-xl bg-amber-50 text-amber-500 flex items-center justify-center text-sm"><i class="fa-solid fa-fire text-base"></i></span>
+                                    <h4 class="font-bold text-slate-900 text-sm">Firebase parameters</h4>
                                 </div>
-                                <div class="space-y-2">
-                                    <div class="space-y-0.5">
-                                        <label class="text-[10px] font-bold text-slate-500">API Key</label>
-                                        <input type="text" id="creds_firebase_apiKey" placeholder="AIzaSy..." class="w-full px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs outline-none focus:bg-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500">
+                                <div class="space-y-3">
+                                    <div class="space-y-1">
+                                        <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wide">Firestore API Key</label>
+                                        <input type="text" id="creds_firebase_apiKey" placeholder="AIzaSy..." class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:bg-white focus:ring-4 focus:ring-indigo-100 transition">
                                     </div>
-                                    <div class="space-y-0.5">
-                                        <label class="text-[10px] font-bold text-slate-500">Auth Domain</label>
-                                        <input type="text" id="creds_firebase_authDomain" placeholder="your-project.firebaseapp.com" class="w-full px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs outline-none focus:bg-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500">
+                                    <div class="space-y-1">
+                                        <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wide">Auth Domain</label>
+                                        <input type="text" id="creds_firebase_authDomain" placeholder="your-project.firebaseapp.com" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:bg-white focus:ring-4 focus:ring-indigo-100 transition">
                                     </div>
-                                    <div class="space-y-0.5">
-                                        <label class="text-[10px] font-bold text-slate-500">Project ID</label>
-                                        <input type="text" id="creds_firebase_projectId" placeholder="your-project-id" class="w-full px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs outline-none focus:bg-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500">
+                                    <div class="space-y-1">
+                                        <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wide">Project ID</label>
+                                        <input type="text" id="creds_firebase_projectId" placeholder="your-project-id" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:bg-white focus:ring-4 focus:ring-indigo-100 transition">
                                     </div>
-                                    <div class="space-y-0.5">
-                                        <label class="text-[10px] font-bold text-slate-500">Storage Bucket</label>
-                                        <input type="text" id="creds_firebase_storageBucket" placeholder="your-project.appspot.com" class="w-full px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs outline-none focus:bg-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500">
+                                    <div class="space-y-1">
+                                        <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wide">Storage Bucket</label>
+                                        <input type="text" id="creds_firebase_storageBucket" placeholder="your-project.appspot.com" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:bg-white focus:ring-4 focus:ring-indigo-100 transition">
                                     </div>
-                                    <div class="space-y-0.5">
-                                        <label class="text-[10px] font-bold text-slate-500">Messaging Sender ID</label>
-                                        <input type="text" id="creds_firebase_messagingSenderId" placeholder="837492021..." class="w-full px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs outline-none focus:bg-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500">
+                                    <div class="space-y-1">
+                                        <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wide">Messaging Sender ID</label>
+                                        <input type="text" id="creds_firebase_messagingSenderId" placeholder="837492021..." class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:bg-white focus:ring-4 focus:ring-indigo-100 transition">
                                     </div>
-                                    <div class="space-y-0.5">
-                                        <label class="text-[10px] font-bold text-slate-500">App ID</label>
-                                        <input type="text" id="creds_firebase_appId" placeholder="1:837492021:web:aef827..." class="w-full px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs outline-none focus:bg-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500">
+                                    <div class="space-y-1">
+                                        <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wide">Web App ID (AppID)</label>
+                                        <input type="text" id="creds_firebase_appId" placeholder="1:837492021:web:aef827..." class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:bg-white focus:ring-4 focus:ring-indigo-100 transition">
                                     </div>
                                 </div>
                             </div>
 
                             <!-- Cloudflare R2 Credentials -->
-                            <div class="p-4 bg-white border border-slate-200 rounded-xl shadow-sm space-y-3">
-                                <div class="flex items-center gap-1.5 border-b border-slate-100 pb-2">
-                                    <span class="w-6 h-6 rounded bg-indigo-50 text-indigo-600 flex items-center justify-center text-xs"><i class="fa-solid fa-cloud"></i></span>
-                                    <h4 class="font-bold text-slate-900 text-xs">Cloudflare R2 Bucket configuration</h4>
+                            <div class="p-6 bg-white border border-slate-200 rounded-2xl shadow-sm space-y-4">
+                                <div class="flex items-center gap-2 border-b border-slate-100 pb-3">
+                                    <span class="w-8 h-8 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-sm"><i class="fa-solid fa-cloud text-base"></i></span>
+                                    <h4 class="font-bold text-slate-900 text-sm">Cloudflare R2 (S3 Compatible API)</h4>
                                 </div>
-                                <div class="space-y-2">
-                                    <div class="space-y-0.5">
-                                        <label class="text-[10px] font-bold text-slate-500">Access Key ID</label>
-                                        <input type="text" id="creds_r2_accessKeyId" placeholder="YOUR_R2_ACCESS_KEY_ID" class="w-full px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs outline-none focus:bg-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500">
+                                <div class="space-y-3">
+                                    <div class="space-y-1">
+                                        <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wide">R2 Access Key ID</label>
+                                        <input type="text" id="creds_r2_accessKeyId" placeholder="YOUR_R2_ACCESS_KEY_ID" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:bg-white focus:ring-4 focus:ring-indigo-100 transition">
                                     </div>
-                                    <div class="space-y-0.5">
-                                        <label class="text-[10px] font-bold text-slate-500">Secret Access Key</label>
-                                        <input type="password" id="creds_r2_secretAccessKey" placeholder="YOUR_R2_SECRET_ACCESS_KEY" class="w-full px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs outline-none focus:bg-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500">
+                                    <div class="space-y-1">
+                                        <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wide">R2 Secret Access Key</label>
+                                        <input type="password" id="creds_r2_secretAccessKey" placeholder="YOUR_R2_SECRET_ACCESS_KEY" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:bg-white focus:ring-4 focus:ring-indigo-100 transition">
                                     </div>
-                                    <div class="space-y-0.5">
-                                        <label class="text-[10px] font-bold text-slate-500">S3 Endpoint API Url</label>
-                                        <input type="text" id="creds_r2_endpoint" placeholder="https://YOUR_ACCOUNT_ID.r2.cloudflarestorage.com" class="w-full px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs outline-none focus:bg-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500">
+                                    <div class="space-y-1">
+                                        <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wide">Endpoint Target API Url</label>
+                                        <input type="text" id="creds_r2_endpoint" placeholder="https://YOUR_ACCOUNT_ID.r2.cloudflarestorage.com" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:bg-white focus:ring-4 focus:ring-indigo-100 transition">
                                     </div>
-                                    <div class="space-y-0.5">
-                                        <label class="text-[10px] font-bold text-slate-500">Bucket Name</label>
-                                        <input type="text" id="creds_r2_bucketName" placeholder="my-prompt-bucket" class="w-full px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs outline-none focus:bg-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500">
+                                    <div class="space-y-1">
+                                        <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wide">S3 Compatible Bucket Name</label>
+                                        <input type="text" id="creds_r2_bucketName" placeholder="my-prompt-bucket" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:bg-white focus:ring-4 focus:ring-indigo-100 transition">
                                     </div>
-                                    <div class="space-y-0.5">
-                                        <label class="text-[10px] font-bold text-slate-500">Public Domain Access Link Prefix</label>
-                                        <input type="text" id="creds_r2_publicDomainUrl" placeholder="https://pub-abcdefgh.r2.dev or your domain" class="w-full px-2.5 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs outline-none focus:bg-white focus:ring-1 focus:ring-indigo-500/20 focus:border-indigo-500">
+                                    <div class="space-y-1">
+                                        <label class="text-[11px] font-bold text-slate-500 uppercase tracking-wide">Public Domain Link Prefix</label>
+                                        <input type="text" id="creds_r2_publicDomainUrl" placeholder="https://pub-abcdefgh.r2.dev" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm outline-none focus:bg-white focus:ring-4 focus:ring-indigo-100 transition">
                                     </div>
-                                    <div class="pt-2 text-[9px] text-zinc-400 font-medium leading-relaxed">
-                                        Make sure CORS policy in R2 allows PUT/GET from your hosted origin domain address (e.g. your GitHub Pages origin)!
+                                    <div class="pt-4 text-[11px] text-zinc-400 font-medium leading-relaxed bg-slate-50 p-4 rounded-xl border border-slate-100">
+                                         Ensure your CORS policy in Cloudflare R2 facilitates PUT/GET procedures from the client domain.
                                     </div>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Save Trigger -->
-                        <div class="flex justify-end pt-3 border-t border-slate-200">
-                            <button type="submit" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-lg text-xs flex items-center gap-1.5 shadow active:scale-95 transition">
-                                <i class="fa-solid fa-save text-[10px]"></i> Save & Initialize Dynamic Connections
+                        <div class="flex justify-end pt-4 border-t border-slate-200">
+                            <button type="submit" class="px-5 py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-sm flex items-center gap-2 shadow active:scale-95 transition">
+                                <i class="fa-solid fa-save"></i> Save & Hot-Reload Services
                             </button>
                         </div>
                     </form>
@@ -551,8 +593,8 @@
     <div id="modal-prompt" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
         <div class="bg-white rounded-2xl border border-slate-200 shadow-2xl w-full max-w-2xl overflow-hidden animate-zoom-in">
             <div class="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-slate-50">
-                <h4 id="prompt-modal-title" class="text-lg font-bold text-slate-900">Add New Prompt Asset</h4>
-                <button onclick="closePromptModal()" class="text-slate-400 hover:text-slate-600 rounded-lg p-1 hover:bg-slate-100 transition">
+                <h4 id="prompt-modal-title" class="text-base font-extrabold text-slate-900">Add New Prompt Asset</h4>
+                <button onclick="closePromptModal()" class="text-slate-400 hover:text-slate-600 rounded-lg p-1.5 hover:bg-slate-200 transition">
                     <i class="fa-solid fa-xmark text-lg"></i>
                 </button>
             </div>
@@ -562,30 +604,30 @@
                 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div class="space-y-1">
-                        <label class="text-xs font-bold text-slate-600">Prompt Title</label>
-                        <input type="text" id="prompt-title" required class="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500" placeholder="e.g. Cinematic Cyberpunk Alleyway">
+                        <label class="text-xs font-bold text-slate-600">Prompt Asset Title</label>
+                        <input type="text" id="prompt-title" required class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm outline-none focus:ring-4 focus:ring-indigo-100 focus:border-indigo-500 transition" placeholder="e.g. Mythical Golden Lion Portrait">
                     </div>
                     <div class="space-y-1">
-                        <label class="text-xs font-bold text-slate-600">Category Selection</label>
-                        <select id="prompt-category" required class="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500">
-                            <!-- Dynamic Categories -->
+                        <label class="text-xs font-bold text-slate-600">Category Placement</label>
+                        <select id="prompt-category" required class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm outline-none focus:ring-4 focus:ring-indigo-100 focus:border-indigo-500 transition">
+                            <!-- Dynamic Options -->
                         </select>
                     </div>
                 </div>
 
                 <div class="space-y-1">
-                    <label class="text-xs font-bold text-slate-600">Instructional Prompt Text</label>
-                    <textarea id="prompt-text" required rows="4" class="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500" placeholder="Paste the fully formed prompt instructions here..."></textarea>
+                    <label class="text-xs font-bold text-slate-600">Actual Prompt Rules / Text</label>
+                    <textarea id="prompt-text" required rows="4" class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm outline-none focus:ring-4 focus:ring-indigo-100 focus:border-indigo-500 transition" placeholder="Paste the fully formed prompt instructions inside here..."></textarea>
                 </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div class="space-y-1">
-                        <label class="text-xs font-bold text-slate-600">Tags / Identifiers (Comma-separated)</label>
-                        <input type="text" id="prompt-tags" class="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500" placeholder="cyberpunk, futuristic, neon">
+                        <label class="text-xs font-bold text-slate-600">Comma Separated Identifiers / Tags</label>
+                        <input type="text" id="prompt-tags" class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm outline-none focus:ring-4 focus:ring-indigo-100 focus:border-indigo-500 transition" placeholder="cyberpunk, lion, golden, metallic">
                     </div>
                     <div class="space-y-1">
-                        <label class="text-xs font-bold text-slate-600">Aspect Ratio Requirement</label>
-                        <select id="prompt-ratio" class="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500">
+                        <label class="text-xs font-bold text-slate-600">Preset Aspect Ratio</label>
+                        <select id="prompt-ratio" class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm outline-none focus:ring-4 focus:ring-indigo-100 focus:border-indigo-500 transition">
                             <option value="1:1">1:1 Square</option>
                             <option value="16:9">16:9 Landscape</option>
                             <option value="9:16">9:16 Portrait</option>
@@ -595,17 +637,17 @@
                 </div>
 
                 <div class="space-y-1.5 border border-slate-200 p-4 rounded-xl bg-slate-50/50">
-                    <label class="text-xs font-bold text-slate-700 block">Prompt Media Image File (Stored in Cloudflare R2)</label>
+                    <label class="text-xs font-bold text-slate-700 block">Prompt Preview Image File</label>
                     <div class="flex items-center gap-4">
-                        <div class="w-16 h-16 bg-slate-200 border border-slate-300 rounded-lg overflow-hidden shrink-0 flex items-center justify-center">
+                        <div class="w-16 h-16 bg-slate-200 border border-slate-300 rounded-xl overflow-hidden shrink-0 flex items-center justify-center">
                             <img id="prompt-img-preview" src="https://placehold.co/100" class="w-full h-full object-cover">
                         </div>
-                        <input type="file" id="prompt-file" accept="image/*" class="text-xs w-full cursor-pointer file:mr-2 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+                        <input type="file" id="prompt-file" accept="image/*" class="text-xs w-full cursor-pointer file:mr-2 file:py-2 file:px-4 file:rounded-xl file:border-0 file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 transition">
                     </div>
                     <!-- Upload Progress -->
-                    <div id="prompt-upload-progress-container" class="hidden space-y-1">
-                        <div class="flex justify-between text-[10px] font-bold text-slate-500">
-                            <span>Uploading asset file to R2...</span>
+                    <div id="prompt-upload-progress-container" class="hidden space-y-1 pt-2">
+                        <div class="flex justify-between text-xs font-bold text-slate-500">
+                            <span>Processing asset payload...</span>
                             <span id="prompt-upload-pct">0%</span>
                         </div>
                         <div class="w-full bg-slate-200 rounded-full h-1.5">
@@ -615,7 +657,7 @@
                 </div>
 
                 <div class="flex justify-end gap-3 pt-4 border-t border-slate-100">
-                    <button type="button" onclick="closePromptModal()" class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-sm">Cancel</button>
+                    <button type="button" onclick="closePromptModal()" class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-sm transition">Cancel</button>
                     <button type="submit" id="prompt-submit-btn" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-sm flex items-center gap-1.5 shadow-md shadow-indigo-600/10 active:scale-95 transition">
                         <i class="fa-solid fa-save"></i> Save Prompt
                     </button>
@@ -629,8 +671,8 @@
     <div id="modal-category" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
         <div class="bg-white rounded-2xl border border-slate-200 shadow-2xl w-full max-w-md overflow-hidden animate-zoom-in">
             <div class="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-slate-50">
-                <h4 id="category-modal-title" class="text-lg font-bold text-slate-900">Create New Category</h4>
-                <button onclick="closeCategoryModal()" class="text-slate-400 hover:text-slate-600 rounded-lg p-1 hover:bg-slate-100 transition">
+                <h4 id="category-modal-title" class="text-base font-extrabold text-slate-900">Create New Category</h4>
+                <button onclick="closeCategoryModal()" class="text-slate-400 hover:text-slate-600 rounded-lg p-1.5 hover:bg-slate-200 transition">
                     <i class="fa-solid fa-xmark text-lg"></i>
                 </button>
             </div>
@@ -640,21 +682,21 @@
 
                 <div class="space-y-1">
                     <label class="text-xs font-bold text-slate-600">Category Name</label>
-                    <input type="text" id="category-name" required class="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500" placeholder="e.g. Midjourney Styles">
+                    <input type="text" id="category-name" required class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm outline-none focus:ring-4 focus:ring-indigo-100 focus:border-indigo-500 transition" placeholder="e.g. Midjourney Styles">
                 </div>
 
                 <div class="space-y-1.5 border border-slate-200 p-4 rounded-xl bg-slate-50/50">
-                    <label class="text-xs font-bold text-slate-700 block">Category Logo (R2 Storage Bucket)</label>
+                    <label class="text-xs font-bold text-slate-700 block">Category Logo File</label>
                     <div class="flex items-center gap-4">
-                        <div class="w-14 h-14 bg-slate-200 border border-slate-300 rounded-lg overflow-hidden shrink-0 flex items-center justify-center">
+                        <div class="w-14 h-14 bg-slate-200 border border-slate-300 rounded-2xl overflow-hidden shrink-0 flex items-center justify-center">
                             <img id="category-logo-preview" src="https://placehold.co/100" class="w-full h-full object-cover">
                         </div>
-                        <input type="file" id="category-file" accept="image/*" class="text-xs w-full cursor-pointer file:mr-2 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+                        <input type="file" id="category-file" accept="image/*" class="text-xs w-full cursor-pointer file:mr-2 file:py-2 file:px-4 file:rounded-xl file:border-0 file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 transition">
                     </div>
                     <!-- Upload Progress -->
-                    <div id="category-upload-progress-container" class="hidden space-y-1">
-                        <div class="flex justify-between text-[10px] font-bold text-slate-500">
-                            <span>Uploading asset file to R2...</span>
+                    <div id="category-upload-progress-container" class="hidden space-y-1 pt-2">
+                        <div class="flex justify-between text-xs font-bold text-slate-500">
+                            <span>Processing asset payload...</span>
                             <span id="category-upload-pct">0%</span>
                         </div>
                         <div class="w-full bg-slate-200 rounded-full h-1.5">
@@ -664,7 +706,7 @@
                 </div>
 
                 <div class="flex justify-end gap-3 pt-4 border-t border-slate-100">
-                    <button type="button" onclick="closeCategoryModal()" class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-sm">Cancel</button>
+                    <button type="button" onclick="closeCategoryModal()" class="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-sm transition">Cancel</button>
                     <button type="submit" id="category-submit-btn" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-sm flex items-center gap-1.5 shadow-md shadow-indigo-600/10 active:scale-95 transition">
                         <i class="fa-solid fa-save"></i> Save Category
                     </button>
@@ -674,24 +716,24 @@
     </div>
 
 
-    <!-- MODAL: TOAST SYSTEM -->
-    <div id="toast-container" class="fixed bottom-6 right-6 z-[200] flex flex-col gap-3 max-w-sm w-full"></div>
+    <!-- TOAST CONTAINER -->
+    <div id="toast-container" class="fixed bottom-6 right-6 z-[200] flex flex-col gap-3.5 max-w-sm w-full"></div>
 
 
     <!-- MODAL: APP SETUP AND TECHNICAL GUIDE -->
     <div id="modal-config-guide" class="hidden fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
-        <div class="bg-white rounded-2xl border border-slate-200 shadow-2xl w-full max-w-2xl overflow-hidden">
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-2xl w-full max-w-2xl overflow-hidden animate-zoom-in">
             <div class="px-6 py-5 border-b border-slate-100 flex items-center justify-between bg-slate-50">
-                <h4 class="text-lg font-bold text-slate-900 flex items-center gap-2"><i class="fa-solid fa-circle-question text-indigo-500"></i> Setup configuration Guide</h4>
-                <button onclick="closeConfigGuide()" class="text-slate-400 hover:text-slate-600 rounded-lg p-1 hover:bg-slate-100 transition">
+                <h4 class="text-base font-extrabold text-slate-900 flex items-center gap-2"><i class="fa-solid fa-circle-question text-indigo-500"></i> Setup Manual & Guide</h4>
+                <button onclick="closeConfigGuide()" class="text-slate-400 hover:text-slate-600 rounded-lg p-1.5 hover:bg-slate-200 transition">
                     <i class="fa-solid fa-xmark text-lg"></i>
                 </button>
             </div>
             <div class="p-6 space-y-4 max-h-[500px] overflow-y-auto text-sm text-slate-600 leading-relaxed">
-                <p>Welcome! This SPA is designed as a direct bridge to manage your Android Prompt App. It utilizes <b>Firebase Firestore</b> (for real-time database syncing) and <b>Cloudflare R2 Bucket storage</b> via AWS S3 compatibility.</p>
+                <p>Welcome! This panel is designed to manage your dynamic Android Prompt app layout. It utilizes <b>Firebase Firestore</b> (for live synchronization) and <b>Cloudflare R2 Bucket storage API</b> (AWS S3 SDK) for media files.</p>
                 
-                <h5 class="font-bold text-slate-900 border-b border-slate-100 pb-1 mt-4">1. Setting up Cloudflare R2 (S3 Compatible API)</h5>
-                <p>Ensure you configure CORS on your Cloudflare R2 bucket to accept uploads from endpoints or local servers (e.g., allow your GitHub Pages origin URL):</p>
+                <h5 class="font-extrabold text-slate-950 border-b border-slate-100 pb-1.5 mt-4">1. CORS Policy Setup</h5>
+                <p>To let your administration panel upload files to your bucket dynamically, configure the CORS property inside your Cloudflare R2 bucket settings:</p>
                 <pre class="bg-slate-950 text-slate-300 p-4 rounded-xl font-mono text-xs overflow-x-auto">
 [
   {
@@ -702,24 +744,24 @@
   }
 ]</pre>
 
-                <h5 class="font-bold text-slate-900 border-b border-slate-100 pb-1 mt-4">2. Edit Credentials Block</h5>
-                <p>To establish dynamic connections, open this file in any text editor and fill in the credentials inside the <code class="bg-slate-100 px-1 py-0.5 rounded font-mono text-indigo-600">firebaseConfig</code> and <code class="bg-slate-100 px-1 py-0.5 rounded font-mono text-indigo-600">r2Credentials</code> constants declared at the top of the JavaScript code.</p>
+                <h5 class="font-extrabold text-slate-950 border-b border-slate-100 pb-1.5 mt-4">2. Sandbox Mode Fallback</h5>
+                <p>If you proceed without credentials, the system automatically falls back to <b>Sandbox Mode</b>. All categories, prompts, branding assets, and file uploads (saved instantly as cached Base64 local URLs!) will operate directly in your browser's persistent cache. Once you plug real keys, the system hooks up immediately!</p>
             </div>
             <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end">
-                <button onclick="closeConfigGuide()" class="px-5 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs">Got it, thanks</button>
+                <button onclick="closeConfigGuide()" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-xs transition">Got it, thanks</button>
             </div>
         </div>
     </div>
 
 
-    <!-- FIREBASE AND AWS S3 SCRIPTS -->
+    <!-- FIREBASE AND AWS S3 COMPAT SCRIPTS -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
     <script src="https://sdk.amazonaws.com/js/aws-sdk-2.1400.0.min.js"></script>
 
     <script>
         // ==========================================
-        // 4. TECHNICAL SETUP VARIABLES (PERSISTENT & DYNAMIC)
+        // DUAL ENGINE SYSTEM CONFIGURATION
         // ==========================================
         let firebaseConfig = {
             apiKey: "YOUR_FIREBASE_API_KEY",
@@ -738,11 +780,35 @@
             publicDomainUrl: "https://your-custom-subdomain-or-r2-url.com"
         };
 
-        // Initialize SDK Instances
-        let db;
-        let s3;
+        // Core Instances
+        let db = null;
+        let s3 = null;
+        let isSandboxMode = true;
 
-        // Restore connections from persistent localStorage cache if configured
+        // State Store variables
+        let prompts = [];
+        let categories = [];
+        let globalConfig = {
+            activeAd: "admob",
+            appLogoUrl: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&q=80&w=300",
+            splashScreenUrl: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&q=80&w=600",
+            settingsIconUrl: "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?auto=format&fit=crop&q=80&w=300",
+            admob_appOpenId: "ca-app-pub-3940256099942544/3419835294",
+            admob_interstitialId: "ca-app-pub-3940256099942544/1033173712",
+            admob_nativeId: "ca-app-pub-3940256099942544/2247696110",
+            admob_collapsibleBannerId: "ca-app-pub-3940256099942544/6300978111",
+            meta_interstitialId: "YOUR_META_INTERSTITIAL_ID",
+            meta_nativeId: "YOUR_META_NATIVE_ID",
+            meta_bannerId: "YOUR_META_BANNER_ID",
+            unity_gameId: "YOUR_UNITY_GAME_ID",
+            unity_interstitialId: "YOUR_UNITY_INTERSTITIAL_ID",
+            unity_bannerId: "YOUR_UNITY_BANNER_ID"
+        };
+
+        // Active layout screen navigation pointer
+        let currentView = 'dashboard';
+
+        // Restore custom credentials configurations from local cache
         function loadSavedCredentials() {
             try {
                 const storedFb = localStorage.getItem('fb_config');
@@ -754,26 +820,27 @@
                     r2Credentials = JSON.parse(storedR2);
                 }
             } catch (err) {
-                console.error("Failed to restore saved local API credentials:", err);
+                console.error("Credentials cache failed to reload accurately:", err);
             }
         }
 
         async function initializeCloudServices() {
             try {
-                // To support live credential updates: clean up any previously running instances
-                if (firebase.apps.length > 0) {
-                    await firebase.app().delete();
-                }
-
-                if (firebaseConfig.apiKey && firebaseConfig.apiKey !== "YOUR_FIREBASE_API_KEY") {
+                if (window.firebase && firebaseConfig.apiKey && firebaseConfig.apiKey !== "YOUR_FIREBASE_API_KEY" && firebaseConfig.apiKey !== "") {
+                    // Reset running apps
+                    if (firebase.apps.length > 0) {
+                        await firebase.app().delete();
+                    }
                     firebase.initializeApp(firebaseConfig);
                     db = firebase.firestore();
-                    console.log("Firebase dynamically initialized.");
+                    isSandboxMode = false;
+                    console.log("🔥 Firebase initialized dynamically.");
                 } else {
                     db = null;
+                    isSandboxMode = true;
                 }
 
-                if (r2Credentials.accessKeyId && r2Credentials.accessKeyId !== "YOUR_R2_ACCESS_KEY_ID") {
+                if (window.AWS && r2Credentials.accessKeyId && r2Credentials.accessKeyId !== "YOUR_R2_ACCESS_KEY_ID" && r2Credentials.accessKeyId !== "") {
                     AWS.config.update({
                         accessKeyId: r2Credentials.accessKeyId,
                         secretAccessKey: r2Credentials.secretAccessKey,
@@ -785,33 +852,181 @@
                         endpoint: new AWS.Endpoint(r2Credentials.endpoint),
                         useAccelerateEndpoint: false
                     });
-                    console.log("Cloudflare R2/S3 handler initialized successfully.");
+                    console.log("☁️ Cloudflare S3 R2 dynamically configured.");
                 } else {
                     s3 = null;
                 }
             } catch (error) {
-                console.warn("Credentials fail live validation check:", error);
-                showToast("Connection fail. Check your credential values.", "error");
+                console.warn("Dynamic cloud service activation failed: ", error);
+                db = null;
+                s3 = null;
+                isSandboxMode = true;
+            }
+
+            updateDatabaseDriverInterface();
+        }
+
+        // ==========================================
+        // DYNAMIC SANDBOX PLAYGROUND SEEDS
+        // ==========================================
+        const sandboxDefaultCategories = [
+            { id: "photorealistic", name: "Photorealistic Art", logoUrl: "https://images.unsplash.com/photo-1546182990-dffeafbe841d?auto=format&fit=crop&q=80&w=200" },
+            { id: "cyberpunk_anime", name: "Anime & Cyberpunk", logoUrl: "https://images.unsplash.com/photo-1540959733332-eab4deceeaf7?auto=format&fit=crop&q=80&w=200" },
+            { id: "clay_3d", name: "Claymation & 3D render", logoUrl: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=200" },
+            { id: "logo_minimal", name: "Minimal Graphic Logo", logoUrl: "https://images.unsplash.com/photo-1626785774573-4b799315345d?auto=format&fit=crop&q=80&w=200" }
+        ];
+
+        const sandboxDefaultPrompts = [
+            {
+                id: "lion_gold",
+                title: "Mythical Golden Lion Portrait",
+                category: "photorealistic",
+                promptText: "Professional studio portrait of an intensely majestic lion face sculpted out of fluid liquid gold, high contrast dramatic lighting, soft black procedural volumetric background, highly intricate details, insanely realistic gold foil texture reflections, Unreal Engine 5 render, depth of field, 8k resolution",
+                tags: "lion, gold, unreal, fantasy",
+                aspectRatio: "1:1",
+                imageUrl: "https://images.unsplash.com/photo-1546182990-dffeafbe841d?auto=format&fit=crop&q=80&w=400"
+            },
+            {
+                id: "tokyo_rain",
+                title: "Teal & Neon Cyberpunk Alleyway",
+                category: "cyberpunk_anime",
+                promptText: "Retro vintage 90s anime style, a dense futuristic skyscraper alleyway in rain-slick Tokyo, hyper detailed neon signage in kanji, reflecting neon purples and teals onto wet asphalt puddles, dynamic camera angle, nostalgic chill ambient vibes, high cinematic style",
+                tags: "cyberpunk, rain, neon, anime",
+                aspectRatio: "16:9",
+                imageUrl: "https://images.unsplash.com/photo-1540959733332-eab4deceeaf7?auto=format&fit=crop&q=80&w=400"
+            },
+            {
+                id: "astronaut_cheese",
+                title: "Adorable Clay Astronaut Character",
+                category: "clay_3d",
+                promptText: "Cute mini chibi 3D rendered astronaut boy happily sitting cross-legged on a tiny clay planet, eating a glowing slice of yellow cheese, soft pastel blue and violet backdrop, isometric camera view, soft clay shader material, key shot, pristine rendering",
+                tags: "astronaut, lunar, 3d, toy",
+                aspectRatio: "1:1",
+                imageUrl: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?auto=format&fit=crop&q=80&w=400"
+            },
+            {
+                id: "minimalist_monogram",
+                title: "Intertwined Geometry Hex Logo",
+                category: "logo_minimal",
+                promptText: "Flat clean vector logo design, geometric complex hexagon featuring intertwined lines that form a continuous minimal knot, sleek corporate luxury, matte black background, pure gold thin line art, design badge, supreme balance, vector grid layout",
+                tags: "logo, golden, hexagon, element",
+                aspectRatio: "1:1",
+                imageUrl: "https://images.unsplash.com/photo-1626785774573-4b799315345d?auto=format&fit=crop&q=80&w=400"
+            },
+            {
+                id: "sunset_muscle",
+                title: "Futuristic Synthwave Sports Car",
+                category: "cyberpunk_anime",
+                promptText: "Sleek low-profile black muscle car speeding towards a massive neon grid sunset, long sunset gradient horizons, glowing purple grid vector lines on background terrain, neon laser headlights, synthwave aesthetic, vaporwave retro cyber-futurism poster rendering",
+                tags: "retro, drive, synthwave, car",
+                aspectRatio: "16:9",
+                imageUrl: "https://images.unsplash.com/photo-1581090700227-13617d58f350?auto=format&fit=crop&q=80&w=400"
+            }
+        ];
+
+        // Set up drivers, banners and status elements
+        function updateDatabaseDriverInterface() {
+            const statusIndicator = document.getElementById('sidebar-driver-status');
+            const driverTypeLabel = document.getElementById('stat-driver-type');
+            
+            const banner = document.getElementById('connection-status-banner');
+            const bannerTitle = document.getElementById('banner-title');
+            const bannerText = document.getElementById('banner-text');
+            const bannerIconBox = document.getElementById('banner-icon-box');
+            const bannerActionBtn = document.getElementById('banner-action-btn');
+
+            if (isSandboxMode) {
+                // Sidebar status widget
+                statusIndicator.innerHTML = `
+                    <span class="w-3 h-3 bg-amber-500 rounded-full animate-pulse shrink-0"></span>
+                    <span class="text-xs font-black text-amber-405 tracking-wide">SANDBOX ACTIVE</span>
+                `;
+                // Stats Card
+                driverTypeLabel.innerHTML = `
+                    <span class="px-2 py-0.5 bg-amber-100 text-amber-800 rounded-md font-extrabold uppercase text-[10px]">LOCAL PLAYGROUND</span>
+                `;
+
+                // Main info banner
+                banner.className = "flex flex-col sm:flex-row items-start sm:items-center justify-between p-5 rounded-2xl border border-amber-100 bg-amber-50/40 fade-in text-slate-800";
+                bannerIconBox.className = "p-3 bg-amber-100 text-amber-700 rounded-2xl";
+                bannerIconBox.innerHTML = `<i class="fa-solid fa-circle-nodes text-xl"></i>`;
+                bannerTitle.textContent = "Offline Demonstration Sandbox Engine Enabled";
+                bannerText.textContent = "Your administration panel is running a fully functioning local client cache. Create, modify or discard presets cleanly. Dynamic file uploads instantly translate into Base64 URLs stored locally.";
+                bannerActionBtn.className = "px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white font-extrabold text-xs rounded-xl shadow-lg shadow-indigo-600/10 active:scale-95 transition";
+                bannerActionBtn.innerHTML = `<i class="fa-solid fa-key-skeleton"></i> Setup Database`;
+                bannerActionBtn.onclick = () => switchView('credentials');
+                banner.classList.remove('hidden');
+
+            } else {
+                // Sidebar status widget
+                statusIndicator.innerHTML = `
+                    <span class="w-3 h-3 bg-emerald-500 rounded-full animate-pulse shrink-0"></span>
+                    <span class="text-xs font-black text-emerald-400 tracking-wide">CLOUD CONNECTED</span>
+                `;
+                // Stats Card
+                driverTypeLabel.innerHTML = `
+                    <span class="px-2 py-0.5 bg-emerald-100 text-emerald-800 rounded-md font-extrabold uppercase text-[10px]">LIVE CLOUD ENGINE</span>
+                `;
+
+                // Main info banner
+                banner.className = "flex flex-col sm:flex-row items-start sm:items-center justify-between p-5 rounded-2xl border border-emerald-100 bg-emerald-50/40 fade-in text-slate-850";
+                bannerIconBox.className = "p-3 bg-emerald-100 text-emerald-700 rounded-2xl";
+                bannerIconBox.innerHTML = `<i class="fa-solid fa-cloud-arrow-up text-xl"></i>`;
+                bannerTitle.textContent = "Real-time Cloud Integration Live!";
+                bannerText.textContent = "Successfully hooked into Firebase Firestore and Cloudflare S3 endpoints. Changes, additions, and deletions made below sync dynamically to all active Android device clients.";
+                bannerActionBtn.className = "px-4 py-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-extrabold text-xs rounded-xl shadow active:scale-95 transition";
+                bannerActionBtn.innerHTML = `<i class="fa-solid fa-gear"></i> App Settings`;
+                bannerActionBtn.onclick = () => switchView('app-settings');
+                banner.classList.remove('hidden');
             }
         }
 
-        // Initialize storage and establish instances
-        loadSavedCredentials();
-        initializeCloudServices();
-
-        // State variables
-        let prompts = [];
-        let categories = [];
-        let globalConfig = {};
-
-        // Active panel layout navigation state
-        let currentView = 'dashboard';
-
-        // Listen for data instantly on startup (Real-time listener matching Android addSnapshotListener)
+        // ==========================================
+        // DYNAMIC SNAPSHOT SYNCHRONIZER
+        // ==========================================
         function subscribeToGlobalServices() {
+            if (isSandboxMode) {
+                // Initialize local sandbox database from browser Cache
+                let localPrompts = localStorage.getItem('sandbox_prompts');
+                let localCategories = localStorage.getItem('sandbox_categories');
+                let localConfig = localStorage.getItem('sandbox_global_config');
+
+                if (!localPrompts) {
+                    localStorage.setItem('sandbox_prompts', JSON.stringify(sandboxDefaultPrompts));
+                    prompts = sandboxDefaultPrompts;
+                } else {
+                    prompts = JSON.parse(localPrompts);
+                }
+
+                if (!localCategories) {
+                    localStorage.setItem('sandbox_categories', JSON.stringify(sandboxDefaultCategories));
+                    categories = sandboxDefaultCategories;
+                } else {
+                    categories = JSON.parse(localCategories);
+                }
+
+                if (!localConfig) {
+                    localStorage.setItem('sandbox_global_config', JSON.stringify(globalConfig));
+                } else {
+                    globalConfig = JSON.parse(localConfig);
+                }
+
+                // Render views cleanly
+                updateStatsCounter();
+                updateCategorySelects();
+                renderPromptsTable();
+                renderRecentPrompts();
+                renderCategoriesList();
+                renderRecentCategories();
+                updateBrandingPreviews(globalConfig);
+                fillAdsConfigurationInputs(globalConfig);
+                console.log("Sandbox database loaded beautifully.");
+                return;
+            }
+
+            // Otherwise, hook Firestore endpoints
             if (!db) return;
 
-            // Stats / live listeners
             db.collection("prompts").onSnapshot((snapshot) => {
                 prompts = [];
                 snapshot.forEach((doc) => {
@@ -821,7 +1036,7 @@
                 renderPromptsTable();
                 renderRecentPrompts();
             }, (error) => {
-                showToast("Failed to sync prompts database in real-time.", "error");
+                console.warn("Prompts real-time read subscription failed, fallback active: ", error);
             });
 
             db.collection("categories").onSnapshot((snapshot) => {
@@ -834,231 +1049,55 @@
                 renderCategoriesList();
                 renderRecentCategories();
             }, (error) => {
-                showToast("Failed to sync categories database.", "error");
+                console.warn("Categories real-time read subscription failed: ", error);
             });
 
-            db.collection("app_config").document("global").onSnapshot((doc) => {
+            db.collection("app_config").doc("global").onSnapshot((doc) => {
                 if (doc.exists) {
                     globalConfig = doc.data();
                     updateBrandingPreviews(globalConfig);
                     fillAdsConfigurationInputs(globalConfig);
                 } else {
-                    console.log("Global config document not found. Seed initializing now...");
                     initGlobalConfigDocument();
                 }
             }, (error) => {
-                showToast("Failed to read global app network configurations.", "error");
+                console.warn("App config read subscription failed: ", error);
             });
         }
 
         function initGlobalConfigDocument() {
             if (!db) return;
-            const seedConfig = {
-                activeAd: "admob",
-                appLogoUrl: "",
-                splashScreenUrl: "",
-                settingsIconUrl: "",
-                admob_appOpenId: "ca-app-pub-3940256099942544/3419835294",
-                admob_interstitialId: "ca-app-pub-3940256099942544/1033173712",
-                admob_nativeId: "ca-app-pub-3940256099942544/2247696110",
-                admob_collapsibleBannerId: "ca-app-pub-3940256099942544/6300978111",
-                meta_interstitialId: "YOUR_META_INTERSTITIAL_ID",
-                meta_nativeId: "YOUR_META_NATIVE_ID",
-                meta_bannerId: "YOUR_META_BANNER_ID",
-                unity_gameId: "YOUR_UNITY_GAME_ID",
-                unity_interstitialId: "YOUR_UNITY_INTERSTITIAL_ID",
-                unity_bannerId: "YOUR_UNITY_BANNER_ID"
-            };
-            db.collection("app_config").doc("global").set(seedConfig)
-                .then(() => showToast("Default global config primed and synced.", "success"))
-                .catch(() => showToast("Failed to seed default global config.", "error"));
+            db.collection("app_config").doc("global").set(globalConfig)
+                .then(() => console.log("Default dynamic preferences written to cloud."))
+                .catch((e) => console.error("Cloud priming fail: ", e));
         }
 
-        // ==========================================
-        // UI INTERACTIVITY & ROUTING CONTROLLER
-        // ==========================================
-        function switchView(viewId) {
-            currentView = viewId;
-            const views = ['dashboard', 'prompts', 'categories', 'app-settings', 'ad-networks', 'credentials'];
-            
-            views.forEach((v) => {
-                const el = document.getElementById(`view-${v}`);
-                if (el) el.classList.add('hidden');
-            });
-            
-            document.getElementById(`view-${viewId}`).classList.remove('hidden');
-
-            const titleMap = {
-                'dashboard': 'Dashboard Overview',
-                'prompts': 'Manage Prompts Repository',
-                'categories': 'App Categories Repository',
-                'app-settings': 'App branding & Assets Config',
-                'ad-networks': 'Monetization & Ad Networks Setup',
-                'credentials': 'Cloud Service Credentials & Connections'
-            };
-            document.getElementById('view-title').textContent = titleMap[viewId];
-
-            if (viewId === 'credentials') {
-                populateCredentialsInputs();
-            }
-
-            // Update active sidebar nav buttons styling
-            const buttons = document.querySelectorAll('.nav-btn');
-            buttons.forEach((btn) => {
-                const text = btn.innerText.toLowerCase();
-                if (text.includes(viewId.replace('-', ' ')) || 
-                    (viewId === 'app-settings' && text.includes('app settings')) || 
-                    (viewId === 'ad-networks' && text.includes('ad networks')) ||
-                    (viewId === 'credentials' && text.includes('api connection'))) {
-                    btn.className = "nav-btn w-full flex items-center gap-3.5 px-4 py-3 text-sm font-semibold rounded-xl text-indigo-400 bg-slate-800/80 transition-all";
-                } else {
-                    btn.className = "nav-btn w-full flex items-center gap-3.5 px-4 py-3 text-sm font-semibold rounded-xl text-slate-400 hover:text-slate-200 hover:bg-slate-800/40 transition-all";
-                }
-            });
-
-            // Close responsive sidebar on mobile toggle view action
-            const sidebar = document.getElementById('sidebar');
-            if (sidebar && !sidebar.classList.contains('-translate-x-full')) {
-                sidebar.classList.add('-translate-x-full');
-            }
-        }
-
-        function populateCredentialsInputs() {
-            document.getElementById('creds_firebase_apiKey').value = firebaseConfig.apiKey === "YOUR_FIREBASE_API_KEY" ? "" : firebaseConfig.apiKey;
-            document.getElementById('creds_firebase_authDomain').value = firebaseConfig.authDomain.includes("YOUR_PROJECT_ID") ? "" : firebaseConfig.authDomain;
-            document.getElementById('creds_firebase_projectId').value = firebaseConfig.projectId === "YOUR_PROJECT_ID" ? "" : firebaseConfig.projectId;
-            document.getElementById('creds_firebase_storageBucket').value = firebaseConfig.storageBucket.includes("YOUR_PROJECT_ID") ? "" : firebaseConfig.storageBucket;
-            document.getElementById('creds_firebase_messagingSenderId').value = firebaseConfig.messagingSenderId === "YOUR_MESSAGING_SENDER_ID" ? "" : firebaseConfig.messagingSenderId;
-            document.getElementById('creds_firebase_appId').value = firebaseConfig.appId === "YOUR_APP_ID" ? "" : firebaseConfig.appId;
-
-            document.getElementById('creds_r2_accessKeyId').value = r2Credentials.accessKeyId === "YOUR_R2_ACCESS_KEY_ID" ? "" : r2Credentials.accessKeyId;
-            document.getElementById('creds_r2_secretAccessKey').value = r2Credentials.secretAccessKey === "YOUR_R2_SECRET_ACCESS_KEY" ? "" : r2Credentials.secretAccessKey;
-            document.getElementById('creds_r2_endpoint').value = r2Credentials.endpoint.includes("YOUR_CLOUDFLARE_ACCOUNT_ID") ? "" : r2Credentials.endpoint;
-            document.getElementById('creds_r2_bucketName').value = r2Credentials.bucketName === "YOUR_R2_BUCKET_NAME" ? "" : r2Credentials.bucketName;
-            document.getElementById('creds_r2_publicDomainUrl').value = r2Credentials.publicDomainUrl.includes("your-custom-subdomain") ? "" : r2Credentials.publicDomainUrl;
-        }
-
-        async function saveCredentialsConfig(event) {
-            event.preventDefault();
-            
-            const fbValues = {
-                apiKey: document.getElementById('creds_firebase_apiKey').value.trim() || "YOUR_FIREBASE_API_KEY",
-                authDomain: document.getElementById('creds_firebase_authDomain').value.trim() || "YOUR_PROJECT_ID.firebaseapp.com",
-                projectId: document.getElementById('creds_firebase_projectId').value.trim() || "YOUR_PROJECT_ID",
-                storageBucket: document.getElementById('creds_firebase_storageBucket').value.trim() || "YOUR_PROJECT_ID.appspot.com",
-                messagingSenderId: document.getElementById('creds_firebase_messagingSenderId').value.trim() || "YOUR_MESSAGING_SENDER_ID",
-                appId: document.getElementById('creds_firebase_appId').value.trim() || "YOUR_APP_ID"
-            };
-
-            const r2Values = {
-                accessKeyId: document.getElementById('creds_r2_accessKeyId').value.trim() || "YOUR_R2_ACCESS_KEY_ID",
-                secretAccessKey: document.getElementById('creds_r2_secretAccessKey').value.trim() || "YOUR_R2_SECRET_ACCESS_KEY",
-                endpoint: document.getElementById('creds_r2_endpoint').value.trim() || "https://YOUR_CLOUDFLARE_ACCOUNT_ID.r2.cloudflarestorage.com",
-                bucketName: document.getElementById('creds_r2_bucketName').value.trim() || "YOUR_R2_BUCKET_NAME",
-                publicDomainUrl: document.getElementById('creds_r2_publicDomainUrl').value.trim() || "https://your-custom-subdomain-or-r2-url.com"
-            };
-
-            try {
-                localStorage.setItem('fb_config', JSON.stringify(fbValues));
-                localStorage.setItem('r2_config', JSON.stringify(r2Values));
-                
-                firebaseConfig = fbValues;
-                r2Credentials = r2Values;
-                
-                showToast("Credentials successfully saved to persistent cache!", "success");
-                
-                // Dynamically re-initialize standard SDK connections
-                await initializeCloudServices();
-                
-                if (db) {
-                    showToast("Cloud Connection live! Syncing tables...", "success");
-                    subscribeToGlobalServices();
-                    // Go to dashboard
-                    switchView('dashboard');
-                } else {
-                    showToast("Using local credentials demo mode.", "warning");
-                }
-            } catch (err) {
-                showToast(`Failed to save configuration: ${err.message}`, "error");
-            }
-        }
-
-        function toggleSidebar() {
-            const sidebar = document.getElementById('sidebar');
-            if (sidebar.classList.contains('-translate-x-full')) {
-                sidebar.classList.remove('-translate-x-full');
-            } else {
-                sidebar.classList.add('-translate-x-full');
-            }
-        }
-
-        // Update top branding and global status count states
-        function updateStatsCounter() {
-            document.getElementById('stat-prompts-count').textContent = prompts.length;
-            document.getElementById('stat-categories-count').textContent = categories.length;
-        }
-
-        // ==========================================
-        // 3. S3 ASSET CLEANUP / GARBAGE COLLECTION LOGIC
-        // ==========================================
-        async function deleteAssetFromR2(fileUrl) {
-            if (!fileUrl) return;
-            if (!s3 || !r2Credentials.bucketName) {
-                console.warn("R2 bucket credentials not found. Operation skipped.");
-                return;
-            }
-
-            try {
-                // Parse key from the URL. Example: https://your-public-domain.com/folder/filename.png -> folder/filename.png
-                let keyName = "";
-                let urlObj;
-                try {
-                    urlObj = new URL(fileUrl);
-                } catch(e) {
-                    // Try parsing as raw path substring if domain is local or custom
-                    keyName = fileUrl.substring(fileUrl.lastIndexOf('/') + 1);
-                }
-
-                if (urlObj) {
-                    const domainPrefix = r2Credentials.publicDomainUrl ? new URL(r2Credentials.publicDomainUrl).host : "";
-                    if (domainPrefix && urlObj.host === domainPrefix) {
-                        keyName = urlObj.pathname.slice(1); // removes leading '/'
-                    } else {
-                        // Extract paths directly
-                        keyName = urlObj.pathname.slice(1);
-                    }
-                }
-
-                if (!keyName) {
-                    console.warn("Could not parse a valid storage Object Key from asset URL: " + fileUrl);
-                    return;
-                }
-
-                // Decode keys having space / URL encodes %20
-                keyName = decodeURIComponent(keyName);
-
-                console.log("R2 cleanup executing for Key: " + keyName);
-                
-                const params = {
-                    Bucket: r2Credentials.bucketName,
-                    Key: keyName
-                };
-
-                await s3.deleteObject(params).promise();
-                console.log("R2 garbage collection complete. Object deleted successfully.");
-            } catch (err) {
-                console.error("Failed to delete stale asset from Cloudflare R2 bucket: ", err);
-            }
-        }
-
-        // Custom Helper to Direct Upload File to Cloudflare R2 bucket
-        function uploadAssetToR2(file, folder, progressCallback) {
+        // Helper to convert dynamic files to local Base64 URLs in sandbox mode cleanly
+        function readAsBase64(file, progressCallback) {
             return new Promise((resolve, reject) => {
-                if (!s3) {
-                    reject(new Error("Storage Client not configured. Fill in your credentials at the top of Javascript scripts array."));
-                    return;
-                }
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = (e) => reject(e);
+                reader.onprogress = (evt) => {
+                    if (evt.lengthComputable && progressCallback) {
+                        const pct = Math.round((evt.loaded / evt.total) * 100);
+                        progressCallback(pct);
+                    }
+                };
+                reader.readAsDataURL(file);
+            });
+        }
 
+        // CUSTOM STORAGE PAYLOAD UPLOADER
+        async function uploadAssetToR2(file, folder, progressCallback) {
+            if (isSandboxMode || !s3) {
+                // Return immediate base64 translation in sandbox mode! Awesome fallback!
+                showToast("Generating secure local Base64 string fallback value...", "success");
+                let base64 = await readAsBase64(file, progressCallback);
+                return base64;
+            }
+
+            return new Promise((resolve, reject) => {
                 const timestamp = Date.now();
                 const cleanName = file.name.replace(/[^a-zA-Z0-9.]/g, "_");
                 const finalFilename = `${folder}/${timestamp}_${cleanName}`;
@@ -1081,7 +1120,6 @@
                     if (err) {
                         reject(err);
                     } else {
-                        // Retrieve public URL based on either clean S3 returned location or custom R2 publicDomainPrefix
                         let publicUrl = data.Location;
                         if (r2Credentials.publicDomainUrl) {
                             const trimmedPrefix = r2Credentials.publicDomainUrl.endsWith('/') ? r2Credentials.publicDomainUrl : r2Credentials.publicDomainUrl + '/';
@@ -1093,49 +1131,80 @@
             });
         }
 
+        async function deleteAssetFromR2(fileUrl) {
+            if (isSandboxMode || !s3 || !r2Credentials.bucketName) return;
+            try {
+                let keyName = "";
+                let urlObj;
+                try {
+                    urlObj = new URL(fileUrl);
+                } catch(e) {
+                    keyName = fileUrl.substring(fileUrl.lastIndexOf('/') + 1);
+                }
+
+                if (urlObj) {
+                    keyName = urlObj.pathname.slice(1);
+                }
+
+                if (!keyName || keyName.startsWith("data:")) return; // Skip base64 arrays
+
+                keyName = decodeURIComponent(keyName);
+
+                const params = {
+                    Bucket: r2Credentials.bucketName,
+                    Key: keyName
+                };
+
+                await s3.deleteObject(params).promise();
+                console.log("Garbage collected R2 asset: " + keyName);
+            } catch (err) {
+                console.error("R2 asset clean failed: ", err);
+            }
+        }
+
         // ==========================================
-        // PROMPTS FORM & REAL-TIME CRUD CRUD ENGINE
+        // PROMPTS PRESET CRUD COMPONENT
         // ==========================================
         function renderPromptsTable() {
             const tableBody = document.getElementById('prompts-table-body');
             tableBody.innerHTML = '';
 
             if (prompts.length === 0) {
-                tableBody.innerHTML = `<tr><td colspan="5" class="py-10 text-center text-slate-400">No prompt assets found. Tap the Add button to create one.</td></tr>`;
+                tableBody.innerHTML = `<tr><td colspan="5" class="py-12 text-center text-slate-400 font-medium">No prompt assets found inside this database category.</td></tr>`;
                 return;
             }
 
             prompts.forEach((prompt) => {
                 const categoryModel = categories.find((c) => c.id === prompt.category || c.name === prompt.category);
-                const categoryNameDisplay = categoryModel ? categoryModel.name : (prompt.category || 'Uncategorized');
+                const categoryNameDisplay = categoryModel ? categoryModel.name : (prompt.category || 'Unassigned');
 
                 const tr = document.createElement('tr');
-                tr.className = 'hover:bg-slate-50/50 transition cursor-pointer';
+                tr.className = 'hover:bg-slate-50 transition border-b border-slate-100';
                 tr.innerHTML = `
-                    <td class="py-4 px-6 shrink-0">
-                        <div class="w-14 h-14 bg-slate-100 border border-slate-200 rounded-xl overflow-hidden shadow-sm">
+                    <td class="py-4 px-6">
+                        <div class="w-14 h-14 bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm flex-shrink-0">
                             <img src="${prompt.imageUrl || 'https://placehold.co/100'}" class="w-full h-full object-cover">
                         </div>
                     </td>
-                    <td class="py-4 px-6 max-w-xs">
-                        <div class="font-bold text-slate-900">${prompt.title || 'Untitled'}</div>
-                        <div class="space-y-1 mt-1.5 flex flex-wrap gap-1">
-                            ${(prompt.tags || '').split(',').map(t => t.trim() ? `<span class="inline-flex py-0.5 px-2 bg-slate-100 text-[10px] tracking-tight font-semibold text-slate-600 rounded">${t.trim()}</span>` : '').join('')}
-                            <span class="inline-flex py-0.5 px-2 bg-yellow-50 text-[10px] font-semibold text-yellow-700 rounded">${prompt.aspectRatio || '1:1'}</span>
+                    <td class="py-4 px-6">
+                        <div class="font-extrabold text-slate-900 text-sm leading-snug">${prompt.title || 'Untitled Grid Presets'}</div>
+                        <div class="flex flex-wrap gap-1.5 mt-2">
+                            ${(prompt.tags || '').split(',').map(t => t.trim() ? `<span class="inline-flex py-1 px-2.5 bg-slate-100 text-[11px] font-bold text-slate-600 rounded-lg">${t.trim()}</span>` : '').join('')}
+                            <span class="inline-flex py-1 px-2.5 bg-indigo-50 text-[11px] font-extrabold text-indigo-700 rounded-lg border border-indigo-100">${prompt.aspectRatio || '1:1'} Layout</span>
                         </div>
                     </td>
-                    <td class="py-4 px-6 text-slate-600 font-semibold text-xs leading-relaxed">
-                        <span class="px-2.5 py-1 bg-indigo-50 border border-indigo-100 text-indigo-700 rounded-lg font-bold">${categoryNameDisplay}</span>
+                    <td class="py-4 px-6 text-slate-600 font-bold text-xs leading-relaxed">
+                        <span class="px-3 py-1.5 bg-violet-50 border border-violet-100 text-violet-700 rounded-xl font-extrabold text-[11px]">${categoryNameDisplay}</span>
                     </td>
-                    <td class="py-4 px-6 max-w-[280px]">
-                        <p class="truncate text-slate-500 font-normal leading-relaxed text-xs" title="${prompt.promptText}">${prompt.promptText || 'No description text'}</p>
+                    <td class="py-4 px-6 max-w-sm">
+                        <p class="truncate text-slate-500 font-medium text-xs" title="${prompt.promptText}">${prompt.promptText || 'No prompt instructions provided.'}</p>
                     </td>
-                    <td class="py-4 px-6 text-right space-x-1.5 whitespace-nowrap">
-                        <button onclick="editPromptAction('${prompt.id}')" class="p-2 bg-slate-50 hover:bg-slate-100 text-slate-600 rounded-lg hover:text-slate-900 active:scale-95 transition" title="Modify asset details">
-                            <i class="fa-solid fa-pen-to-square"></i>
+                    <td class="py-4 px-6 text-right space-x-1 whitespace-nowrap">
+                        <button onclick="editPromptAction('${prompt.id}')" class="p-2.5 bg-white border border-slate-200 hover:bg-slate-50 text-slate-600 hover:text-slate-900 rounded-xl shadow-sm transition active:scale-95" title="Modify asset info">
+                            <i class="fa-solid fa-pen-to-square text-sm"></i>
                         </button>
-                        <button onclick="deletePromptAction('${prompt.id}')" class="p-2 bg-red-50 hover:bg-red-100 text-red-500 rounded-lg hover:text-red-700 active:scale-95 transition" title="Double delete from bucket & Firestore">
-                            <i class="fa-solid fa-trash-can"></i>
+                        <button onclick="deletePromptAction('${prompt.id}')" class="p-2.5 bg-red-50 border border-red-100 hover:bg-red-100 text-red-500 hover:text-red-700 rounded-xl shadow-sm transition active:scale-95" title="Remove preset">
+                            <i class="fa-solid fa-trash-can text-sm"></i>
                         </button>
                     </td>
                 `;
@@ -1149,7 +1218,6 @@
             const rows = document.querySelectorAll('#prompts-table-body tr');
 
             rows.forEach((row) => {
-                // Avoid messing clean standard tables having placeholder labels
                 if (row.cells.length < 5) return;
                 
                 const titleText = row.cells[1].innerText.toLowerCase();
@@ -1170,7 +1238,7 @@
         function openPromptModal() {
             document.getElementById('modal-prompt').classList.remove('hidden');
             document.getElementById('prompt-form').reset();
-            document.getElementById('prompt-modal-title').textContent = "Upload & Add New Prompt";
+            document.getElementById('prompt-modal-title').textContent = "Upload & Create New Prompt Asset";
             document.getElementById('prompt-edit-id').value = '';
             document.getElementById('prompt-existing-img-url').value = '';
             document.getElementById('prompt-img-preview').src = 'https://placehold.co/100';
@@ -1183,10 +1251,6 @@
 
         async function savePrompt(event) {
             event.preventDefault();
-            if (!db) {
-                showToast("Live cloud integrations are locked. Primed keys requested.", "error");
-                return;
-            }
 
             const id = document.getElementById('prompt-edit-id').value;
             const title = document.getElementById('prompt-title').value;
@@ -1199,20 +1263,18 @@
 
             const submitBtn = document.getElementById('prompt-submit-btn');
             submitBtn.disabled = true;
-            submitBtn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Saving...`;
+            submitBtn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Processing...`;
 
             try {
-                let finalImageUrl = existingImgUrl;
+                let finalImageUrl = existingImgUrl || "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&q=80&w=400";
 
                 if (fileInput.files.length > 0) {
-                    // Show progress loader
                     const progressContainer = document.getElementById('prompt-upload-progress-container');
                     const progressPct = document.getElementById('prompt-upload-pct');
                     const progressBar = document.getElementById('prompt-upload-bar');
                     progressContainer.classList.remove('hidden');
 
-                    // If modification includes replacing an old image file, garbage collect from Cloudflare R2 list first
-                    if (existingImgUrl) {
+                    if (existingImgUrl && !isSandboxMode) {
                         await deleteAssetFromR2(existingImgUrl);
                     }
 
@@ -1233,12 +1295,30 @@
                     imageUrl: finalImageUrl
                 };
 
-                if (id) {
-                    await db.collection("prompts").doc(id).set(data, { merge: true });
-                    showToast("Prompt asset modified and synced successfully!", "success");
+                if (isSandboxMode) {
+                    if (id) {
+                        const index = prompts.findIndex(p => p.id === id);
+                        if (index !== -1) {
+                            prompts[index] = { id: id, ...data };
+                        }
+                        showToast("Modified local sandbox prompt asset!", "success");
+                    } else {
+                        const newId = "prompt_" + Date.now();
+                        prompts.push({ id: newId, ...data });
+                        showToast("Appended new play-preset to local sandbox!", "success");
+                    }
+                    localStorage.setItem('sandbox_prompts', JSON.stringify(prompts));
+                    updateStatsCounter();
+                    renderPromptsTable();
+                    renderRecentPrompts();
                 } else {
-                    await db.collection("prompts").add(data);
-                    showToast("New prompt asset added and synced successfully!", "success");
+                    if (id) {
+                        await db.collection("prompts").doc(id).set(data, { merge: true });
+                        showToast("Prompt asset modified and synced dynamically!", "success");
+                    } else {
+                        await db.collection("prompts").add(data);
+                        showToast("Added new cloud prompt asset to database!", "success");
+                    }
                 }
 
                 closePromptModal();
@@ -1255,7 +1335,7 @@
             if (!prompt) return;
 
             openPromptModal();
-            document.getElementById('prompt-modal-title').textContent = "Modify Prompt Asset";
+            document.getElementById('prompt-modal-title').textContent = "Modify Preset Asset Details";
             document.getElementById('prompt-edit-id').value = prompt.id;
             document.getElementById('prompt-title').value = prompt.title || '';
             document.getElementById('prompt-category').value = prompt.category || '';
@@ -1270,82 +1350,61 @@
             const prompt = prompts.find(p => p.id === id);
             if (!prompt) return;
 
-            if (confirm(`Do you want to permanently delete "${prompt.title || 'this prompt'}" from Cloudflare R2 and Firebase Firestore?`)) {
+            if (confirm(`Do you wish to completely discard "${prompt.title || 'this prompt'}" from the database?`)) {
                 try {
-                    // Garbage Collection first
-                    if (prompt.imageUrl) {
-                        await deleteAssetFromR2(prompt.imageUrl);
+                    if (isSandboxMode) {
+                        prompts = prompts.filter(p => p.id !== id);
+                        localStorage.setItem('sandbox_prompts', JSON.stringify(prompts));
+                        showToast("Discarded local sandbox asset.", "success");
+                        updateStatsCounter();
+                        renderPromptsTable();
+                        renderRecentPrompts();
+                    } else {
+                        if (prompt.imageUrl) {
+                            await deleteAssetFromR2(prompt.imageUrl);
+                        }
+                        await db.collection("prompts").doc(id).delete();
+                        showToast("Prompt asset completely deleted.", "success");
                     }
-                    // Firestore delete second
-                    await db.collection("prompts").doc(id).delete();
-                    showToast("Prompt asset completely removed.", "success");
                 } catch (err) {
-                    showToast(`Failed to complete deletion action: ${err.message}`, "error");
+                    showToast(`Failed to delete asset: ${err.message}`, "error");
                 }
             }
         }
 
-        // Render mini stats dashboards
-        function renderRecentPrompts() {
-            const list = document.getElementById('recent-prompts-list');
-            list.innerHTML = '';
-            
-            const recent = prompts.slice(-4).reverse();
-            if (recent.length === 0) {
-                list.innerHTML = `<div class="py-4 text-center text-slate-400 text-xs">No records present in real-time db.</div>`;
-                return;
-            }
-
-            recent.forEach((prompt) => {
-                const item = document.createElement('div');
-                item.className = 'flex items-center justify-between py-3.5';
-                item.innerHTML = `
-                    <div class="flex items-center gap-3 min-w-0">
-                        <img src="${prompt.imageUrl || 'https://placehold.co/100'}" class="w-10 h-10 object-cover rounded-lg border border-slate-200 flex-shrink-0">
-                        <div class="min-w-0">
-                            <span class="font-bold text-slate-800 text-xs block truncate">${prompt.title || 'Untitled'}</span>
-                            <span class="text-[10px] text-slate-400">${prompt.aspectRatio || '1:1'} Layout</span>
-                        </div>
-                    </div>
-                    <span class="text-[10px] font-bold text-indigo-600 bg-indigo-50/80 px-2 py-1 rounded">Synced</span>
-                `;
-                list.appendChild(item);
-            });
-        }
-
-
         // ==========================================
-        // CATEGORIES MANAGEMENT CRUD ENGINE
+        // CATEGORIES MANAGEMENT COMPONENT
         // ==========================================
         function renderCategoriesList() {
             const grid = document.getElementById('categories-grid');
             grid.innerHTML = '';
 
             if (categories.length === 0) {
-                grid.innerHTML = `<div class="col-span-full py-12 text-center text-slate-400">No categories found. Build directories to bundle prompts.</div>`;
+                grid.innerHTML = `<div class="col-span-full py-12 text-center text-slate-400 font-medium">No available categories found. Create a category to sort prompts.</div>`;
                 return;
             }
 
             categories.forEach((cat) => {
+                const countOfAssigned = prompts.filter(p => p.category === cat.id || p.category === cat.name).length;
                 const col = document.createElement('div');
-                col.className = 'p-5 bg-white border border-slate-200/80 rounded-2xl shadow-sm space-y-4 flex flex-col justify-between hover:border-slate-300 transition-all';
+                col.className = 'p-5 bg-white border border-slate-200/80 rounded-2xl shadow-sm hover:shadow-md transition duration-200 flex flex-col justify-between hover:border-indigo-100 group';
                 col.innerHTML = `
-                    <div class="space-y-3.5">
-                        <div class="w-12 h-12 rounded-xl bg-slate-50 border border-slate-200 overflow-hidden flex items-center justify-center">
+                    <div class="space-y-4">
+                        <div class="w-14 h-14 rounded-2xl bg-slate-50 border border-slate-200 overflow-hidden flex items-center justify-center shrink-0 shadow-sm transition group-hover:scale-105 duration-200">
                             <img src="${cat.logoUrl || 'https://placehold.co/100'}" class="w-full h-full object-cover">
                         </div>
                         <div>
-                            <h4 class="font-bold text-slate-900 text-sm tracking-tight">${cat.name || 'Untitled'}</h4>
-                            <span class="text-xs text-slate-400 font-semibold font-mono">ID: ${cat.id}</span>
+                            <h4 class="font-bold text-slate-900 text-sm tracking-tight leading-snug group-hover:text-indigo-600 transition">${cat.name || 'Untitled Category'}</h4>
+                            <span class="text-[11px] text-slate-400 font-mono font-bold uppercase tracking-wider block mt-1">ID: ${cat.id}</span>
                         </div>
                     </div>
-                    <div class="flex items-center justify-between border-t border-slate-100 pt-3.5 mt-2">
-                        <span class="text-xs font-semibold text-slate-400"><i class="fa-solid fa-layer-group"></i> ${prompts.filter(p=>p.category === cat.id || p.category === cat.name).length} Prompts</span>
-                        <div class="space-x-1 whitespace-nowrap">
-                            <button onclick="editCategoryAction('${cat.id}')" class="p-2 border border-slate-100 bg-slate-50 hover:bg-slate-100 text-slate-600 hover:text-slate-900 rounded-lg transition active:scale-95">
+                    <div class="flex items-center justify-between border-t border-slate-100 pt-4 mt-5">
+                        <span class="text-xs font-bold text-slate-400"><i class="fa-solid fa-shapes text-indigo-500"></i> ${countOfAssigned} Presets</span>
+                        <div class="space-x-1 shrink-0">
+                            <button onclick="editCategoryAction('${cat.id}')" class="p-2 border border-slate-200 hover:bg-slate-50 text-slate-600 hover:text-slate-900 rounded-xl transition active:scale-95 shadow-sm" title="Modify detail">
                                 <i class="fa-solid fa-pen-to-square text-xs"></i>
                             </button>
-                            <button onclick="deleteCategoryAction('${cat.id}')" class="p-2 border border-slate-100 bg-red-50 hover:bg-red-100 text-red-500 hover:text-red-700 rounded-lg transition active:scale-95">
+                            <button onclick="deleteCategoryAction('${cat.id}')" class="p-2 border border-red-100 bg-red-50 hover:bg-red-100 text-red-500 hover:text-red-700 rounded-xl transition active:scale-95 shadow-sm" title="Discard">
                                 <i class="fa-solid fa-trash-can text-xs"></i>
                             </button>
                         </div>
@@ -1371,10 +1430,6 @@
 
         async function saveCategory(event) {
             event.preventDefault();
-            if (!db) {
-                showToast("Live database connections are restricted.", "error");
-                return;
-            }
 
             const id = document.getElementById('category-edit-id').value;
             const name = document.getElementById('category-name').value;
@@ -1383,10 +1438,10 @@
 
             const submitBtn = document.getElementById('category-submit-btn');
             submitBtn.disabled = true;
-            submitBtn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Saving...`;
+            submitBtn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Processing...`;
 
             try {
-                let finalLogoUrl = existingLogoUrl;
+                let finalLogoUrl = existingLogoUrl || "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&q=80&w=200";
 
                 if (fileInput.files.length > 0) {
                     const progressContainer = document.getElementById('category-upload-progress-container');
@@ -1394,7 +1449,7 @@
                     const progressBar = document.getElementById('category-upload-bar');
                     progressContainer.classList.remove('hidden');
 
-                    if (existingLogoUrl) {
+                    if (existingLogoUrl && !isSandboxMode) {
                         await deleteAssetFromR2(existingLogoUrl);
                     }
 
@@ -1406,17 +1461,35 @@
                     progressContainer.classList.add('hidden');
                 }
 
+                const catId = id ? id : name.toLowerCase().trim().replace(/[^a-z0-9]/g, "_");
                 const data = {
                     name: name,
                     logoUrl: finalLogoUrl
                 };
 
-                if (id) {
-                    await db.collection("categories").doc(id).set(data, { merge: true });
-                    showToast("Category directory modified successfully!", "success");
+                if (isSandboxMode) {
+                    if (id) {
+                        const index = categories.findIndex(c => c.id === id);
+                        if (index !== -1) {
+                            categories[index] = { id: id, ...data };
+                        }
+                        showToast("Modified local sandbox category information!", "success");
+                    } else {
+                        // Check unique
+                        if (categories.some(c => c.id === catId)) {
+                            throw new Error("A folder category with this derived ID already exists.");
+                        }
+                        categories.push({ id: catId, ...data });
+                        showToast("Created new sandbox category folder!", "success");
+                    }
+                    localStorage.setItem('sandbox_categories', JSON.stringify(categories));
+                    updateStatsCounter();
+                    updateCategorySelects();
+                    renderCategoriesList();
+                    renderRecentCategories();
                 } else {
-                    await db.collection("categories").add(data);
-                    showToast("New category folder compiled and live!", "success");
+                    await db.collection("categories").doc(catId).set(data, { merge: true });
+                    showToast("Dynamic Category set and synced dynamically!", "success");
                 }
 
                 closeCategoryModal();
@@ -1433,7 +1506,7 @@
             if (!cat) return;
 
             openCategoryModal();
-            document.getElementById('category-modal-title').textContent = "Modify Category Directory";
+            document.getElementById('category-modal-title').textContent = "Modify Category Metadata";
             document.getElementById('category-edit-id').value = cat.id;
             document.getElementById('category-name').value = cat.name || '';
             document.getElementById('category-existing-logo-url').value = cat.logoUrl || '';
@@ -1444,66 +1517,110 @@
             const cat = categories.find(c => c.id === id);
             if (!cat) return;
 
-            if (confirm(`Are you certain you wish to delete the category "${cat.name || 'this segment'}"? If yes, it will clear corresponding resources from Cloudflare R2 and Firestore!`)) {
+            if (confirm(`Do you wish to completely delete the category "${cat.name || 'this category'}"? Proximity tags in assigned prompts may unlink.`)) {
                 try {
-                    if (cat.logoUrl) {
-                        await deleteAssetFromR2(cat.logoUrl);
+                    if (isSandboxMode) {
+                        categories = categories.filter(c => c.id !== id);
+                        localStorage.setItem('sandbox_categories', JSON.stringify(categories));
+                        showToast("Discarded local sandbox category.", "success");
+                        updateStatsCounter();
+                        updateCategorySelects();
+                        renderCategoriesList();
+                        renderRecentCategories();
+                    } else {
+                        if (cat.logoUrl) {
+                            await deleteAssetFromR2(cat.logoUrl);
+                        }
+                        await db.collection("categories").doc(id).delete();
+                        showToast("Category completely discarded.", "success");
                     }
-                    await db.collection("categories").doc(id).delete();
-                    showToast("Category folder deleted.", "success");
                 } catch (err) {
-                    showToast(`Operation error: ${err.message}`, "error");
+                    showToast(`Failed to discard category: ${err.message}`, "error");
                 }
             }
         }
 
-        // Render sidebar panels lists
+
+        // ==========================================
+        // MINI COMPONENT RENDERING ROUTINES
+        // ==========================================
+        function renderRecentPrompts() {
+            const list = document.getElementById('recent-prompts-list');
+            list.innerHTML = '';
+            
+            const recent = prompts.slice(-4).reverse();
+            if (recent.length === 0) {
+                list.innerHTML = `<div class="py-12 text-center text-slate-400 text-xs font-semibold">No presets listed.</div>`;
+                return;
+            }
+
+            recent.forEach((prompt) => {
+                const item = document.createElement('div');
+                item.className = 'flex items-center justify-between py-3.5 hover:bg-slate-50 px-2 rounded-xl transition duration-150';
+                item.innerHTML = `
+                    <div class="flex items-center gap-3.5 min-w-0">
+                        <img src="${prompt.imageUrl || 'https://placehold.co/100'}" class="w-10 h-10 object-cover rounded-xl border border-slate-200/80 shadow-sm flex-shrink-0">
+                        <div class="min-w-0">
+                            <span class="font-extrabold text-slate-900 text-xs block truncate">${prompt.title || 'Untitled'}</span>
+                            <span class="text-[11px] text-slate-400 font-medium block mt-0.5">${prompt.aspectRatio || '1:1'} Format Preset</span>
+                        </div>
+                    </div>
+                    <span class="text-[10px] font-extrabold text-indigo-700 bg-indigo-50 border border-indigo-100 px-2.5 py-1 rounded-lg shrink-0">Synced</span>
+                `;
+                list.appendChild(item);
+            });
+        }
+
         function renderRecentCategories() {
             const list = document.getElementById('recent-categories-list');
             list.innerHTML = '';
 
             const recent = categories.slice(-4).reverse();
             if (recent.length === 0) {
-                list.innerHTML = `<div class="py-4 text-center text-slate-400 text-xs">No directories created.</div>`;
+                list.innerHTML = `<div class="py-12 text-center text-slate-400 text-xs font-semibold">No category index.</div>`;
                 return;
             }
 
             recent.forEach((cat) => {
                 const item = document.createElement('div');
-                item.className = 'flex items-center justify-between py-3.5';
+                item.className = 'flex items-center justify-between py-3.5 hover:bg-slate-50 px-2 rounded-xl transition duration-150';
                 item.innerHTML = `
-                    <div class="flex items-center gap-2">
-                        <img src="${cat.logoUrl || 'https://placehold.co/100'}" class="w-8 h-8 rounded-lg object-cover flex-shrink-0">
-                        <span class="font-bold text-slate-800 text-xs">${cat.name || 'Untitled'}</span>
+                    <div class="flex items-center gap-3.5 min-w-0">
+                        <img src="${cat.logoUrl || 'https://placehold.co/100'}" class="w-10 h-10 object-cover rounded-xl border border-slate-200/80 shadow-sm flex-shrink-0">
+                        <div class="min-w-0">
+                            <span class="font-extrabold text-slate-900 text-xs block truncate">${cat.name || 'Untitled'}</span>
+                            <span class="text-[11px] text-slate-350 font-mono font-bold block mt-0.5">${cat.id.toUpperCase()}</span>
+                        </div>
                     </div>
-                    <span class="text-[9px] font-bold text-indigo-500 bg-slate-100 px-2 py-0.5 rounded-full">${prompts.filter(p=>p.category === cat.id || p.category === cat.name).length} Prompts</span>
+                    <span class="text-[10px] font-extrabold text-violet-700 bg-violet-50 border border-violet-100 px-2.5 py-1 rounded-lg shrink-0">Active</span>
                 `;
                 list.appendChild(item);
             });
         }
 
-        // Sync and fill select elements
+        // Keep dropdown controls in sync with active categories lists
         function updateCategorySelects() {
-            const filterEl = document.getElementById('prompt-category-filter');
-            const formEl = document.getElementById('prompt-category');
-            
-            const prevFilterVal = filterEl.value;
-            const prevFormVal = formEl.value;
+            const filters = ['prompt-category-filter', 'prompt-category'];
+            filters.forEach((id) => {
+                const el = document.getElementById(id);
+                if (!el) return;
+                
+                const val = el.value;
+                el.innerHTML = (id === 'prompt-category-filter') ? `<option value="">All Categories</option>` : `<option value="">Select Target Category</option>`;
+                
+                categories.forEach((c) => {
+                    const opt = document.createElement('option');
+                    opt.value = c.id;
+                    opt.text = c.name;
+                    el.appendChild(opt);
+                });
 
-            filterEl.innerHTML = `<option value="">All Categories</option>`;
-            formEl.innerHTML = `<option value="">Select a category</option>`;
-
-            categories.forEach((cat) => {
-                filterEl.innerHTML += `<option value="${cat.name}">${cat.name}</option>`;
-                formEl.innerHTML += `<option value="${cat.id}">${cat.name}</option>`;
+                el.value = val;
             });
-
-            filterEl.value = prevFilterVal;
-            formEl.value = prevFormVal;
         }
 
         // ==========================================
-        // C) APP BRANDING & APP ASSETS MANAGEMENT
+        // APP SETUP & ASSETS MONETIZATION PRESETS
         // ==========================================
         function updateBrandingPreviews(config) {
             document.getElementById('preview-app-logo').src = config.appLogoUrl || 'https://placehold.co/100';
@@ -1513,98 +1630,96 @@
 
         async function saveBrandingAssets(event) {
             event.preventDefault();
-            if (!db) {
-                showToast("Operation blocked. Establish database parameters.", "error");
-                return;
-            }
 
             const btn = document.getElementById('btn-save-branding');
             btn.disabled = true;
-            btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Triggering Uploads...`;
+            btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Syncing...`;
 
             try {
                 let assetsToUpdate = {};
 
-                // 1. Process App Logo Upload
-                const appLogoFile = document.getElementById('input-app-logo').files[0];
-                if (appLogoFile) {
-                    const progressBarEl = document.getElementById('progress-app-logo');
-                    progressBarEl.classList.remove('hidden');
-                    const bar = progressBarEl.querySelector('div');
+                // 1. App Logo File
+                const logoFile = document.getElementById('input-app-logo').files[0];
+                if (logoFile) {
+                    const progress = document.getElementById('progress-app-logo');
+                    progress.classList.remove('hidden');
+                    const bar = progress.querySelector('div');
 
-                    if (globalConfig.appLogoUrl) {
+                    if (globalConfig.appLogoUrl && !isSandboxMode) {
                         await deleteAssetFromR2(globalConfig.appLogoUrl);
                     }
-                    const url = await uploadAssetToR2(appLogoFile, 'brand', (pct) => {
+                    const url = await uploadAssetToR2(logoFile, 'brand', (pct) => {
                         bar.style.width = `${pct}%`;
                     });
                     assetsToUpdate.appLogoUrl = url;
-                    progressBarEl.classList.add('hidden');
+                    progress.classList.add('hidden');
                 }
 
-                // 2. Process Splash Logo Upload
+                // 2. Splash hero payload file
                 const splashFile = document.getElementById('input-splash-logo').files[0];
                 if (splashFile) {
-                    const progressBarEl = document.getElementById('progress-splash-logo');
-                    progressBarEl.classList.remove('hidden');
-                    const bar = progressBarEl.querySelector('div');
+                    const progress = document.getElementById('progress-splash-logo');
+                    progress.classList.remove('hidden');
+                    const bar = progress.querySelector('div');
 
-                    if (globalConfig.splashScreenUrl) {
+                    if (globalConfig.splashScreenUrl && !isSandboxMode) {
                         await deleteAssetFromR2(globalConfig.splashScreenUrl);
                     }
                     const url = await uploadAssetToR2(splashFile, 'brand', (pct) => {
                         bar.style.width = `${pct}%`;
                     });
                     assetsToUpdate.splashScreenUrl = url;
-                    progressBarEl.classList.add('hidden');
+                    progress.classList.add('hidden');
                 }
 
-                // 3. Process Settings Icon Upload
+                // 3. Settings UI icon payload
                 const settingsFile = document.getElementById('input-settings-icon').files[0];
                 if (settingsFile) {
-                    const progressBarEl = document.getElementById('progress-settings-icon');
-                    progressBarEl.classList.remove('hidden');
-                    const bar = progressBarEl.querySelector('div');
+                    const progress = document.getElementById('progress-settings-icon');
+                    progress.classList.remove('hidden');
+                    const bar = progress.querySelector('div');
 
-                    if (globalConfig.settingsIconUrl) {
+                    if (globalConfig.settingsIconUrl && !isSandboxMode) {
                         await deleteAssetFromR2(globalConfig.settingsIconUrl);
                     }
                     const url = await uploadAssetToR2(settingsFile, 'brand', (pct) => {
                         bar.style.width = `${pct}%`;
                     });
                     assetsToUpdate.settingsIconUrl = url;
-                    progressBarEl.classList.add('hidden');
+                    progress.classList.add('hidden');
                 }
 
                 if (Object.keys(assetsToUpdate).length > 0) {
-                    await db.collection("app_config").doc("global").set(assetsToUpdate, { merge: true });
-                    showToast("Brand assets synced to client endpoints instantly!", "success");
-                    // Clear inputs files
+                    globalConfig = { ...globalConfig, ...assetsToUpdate };
+                    
+                    if (isSandboxMode) {
+                        localStorage.setItem('sandbox_global_config', JSON.stringify(globalConfig));
+                        showToast("Saved local sandbox branding assets!", "success");
+                    } else {
+                        await db.collection("app_config").doc("global").set(assetsToUpdate, { merge: true });
+                        showToast("Brand assets successfully synced to dynamic cloud!", "success");
+                    }
+
+                    updateBrandingPreviews(globalConfig);
+                    // Reset fields
                     document.getElementById('input-app-logo').value = '';
                     document.getElementById('input-splash-logo').value = '';
                     document.getElementById('input-settings-icon').value = '';
                 } else {
-                    showToast("Select files to upload and sync.", "warning");
+                    showToast("Please choose asset media files to upload first.", "warning");
                 }
             } catch (err) {
-                showToast(`Asset upload failed: ${err.message}`, "error");
+                showToast(`Dynamic payload transfer error: ${err.message}`, "error");
             } finally {
                 btn.disabled = false;
                 btn.innerHTML = `<i class="fa-solid fa-cloud-arrow-up"></i> Upload & Sync branding Assets`;
             }
         }
 
-
-        // ==========================================
-        // E) MULTI-NETWORK MONETIZATION PANEL
-        // ==========================================
         function fillAdsConfigurationInputs(config) {
-            // Fill header status badge
-            document.getElementById('header-active-ad').textContent = config.activeAd || 'unknown';
-            document.getElementById('stat-active-ad').textContent = config.activeAd || 'None';
-            document.getElementById('ad-badge').classList.remove('hidden');
+            document.getElementById('header-active-ad').textContent = config.activeAd || 'admob';
+            document.getElementById('stat-active-ad').textContent = config.activeAd || 'admob';
 
-            // Select matching global ad switcher radio check
             const radios = document.getElementsByName('activeAd');
             for (let radio of radios) {
                 if (radio.value === config.activeAd) {
@@ -1612,18 +1727,16 @@
                 }
             }
 
-            // Fill AdMob elements
+            // Injects values
             document.getElementById('admob_appOpenId').value = config.admob_appOpenId || '';
             document.getElementById('admob_interstitialId').value = config.admob_interstitialId || '';
             document.getElementById('admob_nativeId').value = config.admob_nativeId || '';
             document.getElementById('admob_collapsibleBannerId').value = config.admob_collapsibleBannerId || '';
 
-            // Fill Meta elements
             document.getElementById('meta_interstitialId').value = config.meta_interstitialId || '';
             document.getElementById('meta_nativeId').value = config.meta_nativeId || '';
             document.getElementById('meta_bannerId').value = config.meta_bannerId || '';
 
-            // Fill Unity elements
             document.getElementById('unity_gameId').value = config.unity_gameId || '';
             document.getElementById('unity_interstitialId').value = config.unity_interstitialId || '';
             document.getElementById('unity_bannerId').value = config.unity_bannerId || '';
@@ -1631,22 +1744,15 @@
 
         async function saveAdsConfig(event) {
             event.preventDefault();
-            if (!db) {
-                showToast("Real-time syncing unavailable.", "error");
-                return;
-            }
 
             try {
-                // Determine checked value active network
-                const activeAdRadios = document.getElementsByName('activeAd');
+                const radios = document.getElementsByName('activeAd');
                 let activeAdValue = 'admob';
-                for (let radio of activeAdRadios) {
-                    if (radio.checked) {
-                        activeAdValue = radio.value;
-                    }
+                for (let r of radios) {
+                    if (r.checked) activeAdValue = r.value;
                 }
 
-                const updateObj = {
+                const dataObj = {
                     activeAd: activeAdValue,
                     admob_appOpenId: document.getElementById('admob_appOpenId').value,
                     admob_interstitialId: document.getElementById('admob_interstitialId').value,
@@ -1660,60 +1766,183 @@
                     unity_bannerId: document.getElementById('unity_bannerId').value
                 };
 
-                await db.collection("app_config").doc("global").set(updateObj, { merge: true });
-                showToast("Ad placement settings completely synced. Live update sent!", "success");
+                globalConfig = { ...globalConfig, ...dataObj };
+
+                if (isSandboxMode) {
+                    localStorage.setItem('sandbox_global_config', JSON.stringify(globalConfig));
+                    showToast("Saved local sandbox monetization configuration!", "success");
+                } else {
+                    await db.collection("app_config").doc("global").set(dataObj, { merge: true });
+                    showToast("Dynamic Ad preferences successfully synced online!", "success");
+                }
+
+                document.getElementById('header-active-ad').textContent = activeAdValue;
+                document.getElementById('stat-active-ad').textContent = activeAdValue;
+
             } catch (err) {
-                showToast(`Sync error: ${err.message}`, "error");
+                showToast(`Unable to save: ${err.message}`, "error");
             }
         }
 
+        // ==========================================
+        // CREDENTIALS CONFIGURATION DISCOVERY SWITCH
+        // ==========================================
+        async function saveCredentialsConfig(event) {
+            event.preventDefault();
+
+            const fbValues = {
+                apiKey: document.getElementById('creds_firebase_apiKey').value.trim() || "YOUR_FIREBASE_API_KEY",
+                authDomain: document.getElementById('creds_firebase_authDomain').value.trim() || "YOUR_PROJECT_ID.firebaseapp.com",
+                projectId: document.getElementById('creds_firebase_projectId').value.trim() || "YOUR_PROJECT_ID",
+                storageBucket: document.getElementById('creds_firebase_storageBucket').value.trim() || "YOUR_PROJECT_ID.appspot.com",
+                messagingSenderId: document.getElementById('creds_firebase_messagingSenderId').value.trim() || "YOUR_MESSAGING_SENDER_ID",
+                appId: document.getElementById('creds_firebase_appId').value.trim() || "YOUR_APP_ID"
+            };
+
+            const r2Values = {
+                accessKeyId: document.getElementById('creds_r2_accessKeyId').value.trim() || "YOUR_R2_ACCESS_KEY_ID",
+                secretAccessKey: document.getElementById('creds_r2_secretAccessKey').value.trim() || "YOUR_R2_SECRET_ACCESS_KEY",
+                endpoint: document.getElementById('creds_r2_endpoint').value.trim() || "https://YOUR_CLOUDFLARE_ACCOUNT_ID.r2.cloudflarestorage.com",
+                bucketName: document.getElementById('creds_r2_bucketName').value.trim() || "YOUR_R2_BUCKET_NAME",
+                publicDomainUrl: document.getElementById('creds_r2_publicDomainUrl').value.trim() || "https://your-custom-subdomain-or-r2-url.com"
+            };
+
+            try {
+                localStorage.setItem('fb_config', JSON.stringify(fbValues));
+                localStorage.setItem('r2_config', JSON.stringify(r2Values));
+                
+                firebaseConfig = fbValues;
+                r2Credentials = r2Values;
+
+                showToast("System configurations saved securely to cache!", "success");
+
+                // Trigger reload transition
+                await initializeCloudServices();
+                subscribeToGlobalServices();
+
+                // Swap views on success
+                switchView('dashboard');
+            } catch (err) {
+                showToast(`Dynamic swappable connection failed: ${err.message}`, "error");
+            }
+        }
+
+        function populateCredentialsInputs() {
+            document.getElementById('creds_firebase_apiKey').value = firebaseConfig.apiKey === "YOUR_FIREBASE_API_KEY" ? "" : firebaseConfig.apiKey;
+            document.getElementById('creds_firebase_authDomain').value = firebaseConfig.authDomain.includes("YOUR_PROJECT_ID") ? "" : firebaseConfig.authDomain;
+            document.getElementById('creds_firebase_projectId').value = firebaseConfig.projectId === "YOUR_PROJECT_ID" ? "" : firebaseConfig.projectId;
+            document.getElementById('creds_firebase_storageBucket').value = firebaseConfig.storageBucket.includes("YOUR_PROJECT_ID") ? "" : firebaseConfig.storageBucket;
+            document.getElementById('creds_firebase_messagingSenderId').value = firebaseConfig.messagingSenderId === "YOUR_MESSAGING_SENDER_ID" ? "" : firebaseConfig.messagingSenderId;
+            document.getElementById('creds_firebase_appId').value = firebaseConfig.appId === "YOUR_APP_ID" ? "" : firebaseConfig.appId;
+
+            document.getElementById('creds_r2_accessKeyId').value = r2Credentials.accessKeyId === "YOUR_R2_ACCESS_KEY_ID" ? "" : r2Credentials.accessKeyId;
+            document.getElementById('creds_r2_secretAccessKey').value = r2Credentials.secretAccessKey === "YOUR_R2_SECRET_ACCESS_KEY" ? "" : r2Credentials.secretAccessKey;
+            document.getElementById('creds_r2_endpoint').value = r2Credentials.endpoint.includes("YOUR_CLOUDFLARE_ACCOUNT_ID") ? "" : r2Credentials.endpoint;
+            document.getElementById('creds_r2_bucketName').value = r2Credentials.bucketName === "YOUR_R2_BUCKET_NAME" ? "" : r2Credentials.bucketName;
+            document.getElementById('creds_r2_publicDomainUrl').value = r2Credentials.publicDomainUrl.includes("your-custom-subdomain") ? "" : r2Credentials.publicDomainUrl;
+        }
 
         // ==========================================
-        // DYNAMIC FEEDBACK SYSTEM TOAST
+        // UI AND VISUAL FEEDBACK UTILITIES
         // ==========================================
+        function switchView(viewId) {
+            currentView = viewId;
+            const views = ['dashboard', 'prompts', 'categories', 'app-settings', 'ad-networks', 'credentials'];
+            
+            views.forEach((v) => {
+                const el = document.getElementById(`view-${v}`);
+                if (el) el.classList.add('hidden');
+            });
+
+            const targetViewEl = document.getElementById(`view-${viewId}`);
+            if (targetViewEl) targetViewEl.classList.remove('hidden');
+
+            const titleMap = {
+                'dashboard': 'Control Center Dashboard',
+                'prompts': 'Manage Prompts Repository',
+                'categories': 'App Categories Repository',
+                'app-settings': 'Branding Assets Configuration',
+                'ad-networks': 'Monetization & Ad Placements',
+                'credentials': 'Dynamic API Credentials'
+            };
+            document.getElementById('view-title').textContent = titleMap[viewId] || 'Dashboard overview';
+
+            if (viewId === 'credentials') {
+                populateCredentialsInputs();
+            }
+
+            // Sync menu select lists
+            const buttons = document.querySelectorAll('.nav-btn');
+            buttons.forEach((btn) => {
+                // Find span child
+                const txt = btn.querySelector('span').textContent.toLowerCase();
+                if (txt.includes(viewId.replace('-', ' ')) ||
+                    (viewId === 'app-settings' && txt.includes('app settings')) ||
+                    (viewId === 'ad-networks' && txt.includes('ad networks')) ||
+                    (viewId === 'credentials' && txt.includes('api connection'))
+                ) {
+                    btn.className = "nav-btn w-full flex items-center gap-3 px-4 py-3 text-sm font-bold rounded-xl text-indigo-400 bg-slate-950 transition-all shadow-inner border-l-4 border-indigo-500";
+                } else {
+                    btn.className = "nav-btn w-full flex items-center gap-3 px-4 py-3 text-sm font-semibold rounded-xl text-slate-400 hover:text-slate-100 hover:bg-slate-800/40 transition-all border-l-4 border-transparent";
+                }
+            });
+
+            // Auto toggle responsive sidebar on mobile view selection
+            const sidebar = document.getElementById('sidebar');
+            if (sidebar && !sidebar.classList.contains('-translate-x-full')) {
+                sidebar.classList.add('-translate-x-full');
+            }
+        }
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            if (sidebar.classList.contains('-translate-x-full')) {
+                sidebar.classList.remove('-translate-x-full');
+            } else {
+                sidebar.classList.add('-translate-x-full');
+            }
+        }
+
+        function updateStatsCounter() {
+            document.getElementById('stat-prompts-count').textContent = prompts.length;
+            document.getElementById('stat-categories-count').textContent = categories.length;
+        }
+
         function showToast(message, type = 'success') {
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
-            
-            toast.className = `p-4 flex items-center gap-3.5 rounded-2xl border shadow-xl bg-white transition-all transform translate-y-2 opacity-0 duration-300 ${
+            toast.className = `p-4 flex items-center gap-3.5 rounded-2xl border shadow-xl bg-white transition-all transform translate-y-3 opacity-0 duration-350 ${
                 type === 'success' ? 'border-emerald-100 text-slate-800' : 'border-red-100 text-slate-800'
             }`;
 
             const icon = type === 'success' ? 
-                `<span class="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-500 shrink-0 flex items-center justify-center"><i class="fa-solid fa-circle-check"></i></span>` : 
-                `<span class="w-8 h-8 rounded-xl bg-red-50 text-red-500 shrink-0 flex items-center justify-center"><i class="fa-solid fa-triangle-exclamation"></i></span>`;
+                `<span class="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-500 shrink-0 flex items-center justify-center text-sm"><i class="fa-solid fa-circle-check"></i></span>` : 
+                `<span class="w-8 h-8 rounded-xl bg-red-50 text-red-500 shrink-0 flex items-center justify-center text-sm"><i class="fa-solid fa-triangle-exclamation"></i></span>`;
 
             toast.innerHTML = `
                 ${icon}
-                <div class="flex-1 text-xs font-bold leading-normal">${message}</div>
+                <div class="flex-1 text-xs font-bold leading-relaxed">${message}</div>
                 <button class="text-slate-400 hover:text-slate-600 focus:outline-none transition"><i class="fa-solid fa-xmark text-sm"></i></button>
             `;
 
             container.appendChild(toast);
 
-            // Trigger animation
             setTimeout(() => {
-                toast.classList.remove('translate-y-2', 'opacity-0');
-            }, 10);
+                toast.classList.remove('translate-y-3', 'opacity-0');
+            }, 20);
 
-            // Handler dismiss cross tap
-            toast.querySelector('button').addEventListener('click', () => {
-                dismissToast(toast);
-            });
-
-            // Auto dismiss duration
-            setTimeout(() => {
-                dismissToast(toast);
-            }, 5000);
+            // Close listeners
+            toast.querySelector('button').addEventListener('click', () => dismissToast(toast));
+            setTimeout(() => dismissToast(toast), 4500);
         }
 
         function dismissToast(toast) {
-            toast.classList.add('translate-y-2', 'opacity-0');
+            toast.classList.add('translate-y-3', 'opacity-0');
             setTimeout(() => {
                 if (toast.parentNode) {
                     toast.parentNode.removeChild(toast);
                 }
-            }, 300);
+            }, 350);
         }
 
         function openConfigGuide() {
@@ -1724,7 +1953,7 @@
             document.getElementById('modal-config-guide').classList.add('hidden');
         }
 
-        // Live preview trigger file lists selection changes
+        // Live file selection preview bindings
         document.getElementById('prompt-file').addEventListener('change', function() {
             const preview = document.getElementById('prompt-img-preview');
             const file = this.files[0];
@@ -1741,16 +1970,15 @@
             }
         });
 
-
-        // Initialize services
-        subscribeToGlobalServices();
-
-        // Boot instructions check
-        setTimeout(() => {
-            if (firebaseConfig.apiKey === "YOUR_FIREBASE_API_KEY") {
-                showToast("Welcome! Please populate your personal S3/R2 credentials and Firebase configs inside the file scripts to unlock live connections.", "success");
-            }
-        }, 1500);
+        // Initialize dynamic sequences
+        (async () => {
+            loadSavedCredentials();
+            await initializeCloudServices();
+            subscribeToGlobalServices();
+            
+            // Highlight active navigation tab initially 
+            switchView('dashboard');
+        })();
 
     </script>
 </body>
