@@ -672,8 +672,11 @@
                     </div>
                 </div>
 
-                <div class="pt-4 mt-auto">
-                    <button type="submit" id="prompt-submit-btn" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-3.5 rounded-xl shadow-lg transition active:scale-95 flex justify-center items-center gap-2">
+                <div class="pt-4 mt-auto flex gap-3">
+                    <button type="button" id="prompt-delete-btn" onclick="deletePromptFromModal()" class="hidden bg-red-100 hover:bg-red-200 text-red-600 font-bold py-3 px-4 rounded-xl shadow-sm transition active:scale-95 flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-trash text-lg"></i>
+                    </button>
+                    <button type="submit" id="prompt-submit-btn" class="flex-1 bg-slate-800 hover:bg-slate-900 text-white font-bold py-3.5 rounded-xl shadow-lg transition active:scale-95 flex justify-center items-center gap-2">
                         <i class="fa-solid fa-paper-plane"></i> Publish Prompt Data
                     </button>
                 </div>
@@ -1182,6 +1185,7 @@
             document.getElementById('prompt-url').value = '';
             document.getElementById('prompt-is-premium').checked = false;
             document.getElementById('prompt-img-preview').src = 'https://placehold.co/100';
+            document.getElementById('prompt-delete-btn').classList.add('hidden');
             openModal('modal-prompt');
         }
 
@@ -1196,6 +1200,7 @@
             document.getElementById('prompt-url').value = prompt.imageUrl || '';
             document.getElementById('prompt-is-premium').checked = !!prompt.isPremium;
             document.getElementById('prompt-img-preview').src = prompt.imageUrl || 'https://placehold.co/100';
+            document.getElementById('prompt-delete-btn').classList.remove('hidden');
             openModal('modal-prompt');
         }
 
@@ -1251,6 +1256,14 @@
 
         function deletePrompt(id) {
             confirmDelete(id, "prompts", "Discard this Prompt forever? This action cannot be undone.");
+        }
+
+        function deletePromptFromModal() {
+            const id = document.getElementById('prompt-edit-id').value;
+            if (id) {
+                closeModal('modal-prompt');
+                deletePrompt(id);
+            }
         }
 
         /* ======================== 
