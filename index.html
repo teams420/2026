@@ -327,7 +327,7 @@
                                 <h3 class="text-sm font-bold text-slate-800 uppercase tracking-widest mb-4 flex items-center gap-2">
                                     <i class="fa-solid fa-bullhorn text-brand-500"></i> Advertisement Networks
                                 </h3>
-                                <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                                <div class="grid grid-cols-1 md:grid-cols-5 gap-6">
                                     <div class="space-y-2">
                                         <label class="text-xs font-bold text-slate-600 block">Global Default Network</label>
                                         <select id="setting-activeAd" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm focus:border-brand-500 outline-none">
@@ -364,6 +364,15 @@
                                             <option value="none">Turn Off</option>
                                         </select>
                                     </div>
+                                    <div class="space-y-2">
+                                        <label class="text-xs font-bold text-slate-600 block">Reward Ad Network</label>
+                                        <select id="setting-rewardedNetwork" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm focus:border-brand-500 outline-none">
+                                            <option value="admob">Google AdMob</option>
+                                            <option value="meta">Meta Audience Network</option>
+                                            <option value="unity">Unity Ads</option>
+                                            <option value="none">Turn Off</option>
+                                        </select>
+                                    </div>
                                 </div>
                             </div>
                             <!-- AdMob specific section -->
@@ -387,6 +396,10 @@
                                     <div class="space-y-2">
                                         <label class="text-xs font-bold text-slate-600 block">Banner ID</label>
                                         <input type="text" id="setting-admobBannerId" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:border-brand-500 outline-none" placeholder="YOUR_PLACEMENT_ID">
+                                    </div>
+                                    <div class="space-y-2">
+                                        <label class="text-xs font-bold text-slate-600 block">Reward Ad ID</label>
+                                        <input type="text" id="setting-admobRewardedId" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:border-brand-500 outline-none" placeholder="YOUR_REWARDED_ID">
                                     </div>
                                 </div>
                             </div>
@@ -413,6 +426,10 @@
                                         <label class="text-xs font-bold text-slate-600 block">Banner ID</label>
                                         <input type="text" id="setting-metaBannerId" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:border-brand-500 outline-none" placeholder="YOUR_PLACEMENT_ID">
                                     </div>
+                                    <div class="space-y-2">
+                                        <label class="text-xs font-bold text-slate-600 block">Reward Ad ID</label>
+                                        <input type="text" id="setting-metaRewardedId" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:border-brand-500 outline-none" placeholder="YOUR_REWARDED_ID">
+                                    </div>
                                 </div>
                             </div>
 
@@ -437,6 +454,10 @@
                                     <div class="space-y-2">
                                         <label class="text-xs font-bold text-slate-600 block">Banner ID</label>
                                         <input type="text" id="setting-unityBannerId" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:border-brand-500 outline-none" placeholder="Placement ID">
+                                    </div>
+                                    <div class="space-y-2">
+                                        <label class="text-xs font-bold text-slate-600 block">Reward Ad ID</label>
+                                        <input type="text" id="setting-unityRewardedId" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:border-brand-500 outline-none" placeholder="Placement ID">
                                     </div>
                                 </div>
                             </div>
@@ -643,12 +664,35 @@
                     </div>
                 </div>
 
+                <div class="flex items-center gap-3 bg-slate-50 border border-slate-200 rounded-xl p-4">
+                    <input type="checkbox" id="prompt-is-premium" class="w-5 h-5 text-brand-600 border-slate-300 rounded focus:ring-brand-500">
+                    <div>
+                        <label for="prompt-is-premium" class="text-sm font-bold text-slate-700 block cursor-pointer">Premium Prompt</label>
+                        <p class="text-xs text-slate-500">Requires users to view a Reward Ad before copying/generating this prompt.</p>
+                    </div>
+                </div>
+
                 <div class="pt-4 mt-auto">
                     <button type="submit" id="prompt-submit-btn" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-3.5 rounded-xl shadow-lg transition active:scale-95 flex justify-center items-center gap-2">
                         <i class="fa-solid fa-paper-plane"></i> Publish Prompt Data
                     </button>
                 </div>
             </form>
+        </div>
+    </div>
+
+    <!-- MODAL: CONFIRM DELETE -->
+    <div id="modal-confirm" class="fixed inset-0 z-[100] bg-slate-900/40 backdrop-blur-sm hidden items-center justify-center p-4">
+        <div class="bg-white rounded-2xl w-full max-w-sm shadow-2xl p-6 text-center transform scale-95 transition-all" id="modal-confirm-content">
+            <div class="w-12 h-12 bg-red-100 text-red-600 rounded-full flex items-center justify-center text-xl mx-auto mb-4">
+                <i class="fa-solid fa-circle-exclamation"></i>
+            </div>
+            <h3 class="text-lg font-bold text-slate-800 mb-2">Are you sure?</h3>
+            <p class="text-sm text-slate-500 mb-6" id="confirm-modal-body">Do you really want to delete this item? This action cannot be undone.</p>
+            <div class="flex gap-3 justify-center">
+                <button type="button" onclick="closeModal('modal-confirm')" class="px-4 py-2 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 transition text-sm font-semibold">Cancel</button>
+                <button type="button" id="btn-confirm-delete" class="px-4 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white transition text-sm font-semibold">Delete</button>
+            </div>
         </div>
     </div>
 
@@ -660,6 +704,31 @@
         let categories = [];
         let promptsList = [];
         let globalConfig = null;
+        let pendingDeleteId = null;
+        let pendingDeleteCollection = null;
+
+        function confirmDelete(id, collection, message) {
+            pendingDeleteId = id;
+            pendingDeleteCollection = collection;
+            document.getElementById('confirm-modal-body').textContent = message || "Do you really want to delete this item? This action cannot be undone.";
+            openModal('modal-confirm');
+            
+            document.getElementById('btn-confirm-delete').onclick = async () => {
+                const btn = document.getElementById('btn-confirm-delete');
+                btn.disabled = true;
+                btn.textContent = "Deleting...";
+                try {
+                    await db.collection(pendingDeleteCollection).doc(pendingDeleteId).delete();
+                    showToast("Deleted successfully.");
+                } catch(e) {
+                    showToast(`Error: ${e.message}`, 'error');
+                } finally {
+                    btn.disabled = false;
+                    btn.textContent = "Delete";
+                    closeModal('modal-confirm');
+                }
+            };
+        }
 
         function showToast(message, type = 'success') {
             const container = document.getElementById('toast-container');
@@ -1032,15 +1101,8 @@
             }
         }
 
-        async function deleteCategory(id) {
-            if (confirm("Permanently delete this category? Devices using it will fail to load contents properly.")) {
-                try {
-                    await db.collection("categories").doc(id).delete();
-                    showToast("Category removed successfully.");
-                } catch(e) {
-                    showToast(`Error: ${e.message}`, 'error');
-                }
-            }
+        function deleteCategory(id) {
+            confirmDelete(id, "categories", "Permanently delete this category? Devices using it will fail to load contents properly.");
         }
 
         /* ======================== 
@@ -1081,6 +1143,7 @@
                         <td class="p-4">
                             <p class="font-bold text-slate-800 line-clamp-1">${prompt.title || 'Untitled'}</p>
                             <span class="inline-block mt-1 px-2 py-0.5 bg-indigo-50 text-indigo-700 text-[10px] font-bold uppercase rounded-md tracking-wider">${prompt.category || 'N/A'}</span>
+                            ${prompt.isPremium ? `<span class="inline-block mt-1 px-2 py-0.5 bg-amber-100 text-amber-700 text-[10px] font-bold uppercase rounded-md tracking-wider"><i class="fa-solid fa-crown text-[8px] mr-1"></i>Premium</span>` : ''}
                         </td>
                         <td class="p-4">
                             <p class="text-xs text-slate-500 line-clamp-2">${prompt.promptText || ''}</p>
@@ -1117,6 +1180,7 @@
             document.getElementById('prompt-tags').value = '';
             document.getElementById('prompt-ratio').value = '1:1';
             document.getElementById('prompt-url').value = '';
+            document.getElementById('prompt-is-premium').checked = false;
             document.getElementById('prompt-img-preview').src = 'https://placehold.co/100';
             openModal('modal-prompt');
         }
@@ -1130,6 +1194,7 @@
             document.getElementById('prompt-tags').value = prompt.tags || '';
             document.getElementById('prompt-ratio').value = prompt.aspectRatio || '1:1';
             document.getElementById('prompt-url').value = prompt.imageUrl || '';
+            document.getElementById('prompt-is-premium').checked = !!prompt.isPremium;
             document.getElementById('prompt-img-preview').src = prompt.imageUrl || 'https://placehold.co/100';
             openModal('modal-prompt');
         }
@@ -1147,6 +1212,7 @@
             const tags = document.getElementById('prompt-tags').value.trim();
             const ratio = document.getElementById('prompt-ratio').value;
             const url = document.getElementById('prompt-url').value.trim() || 'https://placehold.co/100';
+            const isPremium = document.getElementById('prompt-is-premium').checked;
             
             if(!categoryId) {
                 showToast("Please select a category.", "warning"); return;
@@ -1164,7 +1230,8 @@
                     promptText: ptext,
                     tags: tags,
                     aspectRatio: ratio,
-                    imageUrl: url
+                    imageUrl: url,
+                    isPremium: isPremium
                 };
 
                 if (id) {
@@ -1182,15 +1249,8 @@
             }
         }
 
-        async function deletePrompt(id) {
-            if (confirm("Discard this Prompt forever?")) {
-                try {
-                    await db.collection("prompts").doc(id).delete();
-                    showToast("Prompt successfully erased.");
-                } catch(e) {
-                    showToast(`Error: ${e.message}`, 'error');
-                }
-            }
+        function deletePrompt(id) {
+            confirmDelete(id, "prompts", "Discard this Prompt forever? This action cannot be undone.");
         }
 
         /* ======================== 
@@ -1201,13 +1261,13 @@
             
             // Ad network selections & AdMob IDs
             const adFields = [
-                'activeAd', 'bannerNetwork', 'interstitialNetwork', 'nativeNetwork',
-                'admobAppOpenId', 'admobInterstitialId', 'admobNativeId', 'admobBannerId',
-                'metaAppOpenId', 'metaInterstitialId', 'metaNativeId', 'metaBannerId',
-                'unityAppOpenId', 'unityInterstitialId', 'unityNativeId', 'unityBannerId'
+                'activeAd', 'bannerNetwork', 'interstitialNetwork', 'nativeNetwork', 'rewardedNetwork',
+                'admobAppOpenId', 'admobInterstitialId', 'admobNativeId', 'admobBannerId', 'admobRewardedId',
+                'metaAppOpenId', 'metaInterstitialId', 'metaNativeId', 'metaBannerId', 'metaRewardedId',
+                'unityAppOpenId', 'unityInterstitialId', 'unityNativeId', 'unityBannerId', 'unityRewardedId'
             ];
             adFields.forEach(field => {
-                if (config[field]) {
+                if (config[field] !== undefined) {
                     const el = document.getElementById(`setting-${field}`);
                     if (el) el.value = config[field];
                 }
@@ -1256,18 +1316,22 @@
                     bannerNetwork: document.getElementById('setting-bannerNetwork').value,
                     interstitialNetwork: document.getElementById('setting-interstitialNetwork').value,
                     nativeNetwork: document.getElementById('setting-nativeNetwork').value,
+                    rewardedNetwork: document.getElementById('setting-rewardedNetwork').value,
                     admobAppOpenId: document.getElementById('setting-admobAppOpenId').value.trim(),
                     admobInterstitialId: document.getElementById('setting-admobInterstitialId').value.trim(),
                     admobNativeId: document.getElementById('setting-admobNativeId').value.trim(),
                     admobBannerId: document.getElementById('setting-admobBannerId').value.trim(),
+                    admobRewardedId: document.getElementById('setting-admobRewardedId').value.trim(),
                     metaAppOpenId: document.getElementById('setting-metaAppOpenId').value.trim(),
                     metaInterstitialId: document.getElementById('setting-metaInterstitialId').value.trim(),
                     metaNativeId: document.getElementById('setting-metaNativeId').value.trim(),
                     metaBannerId: document.getElementById('setting-metaBannerId').value.trim(),
+                    metaRewardedId: document.getElementById('setting-metaRewardedId').value.trim(),
                     unityAppOpenId: document.getElementById('setting-unityAppOpenId').value.trim(),
                     unityInterstitialId: document.getElementById('setting-unityInterstitialId').value.trim(),
                     unityNativeId: document.getElementById('setting-unityNativeId').value.trim(),
-                    unityBannerId: document.getElementById('setting-unityBannerId').value.trim()
+                    unityBannerId: document.getElementById('setting-unityBannerId').value.trim(),
+                    unityRewardedId: document.getElementById('setting-unityRewardedId').value.trim()
                 };
 
                 await db.collection("app_config").doc("global").set(data, { merge: true });
