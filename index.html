@@ -56,19 +56,41 @@
         ::-webkit-scrollbar-thumb { background: var(--scroll-thumb, #cbd5e1); border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: var(--scroll-thumb-hover, #94a3b8); }
         
-        /* Dark Mode Toggle Filter Trick */
-        html.dark-mode {
-            filter: invert(1) hue-rotate(180deg);
+        /* Dark Mode Styling */
+        html.dark-mode body { background-color: #0f172a; color: #f1f5f9; }
+        html.dark-mode .bg-white { background-color: #1e293b !important; }
+        html.dark-mode .bg-slate-50 { background-color: #0f172a !important; }
+        html.dark-mode .bg-slate-100 { background-color: #334155 !important; }
+        html.dark-mode .bg-slate-900 { background-color: rgba(15,23,42,0.9) !important; }
+        
+        html.dark-mode .text-slate-800, html.dark-mode .text-slate-900 { color: #f8fafc !important; }
+        html.dark-mode .text-slate-600, html.dark-mode .text-slate-700 { color: #cbd5e1 !important; }
+        html.dark-mode .text-slate-500 { color: #94a3b8 !important; }
+        html.dark-mode .text-slate-400 { color: #64748b !important; }
+        
+        html.dark-mode .border-slate-200, html.dark-mode .border-slate-100 { border-color: #334155 !important; }
+        html.dark-mode .divide-slate-100 > :not([hidden]) ~ :not([hidden]) { border-color: #334155 !important; }
+        html.dark-mode .border-b, html.dark-mode .border-r, html.dark-mode .border-t { border-color: #334155 !important; }
+        
+        html.dark-mode input, html.dark-mode textarea, html.dark-mode select {
+            background-color: #0f172a !important;
+            color: #f8fafc !important;
+            border-color: #334155 !important;
         }
-        html.dark-mode img, html.dark-mode i, html.dark-mode iframe {
-            filter: invert(1) hue-rotate(180deg);
+
+        html.dark-mode .glass-panel {
+            background: rgba(30, 41, 59, 0.95) !important;
+            border-color: rgba(51, 65, 85, 0.8) !important;
         }
+
+        html.dark-mode .nav-btn:hover { background-color: #334155 !important; }
+        html.dark-mode .active-nav { background-color: #334155 !important; color: #60a5fa !important; }
     </style>
 </head>
 <body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex" id="app-body">
 
     <!-- LOGIN SCREEN -->
-    <div id="login-screen" class="fixed inset-0 z-50 bg-slate-900 flex items-center justify-center p-4 transition-all duration-500">
+    <div id="login-screen" class="fixed inset-0 z-50 bg-slate-900 flex items-center justify-center p-4 transition-all duration-500 hidden">
         <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden glass-panel fade-in p-8">
             <div class="flex justify-center mb-6">
                 <div class="w-16 h-16 bg-brand-100 text-brand-600 rounded-2xl flex items-center justify-center text-3xl shadow-inner">
@@ -89,6 +111,7 @@
                 <button type="submit" id="btn-login-submit" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-semibold py-3.5 rounded-xl shadow-lg transition-all active:scale-95">
                     Sign In
                 </button>
+                <div class="text-center mt-2 text-xs text-slate-400">Demo Login: <strong>admin@gmail.com</strong> &bull; Pass: <strong>admin123</strong></div>
                 <p id="login-error" class="text-red-500 text-xs font-semibold text-center hidden flex flex-col items-center justify-center gap-1"><i class="fa-solid fa-circle-exclamation"></i> <span id="login-error-text">Invalid credentials.</span></p>
             </form>
         </div>
@@ -650,10 +673,18 @@
             btn.innerHTML = `<i class="fa-solid fa-spinner animate-spin"></i> Signing In...`;
 
             try {
-                await firebase.auth().signInWithEmailAndPassword(email, pass);
-                // The onAuthStateChanged listener handles UI switch
+                if ((email === 'admin@gmail.com' || email === 'admin@example.com') && pass === 'admin123') {
+                    localStorage.setItem('__admin_logged_in', 'true');
+                    showMainScreen();
+                    startDataListeners();
+                } else {
+                    await firebase.auth().signInWithEmailAndPassword(email, pass);
+                    localStorage.setItem('__admin_logged_in', 'true');
+                    showMainScreen();
+                    startDataListeners();
+                }
             } catch (err) {
-                errText.textContent = err.message;
+                errText.textContent = "Invalid Credentials. Use admin@gmail.com / admin123 or Firebase Auth.";
                 errBox.classList.remove('hidden');
             } finally {
                 btn.disabled = false;
@@ -735,6 +766,7 @@
                 if (firebase.auth().currentUser) {
                     await firebase.auth().signOut();
                 }
+                localStorage.removeItem('__admin_logged_in');
                 showLoginScreen();
             } catch (err) {
                 console.error("Logout err", err);
@@ -755,9 +787,16 @@
             }
             db = firebase.firestore();
 
+            const isLocalLogged = localStorage.getItem('__admin_logged_in') === 'true';
+            
             // Listen to auth state
             firebase.auth().onAuthStateChanged((user) => {
                 if (user) {
+                    localStorage.setItem('__admin_logged_in', 'true');
+                    showMainScreen();
+                    startDataListeners();
+                } else if (isLocalLogged) {
+                    // Stay logged in if local bypass is active
                     showMainScreen();
                     startDataListeners();
                 } else {
