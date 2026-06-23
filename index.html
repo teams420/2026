@@ -374,19 +374,19 @@
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div class="space-y-2">
                                         <label class="text-xs font-bold text-slate-600 block">App Open ID</label>
-                                        <input type="text" id="setting-admobAppOpenId" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:border-brand-500 outline-none" placeholder="ca-app-pub-3940256099942544/9257395921">
+                                        <input type="text" id="setting-admobAppOpenId" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:border-brand-500 outline-none" placeholder="YOUR_PLACEMENT_ID">
                                     </div>
                                     <div class="space-y-2">
                                         <label class="text-xs font-bold text-slate-600 block">Interstitial ID</label>
-                                        <input type="text" id="setting-admobInterstitialId" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:border-brand-500 outline-none" placeholder="ca-app-pub-3940256099942544/1033173712">
+                                        <input type="text" id="setting-admobInterstitialId" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:border-brand-500 outline-none" placeholder="YOUR_PLACEMENT_ID">
                                     </div>
                                     <div class="space-y-2">
                                         <label class="text-xs font-bold text-slate-600 block">Native Ad ID</label>
-                                        <input type="text" id="setting-admobNativeId" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:border-brand-500 outline-none" placeholder="ca-app-pub-3940256099942544/2247696110">
+                                        <input type="text" id="setting-admobNativeId" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:border-brand-500 outline-none" placeholder="YOUR_PLACEMENT_ID">
                                     </div>
                                     <div class="space-y-2">
                                         <label class="text-xs font-bold text-slate-600 block">Banner ID</label>
-                                        <input type="text" id="setting-admobBannerId" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:border-brand-500 outline-none" placeholder="ca-app-pub-3940256099942544/6300978111">
+                                        <input type="text" id="setting-admobBannerId" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:border-brand-500 outline-none" placeholder="YOUR_PLACEMENT_ID">
                                     </div>
                                 </div>
                             </div>
@@ -497,7 +497,7 @@
                                 <h3 class="text-sm font-bold text-slate-800 uppercase tracking-widest mb-4 flex items-center gap-2">
                                     <i class="fa-solid fa-image text-brand-500"></i> Brand Graphics URL
                                 </h3>
-                                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
                                     
                                     <div class="space-y-3">
                                         <label class="text-xs font-bold text-slate-600 block">App Icon/Logo Link</label>
@@ -526,6 +526,16 @@
                                                 <img id="preview-settings-ico" src="https://placehold.co/100" class="w-full h-full object-cover">
                                             </div>
                                             <input type="url" id="inp-settings-ico" class="w-full text-xs px-3 py-2 border border-slate-300 rounded-lg outline-none focus:border-brand-500" placeholder="Paste Settings Icon URL...">
+                                        </div>
+                                    </div>
+
+                                    <div class="space-y-3">
+                                        <label class="text-xs font-bold text-slate-600 block">Detail Top Header Logo Link</label>
+                                        <div class="border border-slate-200 rounded-xl p-3 flex flex-col gap-3 bg-slate-50 items-center justify-center">
+                                            <div class="w-20 h-20 bg-white rounded-lg border border-slate-200 flex items-center justify-center overflow-hidden">
+                                                <img id="preview-detail-logo" src="https://placehold.co/100" class="w-full h-full object-cover">
+                                            </div>
+                                            <input type="url" id="inp-detail-logo" class="w-full text-xs px-3 py-2 border border-slate-300 rounded-lg outline-none focus:border-brand-500" placeholder="Paste Detail Logo URL...">
                                         </div>
                                     </div>
 
@@ -926,7 +936,8 @@
                 { inp: 'prompt-url', pre: 'prompt-img-preview' },
                 { inp: 'inp-logo', pre: 'preview-logo' },
                 { inp: 'inp-splash', pre: 'preview-splash' },
-                { inp: 'inp-settings-ico', pre: 'preview-settings-ico' }
+                { inp: 'inp-settings-ico', pre: 'preview-settings-ico' },
+                { inp: 'inp-detail-logo', pre: 'preview-detail-logo' }
             ];
 
             binders.forEach(b => {
@@ -965,12 +976,19 @@
                             <p class="text-[10px] text-slate-400 font-mono tracking-tighter">${cat.id}</p>
                         </td>
                         <td class="p-4 text-right space-x-2">
-                            <button onclick='editCategory(${JSON.stringify(cat).replace(/'/g,"&#39;")})' class="w-8 h-8 rounded-lg bg-orange-50 text-orange-600 hover:bg-orange-100 transition"><i class="fa-solid fa-pen text-xs"></i></button>
+                            <button onclick="editCategoryById('${cat.id}')" class="w-8 h-8 rounded-lg bg-orange-50 text-orange-600 hover:bg-orange-100 transition"><i class="fa-solid fa-pen text-xs"></i></button>
                             <button onclick="deleteCategory('${cat.id}')" class="w-8 h-8 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 transition"><i class="fa-solid fa-trash text-xs"></i></button>
                         </td>
                     </tr>
                 `;
             });
+        }
+
+        function editCategoryById(id) {
+            const cat = categories.find(c => c.id === id);
+            if (cat) {
+                editCategory(cat);
+            }
         }
 
         function openCategoryModal() {
@@ -1071,12 +1089,19 @@
                             ${prompt.aspectRatio || '1:1'}
                         </td>
                         <td class="p-4 text-right space-x-2 whitespace-nowrap">
-                            <button onclick='editPrompt(${JSON.stringify(prompt).replace(/'/g,"&#39;")})' class="w-8 h-8 rounded-lg bg-orange-50 text-orange-600 hover:bg-orange-100 transition"><i class="fa-solid fa-pen text-xs"></i></button>
+                            <button onclick="editPromptById('${prompt.id}')" class="w-8 h-8 rounded-lg bg-orange-50 text-orange-600 hover:bg-orange-100 transition"><i class="fa-solid fa-pen text-xs"></i></button>
                             <button onclick="deletePrompt('${prompt.id}')" class="w-8 h-8 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 transition"><i class="fa-solid fa-trash text-xs"></i></button>
                         </td>
                     </tr>
                 `;
             });
+        }
+
+        function editPromptById(id) {
+            const prompt = promptsList.find(p => p.id === id);
+            if (prompt) {
+                editPrompt(prompt);
+            }
         }
 
         function openPromptModal() {
@@ -1197,7 +1222,8 @@
             const setters = [
                 { inp: 'inp-logo', pre: 'preview-logo', field: 'appLogoUrl' },
                 { inp: 'inp-splash', pre: 'preview-splash', field: 'splashScreenUrl' },
-                { inp: 'inp-settings-ico', pre: 'preview-settings-ico', field: 'settingsIconUrl' }
+                { inp: 'inp-settings-ico', pre: 'preview-settings-ico', field: 'settingsIconUrl' },
+                { inp: 'inp-detail-logo', pre: 'preview-detail-logo', field: 'detailLogoUrl' }
             ];
 
             setters.forEach(s => {
@@ -1265,6 +1291,7 @@
                     appLogoUrl: document.getElementById('inp-logo').value.trim(),
                     splashScreenUrl: document.getElementById('inp-splash').value.trim(),
                     settingsIconUrl: document.getElementById('inp-settings-ico').value.trim(),
+                    detailLogoUrl: document.getElementById('inp-detail-logo').value.trim(),
                     followMeUrl: document.getElementById('setting-followMeUrl').value.trim(),
                     howToUseUrl: document.getElementById('setting-howToUseUrl').value.trim(),
                     shareAppUrl: document.getElementById('setting-shareAppUrl').value.trim(),
