@@ -395,6 +395,10 @@
                                     <i class="fa-brands fa-google text-brand-500"></i> AdMob Placement IDs
                                 </h3>
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div class="space-y-2 md:col-span-2">
+                                        <label class="text-xs font-bold text-slate-600 block">AdMob App ID</label>
+                                        <input type="text" id="setting-admobAppId" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:border-brand-500 outline-none" placeholder="ca-app-pub-xxx~yyy">
+                                    </div>
                                     <div class="space-y-2">
                                         <label class="text-xs font-bold text-slate-600 block">App Open ID</label>
                                         <input type="text" id="setting-admobAppOpenId" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:border-brand-500 outline-none" placeholder="YOUR_PLACEMENT_ID">
@@ -424,6 +428,10 @@
                                     <i class="fa-brands fa-meta text-brand-500"></i> Meta Placement IDs
                                 </h3>
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div class="space-y-2 md:col-span-2">
+                                        <label class="text-xs font-bold text-slate-600 block">Meta App ID (Property ID)</label>
+                                        <input type="text" id="setting-metaAppId" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:border-brand-500 outline-none" placeholder="Meta App ID">
+                                    </div>
                                     <div class="space-y-2">
                                         <label class="text-xs font-bold text-slate-600 block">App Open ID</label>
                                         <input type="text" id="setting-metaAppOpenId" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:border-brand-500 outline-none" placeholder="YOUR_PLACEMENT_ID">
@@ -453,6 +461,10 @@
                                     <i class="fa-brands fa-unity text-brand-500"></i> Unity Placement IDs
                                 </h3>
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div class="space-y-2 md:col-span-2">
+                                        <label class="text-xs font-bold text-slate-600 block">Unity Game ID</label>
+                                        <input type="text" id="setting-unityGameId" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:border-brand-500 outline-none" placeholder="1234567">
+                                    </div>
                                     <div class="space-y-2">
                                         <label class="text-xs font-bold text-slate-600 block">App Open ID</label>
                                         <input type="text" id="setting-unityAppOpenId" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:border-brand-500 outline-none" placeholder="Placement ID">
@@ -1409,9 +1421,9 @@
             // Ad network selections & AdMob IDs
             const adFields = [
                 'activeAd', 'bannerNetwork', 'interstitialNetwork', 'nativeNetwork', 'rewardedNetwork',
-                'admobAppOpenId', 'admobInterstitialId', 'admobNativeId', 'admobBannerId', 'admobRewardedId',
-                'metaAppOpenId', 'metaInterstitialId', 'metaNativeId', 'metaBannerId', 'metaRewardedId',
-                'unityAppOpenId', 'unityInterstitialId', 'unityNativeId', 'unityBannerId', 'unityRewardedId'
+                'admobAppId', 'admobAppOpenId', 'admobInterstitialId', 'admobNativeId', 'admobBannerId', 'admobRewardedId',
+                'metaAppId', 'metaAppOpenId', 'metaInterstitialId', 'metaNativeId', 'metaBannerId', 'metaRewardedId',
+                'unityGameId', 'unityAppOpenId', 'unityInterstitialId', 'unityNativeId', 'unityBannerId', 'unityRewardedId'
             ];
             adFields.forEach(field => {
                 if (config[field] !== undefined) {
@@ -1464,16 +1476,19 @@
                     interstitialNetwork: document.getElementById('setting-interstitialNetwork').value,
                     nativeNetwork: document.getElementById('setting-nativeNetwork').value,
                     rewardedNetwork: document.getElementById('setting-rewardedNetwork').value,
+                    admobAppId: document.getElementById('setting-admobAppId').value.trim(),
                     admobAppOpenId: document.getElementById('setting-admobAppOpenId').value.trim(),
                     admobInterstitialId: document.getElementById('setting-admobInterstitialId').value.trim(),
                     admobNativeId: document.getElementById('setting-admobNativeId').value.trim(),
                     admobBannerId: document.getElementById('setting-admobBannerId').value.trim(),
                     admobRewardedId: document.getElementById('setting-admobRewardedId').value.trim(),
+                    metaAppId: document.getElementById('setting-metaAppId').value.trim(),
                     metaAppOpenId: document.getElementById('setting-metaAppOpenId').value.trim(),
                     metaInterstitialId: document.getElementById('setting-metaInterstitialId').value.trim(),
                     metaNativeId: document.getElementById('setting-metaNativeId').value.trim(),
                     metaBannerId: document.getElementById('setting-metaBannerId').value.trim(),
                     metaRewardedId: document.getElementById('setting-metaRewardedId').value.trim(),
+                    unityGameId: document.getElementById('setting-unityGameId').value.trim(),
                     unityAppOpenId: document.getElementById('setting-unityAppOpenId').value.trim(),
                     unityInterstitialId: document.getElementById('setting-unityInterstitialId').value.trim(),
                     unityNativeId: document.getElementById('setting-unityNativeId').value.trim(),
