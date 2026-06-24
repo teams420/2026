@@ -563,6 +563,22 @@
                                 </div>
                             </div>
 
+                            <!-- ONESIGNAL CONFIG -->
+                            <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm mt-6">
+                                <h3 class="text-sm font-bold text-slate-800 uppercase tracking-widest mb-4 flex items-center gap-2">
+                                    <i class="fa-solid fa-bell text-brand-500"></i> Push Notifications Setup
+                                </h3>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div class="space-y-2">
+                                        <label class="text-xs font-bold text-slate-600 block">OneSignal App ID</label>
+                                        <input type="text" id="setting-onesignalId" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:border-brand-500 outline-none" placeholder="Enter your OneSignal App ID">
+                                    </div>
+                                </div>
+                                <button type="button" onclick="saveOneSignalConfig()" class="mt-4 bg-slate-800 hover:bg-slate-900 text-white px-6 py-2 rounded-xl font-bold shadow-md transition-all active:scale-95 flex items-center justify-center gap-2 w-full sm:w-auto">
+                                    <i class="fa-solid fa-save"></i> Update OneSignal ID
+                                </button>
+                            </div>
+
                             <button type="submit" id="btn-save-settings" class="bg-slate-800 hover:bg-slate-900 text-white px-6 py-3 rounded-xl font-bold shadow-md transition-all active:scale-95 flex items-center justify-center gap-2 w-full sm:w-auto ml-auto">
                                 <i class="fa-solid fa-save"></i> Save Global Configurations
                             </button>
@@ -951,6 +967,16 @@
                 if (doc.exists) {
                     globalConfig = doc.data();
                     populateSettingsForm(globalConfig);
+                }
+            });
+
+            // ONESIGNAL CONFIG
+            db.collection("settings").doc("app_config").onSnapshot(doc => {
+                if (doc.exists) {
+                    const data = doc.data();
+                    if(data.onesignal_id) {
+                        document.getElementById('setting-onesignalId').value = data.onesignal_id;
+                    }
                 }
             });
         }
@@ -1365,6 +1391,23 @@
             } finally {
                 btn.disabled = false;
                 btn.innerHTML = `<i class="fa-solid fa-save"></i> Save Ads Configuration`;
+            }
+        }
+
+        async function saveOneSignalConfig() {
+            const onesignalId = document.getElementById('setting-onesignalId').value.trim();
+            if(!onesignalId) {
+                showToast("Please enter a valid OneSignal App ID", "error");
+                return;
+            }
+
+            try {
+                await db.collection("settings").doc("app_config").set({
+                    onesignal_id: onesignalId
+                }, { merge: true });
+                showToast("OneSignal ID updated successfully.", "success");
+            } catch(err) {
+                showToast(`Failed: ${err.message}`, "error");
             }
         }
 
