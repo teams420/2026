@@ -347,7 +347,6 @@
                                         <select id="setting-activeAd" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm focus:border-brand-500 outline-none">
                                             <option value="admob">Google AdMob</option>
                                             <option value="meta">Meta Audience Network</option>
-                                            <option value="unity">Unity Ads</option>
                                             <option value="none">Turn Off All</option>
                                         </select>
                                     </div>
@@ -356,7 +355,6 @@
                                         <select id="setting-bannerNetwork" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm focus:border-brand-500 outline-none">
                                             <option value="admob">Google AdMob</option>
                                             <option value="meta">Meta Audience Network</option>
-                                            <option value="unity">Unity Ads</option>
                                             <option value="none">Turn Off</option>
                                         </select>
                                     </div>
@@ -365,7 +363,6 @@
                                         <select id="setting-interstitialNetwork" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm focus:border-brand-500 outline-none">
                                             <option value="admob">Google AdMob</option>
                                             <option value="meta">Meta Audience Network</option>
-                                            <option value="unity">Unity Ads</option>
                                             <option value="none">Turn Off</option>
                                         </select>
                                     </div>
@@ -374,7 +371,14 @@
                                         <select id="setting-nativeNetwork" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm focus:border-brand-500 outline-none">
                                             <option value="admob">Google AdMob</option>
                                             <option value="meta">Meta Audience Network</option>
-                                            <option value="unity">Unity Ads</option>
+                                            <option value="none">Turn Off</option>
+                                        </select>
+                                    </div>
+                                    <div class="space-y-2">
+                                        <label class="text-xs font-bold text-slate-600 block">Native Video Network</label>
+                                        <select id="setting-nativeVideoNetwork" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm focus:border-brand-500 outline-none">
+                                            <option value="admob">Google AdMob</option>
+                                            <option value="meta">Meta Audience Network</option>
                                             <option value="none">Turn Off</option>
                                         </select>
                                     </div>
@@ -390,7 +394,6 @@
                                         <select id="setting-rewardedNetwork" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm focus:border-brand-500 outline-none">
                                             <option value="admob">Google AdMob</option>
                                             <option value="meta">Meta Audience Network</option>
-                                            <option value="unity">Unity Ads</option>
                                             <option value="none">Turn Off</option>
                                         </select>
                                     </div>
@@ -417,6 +420,10 @@
                                     <div class="space-y-2">
                                         <label class="text-xs font-bold text-slate-600 block">Native Ad ID</label>
                                         <input type="text" id="setting-admobNativeId" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:border-brand-500 outline-none" placeholder="YOUR_PLACEMENT_ID">
+                                    </div>
+                                    <div class="space-y-2">
+                                        <label class="text-xs font-bold text-slate-600 block">Native Video Ad ID</label>
+                                        <input type="text" id="setting-admobNativeVideoId" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:border-brand-500 outline-none" placeholder="YOUR_PLACEMENT_ID">
                                     </div>
                                     <div class="space-y-2">
                                         <label class="text-xs font-bold text-slate-600 block">Banner ID</label>
@@ -448,37 +455,16 @@
                                         <input type="text" id="setting-metaNativeId" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:border-brand-500 outline-none" placeholder="YOUR_PLACEMENT_ID">
                                     </div>
                                     <div class="space-y-2">
+                                        <label class="text-xs font-bold text-slate-600 block">Native Video Ad ID</label>
+                                        <input type="text" id="setting-metaNativeVideoId" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:border-brand-500 outline-none" placeholder="YOUR_PLACEMENT_ID">
+                                    </div>
+                                    <div class="space-y-2">
                                         <label class="text-xs font-bold text-slate-600 block">Banner ID</label>
                                         <input type="text" id="setting-metaBannerId" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:border-brand-500 outline-none" placeholder="YOUR_PLACEMENT_ID">
                                     </div>
                                     <div class="space-y-2">
                                         <label class="text-xs font-bold text-slate-600 block">Reward Ad ID</label>
                                         <input type="text" id="setting-metaRewardedId" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:border-brand-500 outline-none" placeholder="YOUR_REWARDED_ID">
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Unity specific section -->
-                            <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm mt-6">
-                                <h3 class="text-sm font-bold text-slate-800 uppercase tracking-widest mb-4 flex items-center gap-2">
-                                    <i class="fa-brands fa-unity text-brand-500"></i> Unity Placement IDs
-                                </h3>
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <div class="space-y-2 md:col-span-2">
-                                        <label class="text-xs font-bold text-slate-600 block">Unity Game ID</label>
-                                        <input type="text" id="setting-unityGameId" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:border-brand-500 outline-none" placeholder="1234567">
-                                    </div>
-                                    <div class="space-y-2">
-                                        <label class="text-xs font-bold text-slate-600 block">Interstitial ID</label>
-                                        <input type="text" id="setting-unityInterstitialId" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:border-brand-500 outline-none" placeholder="Placement ID">
-                                    </div>
-                                    <div class="space-y-2">
-                                        <label class="text-xs font-bold text-slate-600 block">Banner ID</label>
-                                        <input type="text" id="setting-unityBannerId" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:border-brand-500 outline-none" placeholder="Placement ID">
-                                    </div>
-                                    <div class="space-y-2">
-                                        <label class="text-xs font-bold text-slate-600 block">Reward Ad ID</label>
-                                        <input type="text" id="setting-unityRewardedId" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:border-brand-500 outline-none" placeholder="Placement ID">
                                     </div>
                                 </div>
                             </div>
@@ -1416,10 +1402,9 @@
             
             // Ad network selections & AdMob IDs
             const adFields = [
-                'activeAd', 'bannerNetwork', 'interstitialNetwork', 'nativeNetwork', 'appOpenNetwork', 'rewardedNetwork',
-                'admobAppId', 'admobAppOpenId', 'admobInterstitialId', 'admobNativeId', 'admobBannerId', 'admobRewardedId',
-                'metaAppId', 'metaInterstitialId', 'metaNativeId', 'metaBannerId', 'metaRewardedId',
-                'unityGameId', 'unityInterstitialId', 'unityBannerId', 'unityRewardedId'
+                'activeAd', 'bannerNetwork', 'interstitialNetwork', 'nativeNetwork', 'nativeVideoNetwork', 'appOpenNetwork', 'rewardedNetwork',
+                'admobAppId', 'admobAppOpenId', 'admobInterstitialId', 'admobNativeId', 'admobNativeVideoId', 'admobBannerId', 'admobRewardedId',
+                'metaAppId', 'metaInterstitialId', 'metaNativeId', 'metaNativeVideoId', 'metaBannerId', 'metaRewardedId'
             ];
             adFields.forEach(field => {
                 if (config[field] !== undefined) {
@@ -1471,23 +1456,22 @@
                     bannerNetwork: document.getElementById('setting-bannerNetwork').value,
                     interstitialNetwork: document.getElementById('setting-interstitialNetwork').value,
                     nativeNetwork: document.getElementById('setting-nativeNetwork').value,
+                    nativeVideoNetwork: document.getElementById('setting-nativeVideoNetwork').value,
                     appOpenNetwork: document.getElementById('setting-appOpenNetwork').value,
                     rewardedNetwork: document.getElementById('setting-rewardedNetwork').value,
                     admobAppId: document.getElementById('setting-admobAppId').value.trim(),
                     admobAppOpenId: document.getElementById('setting-admobAppOpenId').value.trim(),
                     admobInterstitialId: document.getElementById('setting-admobInterstitialId').value.trim(),
                     admobNativeId: document.getElementById('setting-admobNativeId').value.trim(),
+                    admobNativeVideoId: document.getElementById('setting-admobNativeVideoId').value.trim(),
                     admobBannerId: document.getElementById('setting-admobBannerId').value.trim(),
                     admobRewardedId: document.getElementById('setting-admobRewardedId').value.trim(),
                     metaAppId: document.getElementById('setting-metaAppId').value.trim(),
                     metaInterstitialId: document.getElementById('setting-metaInterstitialId').value.trim(),
                     metaNativeId: document.getElementById('setting-metaNativeId').value.trim(),
+                    metaNativeVideoId: document.getElementById('setting-metaNativeVideoId').value.trim(),
                     metaBannerId: document.getElementById('setting-metaBannerId').value.trim(),
-                    metaRewardedId: document.getElementById('setting-metaRewardedId').value.trim(),
-                    unityGameId: document.getElementById('setting-unityGameId').value.trim(),
-                    unityInterstitialId: document.getElementById('setting-unityInterstitialId').value.trim(),
-                    unityBannerId: document.getElementById('setting-unityBannerId').value.trim(),
-                    unityRewardedId: document.getElementById('setting-unityRewardedId').value.trim()
+                    metaRewardedId: document.getElementById('setting-metaRewardedId').value.trim()
                 };
 
                 await db.collection("app_config").doc("global").set(data, { merge: true });
