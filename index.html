@@ -1053,7 +1053,7 @@
             // PROMPTS
             db.collection("prompts").onSnapshot((snapshot) => {
                 promptsList = [];
-                snapshot.forEach(doc => promptsList.push({ id: doc.id, ...doc.data() }));
+                snapshot.forEach(doc => promptsList.push({ id: doc.id, ...doc.data({ serverTimestamps: 'estimate' }) }));
                 promptsList.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
                 renderPromptsTable();
                 document.getElementById('stat-prompts').textContent = promptsList.length;
@@ -1263,18 +1263,18 @@
                 return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
             };
 
-            promptsList.forEach(prompt => {
+            const htmlRows = promptsList.map(prompt => {
                 const safeTitle = escapeHTML(prompt.title || 'Untitled');
                 const safeCategory = escapeHTML(prompt.category || 'N/A');
                 const safeText = escapeHTML(prompt.promptText || '');
                 const safeId = escapeHTML(prompt.id);
                 const safeUrl = escapeHTML(prompt.imageUrl || 'https://placehold.co/100');
 
-                tbody.innerHTML += `
+                return `
                     <tr class="hover:bg-slate-50/50 transition">
                         <td class="p-4">
                             <div class="w-14 h-14 rounded-xl shadow-sm overflow-hidden border border-slate-200">
-                                <img src="${safeUrl}" class="w-full h-full object-cover">
+                                <img src="${safeUrl}" loading="lazy" decoding="async" class="w-full h-full object-cover">
                             </div>
                         </td>
                         <td class="p-4">
@@ -1295,6 +1295,7 @@
                     </tr>
                 `;
             });
+            tbody.innerHTML = htmlRows.join('');
         }
 
         function editPromptById(id) {
