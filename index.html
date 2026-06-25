@@ -1409,6 +1409,7 @@
                 if (id) {
                     await db.collection('prompts').doc(id).update(data);
                 } else {
+                    data.createdAt = firebase.firestore.FieldValue.serverTimestamp();
                     await db.collection('prompts').add(data);
                 }
                 showToast(`Prompt "${title}" synchronized!`);
