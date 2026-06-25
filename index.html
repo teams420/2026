@@ -1054,6 +1054,7 @@
             db.collection("prompts").onSnapshot((snapshot) => {
                 promptsList = [];
                 snapshot.forEach(doc => promptsList.push({ id: doc.id, ...doc.data() }));
+                promptsList.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
                 renderPromptsTable();
                 document.getElementById('stat-prompts').textContent = promptsList.length;
             }, (err) => showToast("Error reading prompts.", "error"));
