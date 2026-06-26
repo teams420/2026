@@ -955,7 +955,7 @@
         ======================== */
         function startDataListeners() {
             // CATEGORIES
-            db.collection("categories").onSnapshot((snapshot) => {
+            db.collection("categories").orderBy("createdAt", "asc").onSnapshot((snapshot) => {
                 categories = [];
                 snapshot.forEach(doc => categories.push({ id: doc.id, ...doc.data() }));
                 updateCategoriesSelect();
@@ -1129,7 +1129,11 @@
 
             try {
                 const docId = id || name.toLowerCase().replace(/[^a-z0-9]/g, "_");
-                await db.collection('categories').doc(docId).set({ name: name, logoUrl: url }, { merge: true });
+                const payload = { name: name, logoUrl: url };
+                if (!id) {
+                    payload.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+                }
+                await db.collection('categories').doc(docId).set(payload, { merge: true });
                 showToast(`Category ${name} saved successfully.`);
                 closeModal('modal-category');
             } catch (err) {
