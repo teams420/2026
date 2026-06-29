@@ -81,7 +81,7 @@
         html.dark-mode .text-slate-800, html.dark-mode .text-slate-900 { color: #ffffff !important; }
         html.dark-mode .text-slate-600, html.dark-mode .text-slate-700 { color: #d4d4d8 !important; }
         html.dark-mode .text-slate-500 { color: #a1a1aa !important; }
-        html.dark-mode .text-slate-400 { color: #71717a !important; }
+        html.dark-mode .text-slate-400 { color: #a1a1aa !important; }
         
         html.dark-mode .border-slate-200, html.dark-mode .border-slate-100 { border-color: #27272a !important; }
         html.dark-mode .divide-slate-100 > :not([hidden]) ~ :not([hidden]) { border-color: #27272a !important; }
@@ -99,9 +99,11 @@
             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5) !important;
         }
 
-        html.dark-mode .nav-btn:hover { background-color: #27272a !important; }
-        html.dark-mode .active-nav { background-color: #27272a !important; color: #fafafa !important; }
-        
+        html.dark-mode .active-nav { 
+            background-color: rgba(99, 102, 241, 0.15) !important; 
+            color: #a5b4fc !important; 
+        }
+
         /* Premium Shadows and Layout Details */
         .glass-panel {
             background: rgba(255, 255, 255, 0.85);
@@ -177,7 +179,7 @@
     <div id="main-screen" class="flex-1 flex flex-col h-screen hidden fade-in w-full transition-all">
         
         <!-- TOP NAVIGATION -->
-        <header class="bg-white/80 backdrop-blur-md border-b border-slate-200/50 sticky top-0 z-30 shadow-sm h-16 flex items-center justify-between px-4 md:px-6">
+        <header class="bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200/50 dark:border-slate-800/50 sticky top-0 z-30 shadow-sm h-16 flex items-center justify-between px-4 md:px-6">
             <div class="flex items-center gap-4">
                 <button onclick="document.getElementById('mobile-sidebar').classList.toggle('-translate-x-full')" class="md:hidden text-slate-500 hover:text-slate-800 focus:outline-none">
                     <i class="fa-solid fa-bars text-xl"></i>
@@ -206,7 +208,7 @@
         <!-- LAYOUT CONTENT -->
         <div class="flex-1 overflow-hidden flex bg-slate-50 relative">
             <!-- SIDEBAR -->
-            <aside id="mobile-sidebar" class="absolute md:relative w-64 bg-white/80 backdrop-blur-md border-r border-slate-200/50 flex flex-col h-full z-40 transition-transform duration-300 -translate-x-full md:translate-x-0 shadow-2xl md:shadow-none">
+            <aside id="mobile-sidebar" class="absolute md:relative w-64 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-r border-slate-200/50 dark:border-slate-800/50 flex flex-col h-full z-40 transition-transform duration-300 -translate-x-full md:translate-x-0 shadow-2xl md:shadow-none">
                 <div class="flex md:hidden items-center justify-between p-4 border-b border-slate-100">
                     <h2 class="font-bold text-sm text-slate-500">Navigation</h2>
                     <button onclick="document.getElementById('mobile-sidebar').classList.toggle('-translate-x-full')" class="text-slate-400 hover:text-slate-800">
@@ -214,22 +216,22 @@
                     </button>
                 </div>
                 <nav class="flex-1 p-4 space-y-2 overflow-y-auto">
-                    <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-100 transition-all active-nav">
+                    <button onclick="switchTab('dashboard')" id="nav-dashboard" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-slate-600 transition-all active-nav bg-indigo-50 text-brand-700 dark:bg-indigo-500/20 dark:text-indigo-300">
                         <i class="fa-solid fa-chart-pie w-5 text-center"></i> Dashboard
                     </button>
-                    <button onclick="switchTab('categories')" id="nav-categories" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-100 transition-all">
+                    <button onclick="switchTab('categories')" id="nav-categories" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all">
                         <i class="fa-solid fa-folder-tree w-5 text-center"></i> Categories
                     </button>
-                    <button onclick="switchTab('prompts')" id="nav-prompts" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-100 transition-all">
+                    <button onclick="switchTab('prompts')" id="nav-prompts" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all">
                         <i class="fa-solid fa-image w-5 text-center"></i> Prompts
                     </button>
                     <div class="pt-6 pb-2">
                         <p class="px-4 text-xs font-bold text-slate-400 uppercase tracking-wider">System Configuration</p>
                     </div>
-                    <button onclick="switchTab('ads')" id="nav-ads" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-100 transition-all">
+                    <button onclick="switchTab('ads')" id="nav-ads" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all">
                         <i class="fa-solid fa-bullhorn w-5 text-center"></i> Ads Manager
                     </button>
-                    <button onclick="switchTab('settings')" id="nav-settings" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-100 transition-all">
+                    <button onclick="switchTab('settings')" id="nav-settings" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold text-slate-600 hover:bg-slate-100 dark:hover:bg-slate-800 transition-all">
                         <i class="fa-solid fa-sliders w-5 text-center"></i> Global Settings
                     </button>
                 </nav>
@@ -871,11 +873,12 @@
             const html = document.documentElement;
             const icon = document.getElementById('dark-mode-icon');
             html.classList.toggle('dark-mode');
+            html.classList.toggle('dark');
             if (html.classList.contains('dark-mode')) {
-                icon.className = "fa-solid fa-sun";
+                icon.className = "fa-solid fa-sun text-amber-400";
                 localStorage.setItem('__admin_dark_mode', 'true');
             } else {
-                icon.className = "fa-solid fa-moon";
+                icon.className = "fa-solid fa-moon text-slate-500";
                 localStorage.setItem('__admin_dark_mode', 'false');
             }
         }
@@ -885,9 +888,12 @@
             
             // Check dark mode
             if (localStorage.getItem('__admin_dark_mode') === 'true') {
-                document.documentElement.classList.add('dark-mode');
+                document.documentElement.classList.add('dark-mode', 'dark');
                 const icon = document.getElementById('dark-mode-icon');
-                if(icon) icon.className = "fa-solid fa-sun";
+                if(icon) icon.className = "fa-solid fa-sun text-amber-400";
+            } else {
+                const icon = document.getElementById('dark-mode-icon');
+                if(icon) icon.className = "fa-solid fa-moon text-slate-500";
             }
 
             checkFirebaseConfig();
@@ -1077,14 +1083,14 @@
         function switchTab(tabId) {
             document.querySelectorAll('.tab-content').forEach(t => t.classList.add('hidden'));
             document.querySelectorAll('.nav-btn').forEach(btn => {
-                btn.classList.remove('bg-indigo-50', 'text-brand-700');
-                btn.classList.add('hover:bg-slate-100');
+                btn.classList.remove('bg-indigo-50', 'text-brand-700', 'dark:bg-indigo-500/20', 'dark:text-indigo-300', 'active-nav');
+                btn.classList.add('hover:bg-slate-100', 'dark:hover:bg-slate-800');
             });
 
             document.getElementById(`tab-${tabId}`).classList.remove('hidden');
             const activeBtn = document.getElementById(`nav-${tabId}`);
-            activeBtn.classList.remove('hover:bg-slate-100');
-            activeBtn.classList.add('bg-indigo-50', 'text-brand-700');
+            activeBtn.classList.remove('hover:bg-slate-100', 'dark:hover:bg-slate-800');
+            activeBtn.classList.add('bg-indigo-50', 'text-brand-700', 'dark:bg-indigo-500/20', 'dark:text-indigo-300', 'active-nav');
             
             // Close mobile sidebar if open
             const mobileSidebar = document.getElementById('mobile-sidebar');
