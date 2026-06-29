@@ -339,6 +339,7 @@
                                         <select id="setting-activeAd" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm focus:border-brand-500 outline-none">
                                             <option value="admob">Google AdMob</option>
                                             <option value="meta">Meta Audience Network</option>
+                                            <option value="inmobi">InMobi</option>
                                             <option value="none">Turn Off All</option>
                                         </select>
                                     </div>
@@ -348,6 +349,7 @@
                                             <option value="default">Use Global Default</option>
                                             <option value="admob">Google AdMob</option>
                                             <option value="meta">Meta Audience Network</option>
+                                            <option value="inmobi">InMobi</option>
                                             <option value="none">Turn Off</option>
                                         </select>
                                     </div>
@@ -357,6 +359,7 @@
                                             <option value="default">Use Global Default</option>
                                             <option value="admob">Google AdMob</option>
                                             <option value="meta">Meta Audience Network</option>
+                                            <option value="inmobi">InMobi</option>
                                             <option value="none">Turn Off</option>
                                         </select>
                                     </div>
@@ -366,6 +369,7 @@
                                             <option value="default">Use Global Default</option>
                                             <option value="admob">Google AdMob</option>
                                             <option value="meta">Meta Audience Network</option>
+                                            <option value="inmobi">InMobi</option>
                                             <option value="none">Turn Off</option>
                                         </select>
                                     </div>
@@ -375,6 +379,7 @@
                                             <option value="default">Use Global Default</option>
                                             <option value="admob">Google AdMob</option>
                                             <option value="meta">Meta Audience Network</option>
+                                            <option value="inmobi">InMobi</option>
                                             <option value="none">Turn Off</option>
                                         </select>
                                     </div>
@@ -383,6 +388,7 @@
                                         <select id="setting-appOpenNetwork" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm focus:border-brand-500 outline-none">
                                             <option value="default">Use Global Default</option>
                                             <option value="admob">Google AdMob</option>
+                                            <option value="inmobi">InMobi</option>
                                             <option value="none">Turn Off</option>
                                         </select>
                                     </div>
@@ -392,6 +398,7 @@
                                             <option value="default">Use Global Default</option>
                                             <option value="admob">Google AdMob</option>
                                             <option value="meta">Meta Audience Network</option>
+                                            <option value="inmobi">InMobi</option>
                                             <option value="none">Turn Off</option>
                                         </select>
                                     </div>
@@ -466,7 +473,40 @@
                                     </div>
                                 </div>
                             </div>
-                            <button type="submit" id="btn-save-ads" class="bg-slate-800 hover:bg-slate-900 text-white px-6 py-3 rounded-xl font-bold shadow-md transition-all active:scale-95 flex items-center justify-center gap-2 w-full sm:w-auto ml-auto">
+                            
+                            <!-- InMobi specific section -->
+                            <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm mt-6">
+                                <h3 class="text-sm font-bold text-slate-800 uppercase tracking-widest mb-4 flex items-center gap-2">
+                                    <i class="fa-solid fa-mobile-screen text-brand-500"></i> InMobi Placement IDs
+                                </h3>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div class="space-y-2 md:col-span-2">
+                                        <label class="text-xs font-bold text-slate-600 block">InMobi Account ID</label>
+                                        <input type="text" id="setting-inmobiAccountId" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:border-brand-500 outline-none" placeholder="Your Account ID">
+                                    </div>
+                                    <div class="space-y-2">
+                                        <label class="text-xs font-bold text-slate-600 block">Interstitial ID</label>
+                                        <input type="text" id="setting-inmobiInterstitialId" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:border-brand-500 outline-none" placeholder="YOUR_PLACEMENT_ID">
+                                    </div>
+                                    <div class="space-y-2">
+                                        <label class="text-xs font-bold text-slate-600 block">Native Ad ID</label>
+                                        <input type="text" id="setting-inmobiNativeId" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:border-brand-500 outline-none" placeholder="YOUR_PLACEMENT_ID">
+                                    </div>
+                                    <div class="space-y-2">
+                                        <label class="text-xs font-bold text-slate-600 block">Native Video Ad ID</label>
+                                        <input type="text" id="setting-inmobiNativeVideoId" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:border-brand-500 outline-none" placeholder="YOUR_PLACEMENT_ID">
+                                    </div>
+                                    <div class="space-y-2">
+                                        <label class="text-xs font-bold text-slate-600 block">Banner ID</label>
+                                        <input type="text" id="setting-inmobiBannerId" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:border-brand-500 outline-none" placeholder="YOUR_PLACEMENT_ID">
+                                    </div>
+                                    <div class="space-y-2">
+                                        <label class="text-xs font-bold text-slate-600 block">Reward Ad ID</label>
+                                        <input type="text" id="setting-inmobiRewardedId" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:border-brand-500 outline-none" placeholder="YOUR_REWARDED_ID">
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="submit" id="btn-save-ads" class="bg-slate-800 hover:bg-slate-900 text-white px-6 py-3 rounded-xl font-bold shadow-md transition-all active:scale-95 flex items-center justify-center gap-2 w-full sm:w-auto ml-auto mt-6">
                                 <i class="fa-solid fa-save"></i> Save Ads Configuration
                             </button>
                         </form>
@@ -481,6 +521,29 @@
 
                         <form id="settings-form" onsubmit="saveGlobalSettings(event)" class="space-y-6 w-full">
                             
+                            <!-- IN-APP UPDATE CONFIG -->
+                            <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm mt-6">
+                                <h3 class="text-sm font-bold text-slate-800 uppercase tracking-widest mb-4 flex items-center gap-2">
+                                    <i class="fa-solid fa-cloud-arrow-down text-brand-500"></i> App Update Config
+                                </h3>
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <div class="space-y-2">
+                                        <label class="text-xs font-bold text-slate-600 block">Latest Version Code</label>
+                                        <input type="number" id="setting-latestVersionCode" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:border-brand-500 outline-none" placeholder="e.g. 2">
+                                    </div>
+                                    <div class="space-y-2">
+                                        <label class="text-xs font-bold text-slate-600 block">Update URL (Play Store / APK)</label>
+                                        <input type="url" id="setting-updateUrl" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:border-brand-500 outline-none" placeholder="https://play.google.com/...">
+                                    </div>
+                                    <div class="space-y-2 flex items-end pb-2">
+                                        <label class="flex items-center gap-2 cursor-pointer">
+                                            <input type="checkbox" id="setting-forceUpdate" class="w-4 h-4 text-brand-600 border-slate-300 rounded focus:ring-brand-500">
+                                            <span class="text-sm font-bold text-slate-700">Force Update Required</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
                             <!-- MENU LINKS CONFIG -->
                             <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm mt-6">
                                 <h3 class="text-sm font-bold text-slate-800 uppercase tracking-widest mb-4 flex items-center gap-2">
@@ -513,7 +576,7 @@
                                     </div>
                                     <div class="space-y-2">
                                         <label class="text-xs font-bold text-slate-600 block">Privacy Policy URL</label>
-                                        <input type="url" id="setting-privacyPolicyUrl" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:border-brand-500 outline-none" placeholder="https://yourwebsite.com/privacy">
+                                        <input type="url" id="setting-privacyPolicyUrl" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:border-brand-500 outline-none" placeholder="https://prompthouseapp.blogspot.com/p/privacy-policy-prompt-house-body-font.html">
                                     </div>
                                 </div>
                             </div>
@@ -811,11 +874,8 @@
 
             // Bind Live URL Image Preview events
             bindLivePreviews();
-            
-            // Initialize ads chart removed
         });
 
-        // Initialize Daily Ads Views Chart removed
 
         async function handleLogin(e) {
             e.preventDefault();
@@ -1329,7 +1389,8 @@
             const adFields = [
                 'activeAd', 'bannerNetwork', 'interstitialNetwork', 'nativeNetwork', 'nativeVideoNetwork', 'appOpenNetwork', 'rewardedNetwork',
                 'admobAppId', 'admobAppOpenId', 'admobInterstitialId', 'admobNativeId', 'admobNativeVideoId', 'admobBannerId', 'admobRewardedId',
-                'metaAppId', 'metaInterstitialId', 'metaNativeId', 'metaNativeVideoId', 'metaBannerId', 'metaRewardedId'
+                'metaAppId', 'metaInterstitialId', 'metaNativeId', 'metaNativeVideoId', 'metaBannerId', 'metaRewardedId',
+                'inmobiAccountId', 'inmobiInterstitialId', 'inmobiNativeId', 'inmobiNativeVideoId', 'inmobiBannerId', 'inmobiRewardedId'
             ];
             adFields.forEach(field => {
                 if (config[field] !== undefined) {
@@ -1343,7 +1404,7 @@
                 if(displayNode) displayNode.textContent = config.activeAd;
             }
 
-            // Url inputs (Graphics)
+            // Url inputs (Graphics & App update)
             const setters = [
                 { inp: 'inp-logo', pre: 'preview-logo', field: 'appLogoUrl' },
                 { inp: 'inp-splash', pre: 'preview-splash', field: 'splashScreenUrl' },
@@ -1360,11 +1421,28 @@
             });
             
             // Menu Action Links
-            const linkFields = ['followMeUrl', 'howToUseUrl', 'shareAppUrl', 'rateUsUrl', 'contactUsEmail', 'developerInfoUrl', 'privacyPolicyUrl'];
+            const linkFields = ['followMeUrl', 'howToUseUrl', 'shareAppUrl', 'rateUsUrl', 'contactUsEmail', 'developerInfoUrl', 'privacyPolicyUrl', 'updateUrl'];
             linkFields.forEach(field => {
-                if (config[field]) {
+                if (config[field] !== undefined) {
                     const inp = document.getElementById(`setting-${field}`);
                     if (inp) inp.value = config[field];
+                }
+            });
+
+            // App Update Config
+            const numberFields = ['latestVersionCode'];
+            numberFields.forEach(field => {
+                if (config[field] !== undefined) {
+                    const inp = document.getElementById(`setting-${field}`);
+                    if (inp) inp.value = config[field];
+                }
+            });
+
+            const boolFields = ['forceUpdate'];
+            boolFields.forEach(field => {
+                if (config[field] !== undefined) {
+                    const inp = document.getElementById(`setting-${field}`);
+                    if (inp) inp.checked = config[field];
                 }
             });
         }
@@ -1396,7 +1474,13 @@
                     metaNativeId: document.getElementById('setting-metaNativeId').value.trim(),
                     metaNativeVideoId: document.getElementById('setting-metaNativeVideoId').value.trim(),
                     metaBannerId: document.getElementById('setting-metaBannerId').value.trim(),
-                    metaRewardedId: document.getElementById('setting-metaRewardedId').value.trim()
+                    metaRewardedId: document.getElementById('setting-metaRewardedId').value.trim(),
+                    inmobiAccountId: document.getElementById('setting-inmobiAccountId').value.trim(),
+                    inmobiInterstitialId: document.getElementById('setting-inmobiInterstitialId').value.trim(),
+                    inmobiNativeId: document.getElementById('setting-inmobiNativeId').value.trim(),
+                    inmobiNativeVideoId: document.getElementById('setting-inmobiNativeVideoId').value.trim(),
+                    inmobiBannerId: document.getElementById('setting-inmobiBannerId').value.trim(),
+                    inmobiRewardedId: document.getElementById('setting-inmobiRewardedId').value.trim()
                 };
 
                 await db.collection("app_config").doc("global").set(data, { merge: true });
@@ -1444,7 +1528,10 @@
                     rateUsUrl: document.getElementById('setting-rateUsUrl').value.trim(),
                     contactUsEmail: document.getElementById('setting-contactUsEmail').value.trim(),
                     developerInfoUrl: document.getElementById('setting-developerInfoUrl').value.trim(),
-                    privacyPolicyUrl: document.getElementById('setting-privacyPolicyUrl').value.trim()
+                    privacyPolicyUrl: document.getElementById('setting-privacyPolicyUrl').value.trim(),
+                    latestVersionCode: parseInt(document.getElementById('setting-latestVersionCode').value) || 1,
+                    updateUrl: document.getElementById('setting-updateUrl').value.trim(),
+                    forceUpdate: document.getElementById('setting-forceUpdate').checked
                 };
 
                 await db.collection("app_config").doc("global").set(data, { merge: true });
