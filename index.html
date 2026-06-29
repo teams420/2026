@@ -73,6 +73,8 @@
         html.dark-mode .bg-brand-600 { background-color: #6366f1 !important; color: #ffffff !important; }
         html.dark-mode .bg-brand-700 { background-color: #4f46e5 !important; color: #ffffff !important; }
         html.dark-mode .text-brand-600 { color: #818cf8 !important; }
+        html.dark-mode .text-brand-700 { color: #a5b4fc !important; }
+        html.dark-mode .bg-indigo-50 { background-color: rgba(99, 102, 241, 0.15) !important; }
         html.dark-mode .border-brand-500 { border-color: #6366f1 !important; }
         html.dark-mode .ring-brand-500 { --tw-ring-color: #6366f1 !important; }
         
@@ -252,30 +254,33 @@
 
                         <!-- STATS CARDS -->
                         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                            <div class="bg-brand-600 rounded-3xl p-6 border border-brand-500 shadow-xl shadow-brand-500/20 flex items-center gap-5 text-white transform transition-all hover:-translate-y-1 hover:shadow-2xl">
-                                <div class="w-16 h-16 bg-white/10 backdrop-blur-md rounded-2xl flex items-center justify-center text-2xl shadow-inner border border-white/5">
+                            <div class="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-3xl p-6 border border-white/10 shadow-xl shadow-indigo-500/20 flex items-center gap-5 text-white transform transition-all hover:-translate-y-1 hover:shadow-2xl relative overflow-hidden">
+                                <div class="absolute -right-4 -top-4 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
+                                <div class="w-16 h-16 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center text-2xl shadow-inner border border-white/20 relative z-10">
                                     <i class="fa-solid fa-layer-group"></i>
                                 </div>
-                                <div>
-                                    <p class="text-xs sm:text-sm font-medium text-brand-300 uppercase tracking-wider">Total Prompts</p>
+                                <div class="relative z-10">
+                                    <p class="text-xs sm:text-sm font-medium text-indigo-100 uppercase tracking-wider">Total Prompts</p>
                                     <h3 class="text-3xl sm:text-4xl font-extrabold" id="stat-prompts">0</h3>
                                 </div>
                             </div>
-                            <div class="bg-brand-600 rounded-3xl p-6 border border-brand-500 shadow-xl shadow-brand-500/20 flex items-center gap-5 text-white transform transition-all hover:-translate-y-1 hover:shadow-2xl">
-                                <div class="w-16 h-16 bg-white/10 backdrop-blur-md rounded-2xl flex items-center justify-center text-2xl shadow-inner border border-white/5">
+                            <div class="bg-gradient-to-br from-rose-500 to-orange-500 rounded-3xl p-6 border border-white/10 shadow-xl shadow-rose-500/20 flex items-center gap-5 text-white transform transition-all hover:-translate-y-1 hover:shadow-2xl relative overflow-hidden">
+                                <div class="absolute -right-4 -top-4 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
+                                <div class="w-16 h-16 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center text-2xl shadow-inner border border-white/20 relative z-10">
                                     <i class="fa-solid fa-tags"></i>
                                 </div>
-                                <div>
-                                    <p class="text-xs sm:text-sm font-medium text-brand-300 uppercase tracking-wider">Total Categories</p>
+                                <div class="relative z-10">
+                                    <p class="text-xs sm:text-sm font-medium text-rose-100 uppercase tracking-wider">Total Categories</p>
                                     <h3 class="text-3xl sm:text-4xl font-extrabold" id="stat-categories">0</h3>
                                 </div>
                             </div>
-                            <div class="bg-brand-600 rounded-3xl p-6 border border-brand-500 shadow-xl shadow-brand-500/20 flex items-center gap-5 text-white transform transition-all hover:-translate-y-1 hover:shadow-2xl sm:col-span-2 md:col-span-1">
-                                <div class="w-16 h-16 bg-white/10 backdrop-blur-md rounded-2xl flex items-center justify-center text-2xl shadow-inner border border-white/5 shrink-0">
+                            <div class="bg-gradient-to-br from-emerald-500 to-teal-600 rounded-3xl p-6 border border-white/10 shadow-xl shadow-emerald-500/20 flex items-center gap-5 text-white transform transition-all hover:-translate-y-1 hover:shadow-2xl sm:col-span-2 md:col-span-1 relative overflow-hidden">
+                                <div class="absolute -right-4 -top-4 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
+                                <div class="w-16 h-16 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center text-2xl shadow-inner border border-white/20 shrink-0 relative z-10">
                                     <i class="fa-solid fa-mobile-screen"></i>
                                 </div>
-                                <div class="flex-1 overflow-hidden">
-                                    <p class="text-xs sm:text-sm font-medium text-brand-300 uppercase tracking-wider">Active Ad Network</p>
+                                <div class="flex-1 overflow-hidden relative z-10">
+                                    <p class="text-xs sm:text-sm font-medium text-emerald-100 uppercase tracking-wider">Active Ad Network</p>
                                     <h3 class="text-2xl sm:text-3xl font-extrabold uppercase truncate" id="stat-active-ad">AdMob</h3>
                                 </div>
                             </div>
