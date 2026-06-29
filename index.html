@@ -331,76 +331,30 @@
                             <!-- Network Settings -->
                             <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
                                 <h3 class="text-sm font-bold text-slate-800 uppercase tracking-widest mb-4 flex items-center gap-2">
-                                    <i class="fa-solid fa-bullhorn text-brand-500"></i> Advertisement Networks
+                                    <i class="fa-solid fa-bullhorn text-brand-500"></i> Advertisement Networks Configuration
                                 </h3>
-                                <div class="grid grid-cols-1 md:grid-cols-5 gap-6">
-                                    <div class="space-y-2">
-                                        <label class="text-xs font-bold text-slate-600 block">Global Default Network</label>
-                                        <select id="setting-activeAd" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm focus:border-brand-500 outline-none">
-                                            <option value="admob">Google AdMob</option>
-                                            <option value="meta">Meta Audience Network</option>
-                                            <option value="inmobi">InMobi</option>
-                                            <option value="none">Turn Off All</option>
-                                        </select>
-                                    </div>
-                                    <div class="space-y-2">
-                                        <label class="text-xs font-bold text-slate-600 block">Banner Ad Network</label>
-                                        <select id="setting-bannerNetwork" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm focus:border-brand-500 outline-none">
-                                            <option value="default">Use Global Default</option>
-                                            <option value="admob">Google AdMob</option>
-                                            <option value="meta">Meta Audience Network</option>
-                                            <option value="inmobi">InMobi</option>
-                                            <option value="none">Turn Off</option>
-                                        </select>
-                                    </div>
-                                    <div class="space-y-2">
-                                        <label class="text-xs font-bold text-slate-600 block">Interstitial Network</label>
-                                        <select id="setting-interstitialNetwork" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm focus:border-brand-500 outline-none">
-                                            <option value="default">Use Global Default</option>
-                                            <option value="admob">Google AdMob</option>
-                                            <option value="meta">Meta Audience Network</option>
-                                            <option value="inmobi">InMobi</option>
-                                            <option value="none">Turn Off</option>
-                                        </select>
-                                    </div>
-                                    <div class="space-y-2">
-                                        <label class="text-xs font-bold text-slate-600 block">Native Ads Network</label>
-                                        <select id="setting-nativeNetwork" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm focus:border-brand-500 outline-none">
-                                            <option value="default">Use Global Default</option>
-                                            <option value="admob">Google AdMob</option>
-                                            <option value="meta">Meta Audience Network</option>
-                                            <option value="inmobi">InMobi</option>
-                                            <option value="none">Turn Off</option>
-                                        </select>
-                                    </div>
-                                    <div class="space-y-2">
-                                        <label class="text-xs font-bold text-slate-600 block">Native Video Network</label>
-                                        <select id="setting-nativeVideoNetwork" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm focus:border-brand-500 outline-none">
-                                            <option value="default">Use Global Default</option>
-                                            <option value="admob">Google AdMob</option>
-                                            <option value="meta">Meta Audience Network</option>
-                                            <option value="inmobi">InMobi</option>
-                                            <option value="none">Turn Off</option>
-                                        </select>
-                                    </div>
-                                    <div class="space-y-2">
-                                        <label class="text-xs font-bold text-slate-600 block">App Open Network</label>
-                                        <select id="setting-appOpenNetwork" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm focus:border-brand-500 outline-none">
-                                            <option value="default">Use Global Default</option>
-                                            <option value="admob">Google AdMob</option>
-                                            <option value="inmobi">InMobi</option>
-                                            <option value="none">Turn Off</option>
-                                        </select>
-                                    </div>
-                                    <div class="space-y-2">
-                                        <label class="text-xs font-bold text-slate-600 block">Reward Ad Network</label>
-                                        <select id="setting-rewardedNetwork" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm focus:border-brand-500 outline-none">
-                                            <option value="default">Use Global Default</option>
-                                            <option value="admob">Google AdMob</option>
-                                            <option value="meta">Meta Audience Network</option>
-                                            <option value="inmobi">InMobi</option>
-                                            <option value="none">Turn Off</option>
-                                        </select>
+                                <div class="space-y-4">
+                                    <label class="flex items-center gap-3 cursor-pointer p-4 border border-slate-200 rounded-xl bg-slate-50 transition hover:bg-slate-100">
+                                        <input type="checkbox" id="setting-enableAdmobMediation" class="w-5 h-5 text-brand-600 rounded focus:ring-brand-500">
+                                        <div>
+                                            <span class="text-sm font-bold text-slate-800 block">Enable AdMob Mediation</span>
+                                            <span class="text-xs text-slate-500">Uses AdMob to mediate Meta and InMobi automatically. Bypasses individual switches.</span>
+                                        </div>
+                                    </label>
+                                    
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                        <label class="flex items-center gap-3 cursor-pointer p-3 border border-slate-200 rounded-xl bg-white hover:bg-slate-50 transition">
+                                            <input type="checkbox" id="setting-enableAdmob" class="w-5 h-5 text-brand-600 rounded focus:ring-brand-500">
+                                            <span class="text-sm font-bold text-slate-700">Enable AdMob</span>
+                                        </label>
+                                        <label class="flex items-center gap-3 cursor-pointer p-3 border border-slate-200 rounded-xl bg-white hover:bg-slate-50 transition">
+                                            <input type="checkbox" id="setting-enableMeta" class="w-5 h-5 text-brand-600 rounded focus:ring-brand-500">
+                                            <span class="text-sm font-bold text-slate-700">Enable Meta</span>
+                                        </label>
+                                        <label class="flex items-center gap-3 cursor-pointer p-3 border border-slate-200 rounded-xl bg-white hover:bg-slate-50 transition">
+                                            <input type="checkbox" id="setting-enableInMobi" class="w-5 h-5 text-brand-600 rounded focus:ring-brand-500">
+                                            <span class="text-sm font-bold text-slate-700">Enable InMobi</span>
+                                        </label>
                                     </div>
                                 </div>
                             </div>
@@ -1387,7 +1341,6 @@
             
             // Ad network selections & AdMob IDs
             const adFields = [
-                'activeAd', 'bannerNetwork', 'interstitialNetwork', 'nativeNetwork', 'nativeVideoNetwork', 'appOpenNetwork', 'rewardedNetwork',
                 'admobAppId', 'admobAppOpenId', 'admobInterstitialId', 'admobNativeId', 'admobNativeVideoId', 'admobBannerId', 'admobRewardedId',
                 'metaAppId', 'metaInterstitialId', 'metaNativeId', 'metaNativeVideoId', 'metaBannerId', 'metaRewardedId',
                 'inmobiAccountId', 'inmobiInterstitialId', 'inmobiNativeId', 'inmobiNativeVideoId', 'inmobiBannerId', 'inmobiRewardedId'
@@ -1398,10 +1351,29 @@
                     if (el) el.value = config[field];
                 }
             });
+
+            // New Ad Switches
+            const adSwitches = [
+                'enableAdmobMediation', 'enableAdmob', 'enableMeta', 'enableInMobi'
+            ];
+            adSwitches.forEach(field => {
+                const el = document.getElementById(`setting-${field}`);
+                if (el && config[field] !== undefined) {
+                    el.checked = !!config[field];
+                }
+            });
             
-            if (config.activeAd) {
+            if (config.enableAdmobMediation) {
                 const displayNode = document.getElementById('stat-active-ad');
-                if(displayNode) displayNode.textContent = config.activeAd;
+                if(displayNode) displayNode.textContent = "AdMob Med.";
+            } else {
+                let text = "None";
+                if(config.enableAdmob) text = "AdMob";
+                else if(config.enableMeta) text = "Meta";
+                else if(config.enableInMobi) text = "InMobi";
+                
+                const displayNode = document.getElementById('stat-active-ad');
+                if(displayNode) displayNode.textContent = text;
             }
 
             // Url inputs (Graphics & App update)
@@ -1455,13 +1427,10 @@
 
             try {
                 const data = {
-                    activeAd: document.getElementById('setting-activeAd').value,
-                    bannerNetwork: document.getElementById('setting-bannerNetwork').value,
-                    interstitialNetwork: document.getElementById('setting-interstitialNetwork').value,
-                    nativeNetwork: document.getElementById('setting-nativeNetwork').value,
-                    nativeVideoNetwork: document.getElementById('setting-nativeVideoNetwork').value,
-                    appOpenNetwork: document.getElementById('setting-appOpenNetwork').value,
-                    rewardedNetwork: document.getElementById('setting-rewardedNetwork').value,
+                    enableAdmobMediation: document.getElementById('setting-enableAdmobMediation').checked,
+                    enableAdmob: document.getElementById('setting-enableAdmob').checked,
+                    enableMeta: document.getElementById('setting-enableMeta').checked,
+                    enableInMobi: document.getElementById('setting-enableInMobi').checked,
                     admobAppId: document.getElementById('setting-admobAppId').value.trim(),
                     admobAppOpenId: document.getElementById('setting-admobAppOpenId').value.trim(),
                     admobInterstitialId: document.getElementById('setting-admobInterstitialId').value.trim(),
