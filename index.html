@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Premium Admin Workspace</title>
+    <title>Prompt House Admin</title>
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -31,12 +31,16 @@
                     },
                     colors: {
                         brand: {
-                            50: '#eff6ff',
-                            100: '#dbeafe',
-                            500: '#3b82f6',
-                            600: '#2563eb',
-                            700: '#1d4ed8',
-                            900: '#1e3a8a',
+                            50: '#f8fafc',
+                            100: '#f1f5f9',
+                            500: '#0f172a',
+                            600: '#020617',
+                            700: '#000000',
+                            900: '#000000',
+                        },
+                        accent: {
+                            500: '#8b5cf6',
+                            600: '#7c3aed',
                         }
                     }
                 }
@@ -90,7 +94,7 @@
         html.dark-mode .active-nav { background-color: #334155 !important; color: #60a5fa !important; }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex" id="app-body">
+<body class="bg-gradient-to-br from-slate-50 to-slate-100 text-slate-800 antialiased min-h-screen flex" id="app-body">
 
     <!-- LOGIN SCREEN -->
     <div id="login-screen" class="fixed inset-0 z-50 bg-slate-900 flex items-center justify-center p-4 transition-all duration-500 hidden">
@@ -101,7 +105,7 @@
                 </div>
             </div>
             <h2 class="text-2xl font-bold text-center text-slate-900 mb-2">Admin Login</h2>
-            <p class="text-sm text-slate-500 text-center mb-8">Sign in to the Premium Workspace</p>
+            <p class="text-sm text-slate-500 text-center mb-8">Sign in to Prompt House Admin</p>
             <form id="login-form-submit" onsubmit="handleLogin(event)" class="space-y-4">
                 <div>
                     <label class="block text-xs font-semibold text-slate-600 uppercase mb-2">Email</label>
@@ -152,7 +156,7 @@
     <div id="main-screen" class="flex-1 flex flex-col h-screen hidden fade-in w-full transition-all">
         
         <!-- TOP NAVIGATION -->
-        <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm h-16 flex items-center justify-between px-4 md:px-6">
+        <header class="bg-white/80 backdrop-blur-md border-b border-slate-200/50 sticky top-0 z-30 shadow-sm h-16 flex items-center justify-between px-4 md:px-6">
             <div class="flex items-center gap-4">
                 <button onclick="document.getElementById('mobile-sidebar').classList.toggle('-translate-x-full')" class="md:hidden text-slate-500 hover:text-slate-800 focus:outline-none">
                     <i class="fa-solid fa-bars text-xl"></i>
@@ -160,7 +164,7 @@
                 <div class="hidden md:flex w-8 h-8 rounded-lg bg-brand-600 text-white items-center justify-center font-bold text-sm shadow shadow-brand-500/50">
                     <i class="fa-solid fa-layer-group"></i>
                 </div>
-                <h1 class="font-bold text-lg text-slate-800 tracking-tight">Admin<span class="text-slate-400 font-normal">Workspace</span></h1>
+                <h1 class="font-bold text-xl text-slate-800 tracking-tight">Prompt House <span class="text-slate-400 font-normal">Admin</span></h1>
             </div>
             <div class="flex items-center gap-4 md:gap-6">
                 <span class="hidden md:flex px-3 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-full items-center gap-2">
@@ -181,7 +185,7 @@
         <!-- LAYOUT CONTENT -->
         <div class="flex-1 overflow-hidden flex bg-slate-50 relative">
             <!-- SIDEBAR -->
-            <aside id="mobile-sidebar" class="absolute md:relative w-64 bg-white border-r border-slate-200 flex flex-col h-full z-40 transition-transform duration-300 -translate-x-full md:translate-x-0 shadow-2xl md:shadow-none">
+            <aside id="mobile-sidebar" class="absolute md:relative w-64 bg-white/80 backdrop-blur-md border-r border-slate-200/50 flex flex-col h-full z-40 transition-transform duration-300 -translate-x-full md:translate-x-0 shadow-2xl md:shadow-none">
                 <div class="flex md:hidden items-center justify-between p-4 border-b border-slate-100">
                     <h2 class="font-bold text-sm text-slate-500">Navigation</h2>
                     <button onclick="document.getElementById('mobile-sidebar').classList.toggle('-translate-x-full')" class="text-slate-400 hover:text-slate-800">
