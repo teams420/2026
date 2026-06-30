@@ -513,10 +513,6 @@
                                         <input type="text" id="setting-inmobiNativeId" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:border-brand-500 outline-none" placeholder="YOUR_PLACEMENT_ID">
                                     </div>
                                     <div class="space-y-2">
-                                        <label class="text-xs font-bold text-slate-600 block">Native Video Ad ID</label>
-                                        <input type="text" id="setting-inmobiNativeVideoId" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:border-brand-500 outline-none" placeholder="YOUR_PLACEMENT_ID">
-                                    </div>
-                                    <div class="space-y-2">
                                         <label class="text-xs font-bold text-slate-600 block">Banner ID</label>
                                         <input type="text" id="setting-inmobiBannerId" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:border-brand-500 outline-none" placeholder="YOUR_PLACEMENT_ID">
                                     </div>
@@ -1413,7 +1409,7 @@
             const adFields = [
                 'admobAppId', 'admobAppOpenId', 'admobInterstitialId', 'admobNativeId', 'admobNativeVideoId', 'admobBannerId', 'admobRewardedId',
                 'metaAppId', 'metaInterstitialId', 'metaNativeId', 'metaNativeVideoId', 'metaBannerId', 'metaRewardedId',
-                'inmobiAccountId', 'inmobiInterstitialId', 'inmobiNativeId', 'inmobiNativeVideoId', 'inmobiBannerId', 'inmobiRewardedId'
+                'inmobiAccountId', 'inmobiInterstitialId', 'inmobiNativeId', 'inmobiBannerId', 'inmobiRewardedId'
             ];
             adFields.forEach(field => {
                 if (config[field] !== undefined) {
@@ -1517,7 +1513,6 @@
                     inmobiAccountId: document.getElementById('setting-inmobiAccountId').value.trim(),
                     inmobiInterstitialId: document.getElementById('setting-inmobiInterstitialId').value.trim(),
                     inmobiNativeId: document.getElementById('setting-inmobiNativeId').value.trim(),
-                    inmobiNativeVideoId: document.getElementById('setting-inmobiNativeVideoId').value.trim(),
                     inmobiBannerId: document.getElementById('setting-inmobiBannerId').value.trim(),
                     inmobiRewardedId: document.getElementById('setting-inmobiRewardedId').value.trim()
                 };
