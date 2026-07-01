@@ -542,7 +542,11 @@
                                 <h3 class="text-sm font-bold text-slate-800 uppercase tracking-widest mb-4 flex items-center gap-2">
                                     <i class="fa-solid fa-cloud-arrow-down text-brand-500"></i> App Update Config
                                 </h3>
-                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                                    <div class="space-y-2">
+                                        <label class="text-xs font-bold text-slate-600 block">App Version String</label>
+                                        <input type="text" id="setting-appVersionString" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:border-brand-500 outline-none" placeholder="e.g. 1.0.2">
+                                    </div>
                                     <div class="space-y-2">
                                         <label class="text-xs font-bold text-slate-600 block">Latest Version Code</label>
                                         <input type="number" id="setting-latestVersionCode" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:border-brand-500 outline-none" placeholder="e.g. 2">
@@ -1457,7 +1461,7 @@
             });
             
             // Menu Action Links
-            const linkFields = ['followMeUrl', 'howToUseUrl', 'shareAppUrl', 'rateUsUrl', 'contactUsEmail', 'developerInfoUrl', 'privacyPolicyUrl', 'updateUrl'];
+            const linkFields = ['followMeUrl', 'howToUseUrl', 'shareAppUrl', 'rateUsUrl', 'contactUsEmail', 'developerInfoUrl', 'privacyPolicyUrl', 'updateUrl', 'appVersionString'];
             linkFields.forEach(field => {
                 if (config[field] !== undefined) {
                     const inp = document.getElementById(`setting-${field}`);
@@ -1563,6 +1567,7 @@
                     contactUsEmail: document.getElementById('setting-contactUsEmail').value.trim(),
                     developerInfoUrl: document.getElementById('setting-developerInfoUrl').value.trim(),
                     privacyPolicyUrl: document.getElementById('setting-privacyPolicyUrl').value.trim(),
+                    appVersionString: document.getElementById('setting-appVersionString').value.trim(),
                     latestVersionCode: parseInt(document.getElementById('setting-latestVersionCode').value) || 1,
                     updateUrl: document.getElementById('setting-updateUrl').value.trim(),
                     forceUpdate: document.getElementById('setting-forceUpdate').checked
