@@ -692,15 +692,7 @@
                     <input type="text" id="cat-name" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:border-brand-500 outline-none transition" placeholder="e.g. Science Fiction">
                 </div>
 
-                <div>
-                    <label class="block text-xs font-bold text-slate-600 uppercase mb-2">Cover Image URL (Optional)</label>
-                    <div class="flex gap-4 items-center">
-                        <div class="w-14 h-14 bg-slate-100 border border-slate-200 rounded-xl flex-shrink-0 overflow-hidden">
-                            <img id="cat-img-preview" src="https://placehold.co/100" class="w-full h-full object-cover">
-                        </div>
-                        <input type="url" id="cat-url" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:border-brand-500 outline-none transition" placeholder="Paste image link here...">
-                    </div>
-                </div>
+                
 
                 <div class="pt-2">
                     <button type="submit" id="cat-submit-btn" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-bold py-3.5 rounded-xl shadow-lg transition active:scale-95 flex justify-center items-center gap-2">
@@ -1037,21 +1029,26 @@
         ======================== */
         function startDataListeners() {
             // CATEGORIES
-            db.collection("categories").orderBy("order", "asc").onSnapshot((snapshot) => {
+            db.collection("categories").onSnapshot((snapshot) => {
                 categories = [];
                 snapshot.forEach(doc => categories.push({ id: doc.id, ...doc.data() }));
+                
+                // Sort locally by order, fallback to createdAt or name
+                categories.sort((a, b) => {
+                    if (a.order !== undefined && b.order !== undefined) {
+                        return a.order - b.order;
+                    }
+                    if (a.createdAt && b.createdAt) {
+                        return (a.createdAt?.seconds || 0) - (b.createdAt?.seconds || 0);
+                    }
+                    return (a.name || '').localeCompare(b.name || '');
+                });
+                
                 updateCategoriesSelect();
                 renderCategoriesTable();
                 document.getElementById('stat-categories').textContent = categories.length;
             }, (err) => {
-                // Fallback to sort by createdAt if order index doesn't exist
-                db.collection("categories").orderBy("createdAt", "asc").onSnapshot((fallbackSnapshot) => {
-                    categories = [];
-                    fallbackSnapshot.forEach(doc => categories.push({ id: doc.id, ...doc.data() }));
-                    updateCategoriesSelect();
-                    renderCategoriesTable();
-                    document.getElementById('stat-categories').textContent = categories.length;
-                });
+                showToast("Error reading categories.", "error");
             });
 
             // PROMPTS
@@ -1131,7 +1128,6 @@
 
         function bindLivePreviews() {
             const binders = [
-                { inp: 'cat-url', pre: 'cat-img-preview' },
                 { inp: 'prompt-url', pre: 'prompt-img-preview' },
                 { inp: 'inp-logo', pre: 'preview-logo' },
                 { inp: 'inp-splash', pre: 'preview-splash' },
@@ -1165,11 +1161,8 @@
             categories.forEach(cat => {
                 tbody.innerHTML += `
                     <tr class="hover:bg-slate-50/50 transition category-row" data-id="${cat.id}">
-                        <td class="p-4 w-20 flex items-center gap-3">
+                        <td class="p-4 w-12 text-center">
                             <i class="fa-solid fa-grip-vertical text-slate-300 cursor-grab drag-handle text-lg"></i>
-                            <div class="w-12 h-12 rounded-xl bg-slate-100 overflow-hidden border border-slate-200">
-                                <img src="${cat.logoUrl || 'https://placehold.co/100'}" class="w-full h-full object-cover">
-                            </div>
                         </td>
                         <td class="p-4">
                             <p class="font-bold text-slate-800">${cat.name}</p>
@@ -1182,7 +1175,6 @@
                 `;
             });
             
-            // Initialize SortableJS
             new Sortable(tbody, {
                 handle: '.drag-handle',
                 animation: 150,
@@ -1221,8 +1213,6 @@
             document.getElementById('cat-modal-title').textContent = "Add Category";
             document.getElementById('cat-edit-id').value = '';
             document.getElementById('cat-name').value = '';
-            document.getElementById('cat-url').value = '';
-            document.getElementById('cat-img-preview').src = 'https://placehold.co/100';
             openModal('modal-category');
         }
 
@@ -1230,8 +1220,6 @@
             document.getElementById('cat-modal-title').textContent = "Edit Category";
             document.getElementById('cat-edit-id').value = cat.id;
             document.getElementById('cat-name').value = cat.name || '';
-            document.getElementById('cat-url').value = cat.logoUrl || '';
-            document.getElementById('cat-img-preview').src = cat.logoUrl || 'https://placehold.co/100';
             openModal('modal-category');
         }
 
@@ -1239,7 +1227,7 @@
             e.preventDefault();
             const id = document.getElementById('cat-edit-id').value;
             const name = document.getElementById('cat-name').value.trim();
-            const url = document.getElementById('cat-url').value.trim();
+            const url = '';
             
             const btn = document.getElementById('cat-submit-btn');
             btn.disabled = true;
