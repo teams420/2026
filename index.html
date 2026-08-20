@@ -1029,12 +1029,11 @@
             
             // --- App Check ReCAPTCHA Setup Start ---
             try {
-                // Force token refresh setting before activation to ensure predictable mobile timing
                 const appCheck = firebase.appCheck();
                 
-                // Activate ReCAPTCHA v3 provider
+                // Activate ReCAPTCHA v3 using the site key string for compat library
                 appCheck.activate(
-                  new firebase.appCheck.ReCaptchaV3Provider('6Ld1gY8tAAAAAEQcIVD5PDBzHnGs5E8I1szRnFz7'),
+                  '6Ld1gY8tAAAAAEQcIVD5PDBzHnGs5E8I1szRnFz7',
                   true // allows auto refresh of the token
                 );
 
