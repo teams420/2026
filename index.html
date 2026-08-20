@@ -18,9 +18,12 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+    
+    <!-- Firebase App Check -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-appcheck-compat.js"></script>
 
-    <!-- SortableJS for Drag and Drop -->
-    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <script>
         tailwind.config = {
@@ -161,7 +164,11 @@
                 <div class="space-y-4">
                     <div>
                         <label class="block text-xs font-semibold text-slate-600 uppercase mb-2">Firebase Config JSON</label>
-                        <textarea id="firebase-config-input" rows="8" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-4 text-sm font-mono text-slate-700 outline-none focus:ring-2 focus:ring-brand-500 transition-all placeholder:text-slate-300" placeholder="{...}"></textarea>
+                        <textarea id="firebase-config-input" rows="8" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-4 text-sm font-mono text-slate-700 outline-none focus:ring-2 focus:ring-brand-500 transition-all placeholder:text-slate-300" placeholder="{
+  &quot;apiKey&quot;: &quot;AIzaSy...&quot;,
+  &quot;authDomain&quot;: &quot;YOUR_PROJECT.firebaseapp.com&quot;,
+  &quot;projectId&quot;: &quot;YOUR_PROJECT&quot;
+}"></textarea>
                     </div>
                     <button onclick="connectFirebase()" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-semibold py-3.5 rounded-xl shadow-lg shadow-brand-500/30 transition-all active:scale-95 flex justify-center items-center gap-2">
                         <i class="fa-solid fa-link"></i> Connect to Database
@@ -287,7 +294,6 @@
                                 </div>
                             </div>
                         </div>
-
                     </div>
 
                     <!-- TAB: CATEGORIES -->
@@ -295,7 +301,7 @@
                         <div class="flex items-center justify-between">
                             <div>
                                 <h2 class="text-2xl font-bold text-slate-800">Categories</h2>
-                                <p class="text-sm text-slate-500">Drag items to change the category order.</p>
+                                <p class="text-sm text-slate-500">Manage application category tags.</p>
                             </div>
                             <button onclick="openCategoryModal()" class="bg-brand-600 hover:bg-brand-700 text-white px-5 py-2.5 rounded-xl font-semibold shadow-md transition-all active:scale-95 flex items-center gap-2 text-sm">
                                 <i class="fa-solid fa-plus"></i> Add Category
@@ -306,7 +312,7 @@
                             <table class="w-full text-left border-collapse w-full">
                                 <thead>
                                     <tr class="bg-slate-50 border-b border-slate-200 text-xs uppercase tracking-wider text-slate-500 font-semibold">
-                                        <th class="p-4 w-12 text-center">Drag</th>
+                                        <th class="p-4">Logo</th>
                                         <th class="p-4">Name (ID)</th>
                                         <th class="p-4 text-right">Actions</th>
                                     </tr>
@@ -397,7 +403,7 @@
                                             <option value="admob_mediation">AdMob Mediation</option>
                                             <option value="admob">Google AdMob</option>
                                             <option value="meta">Meta Audience Network</option>
-                                            
+                                            <option value="inmobi">InMobi</option>
                                             <option value="none">Turn Off</option>
                                         </select>
                                     </div>
@@ -407,7 +413,7 @@
                                             <option value="admob_mediation">AdMob Mediation</option>
                                             <option value="admob">Google AdMob</option>
                                             <option value="meta">Meta Audience Network</option>
-                                            
+                                            <option value="inmobi">InMobi</option>
                                             <option value="none">Turn Off</option>
                                         </select>
                                     </div>
@@ -459,6 +465,7 @@
                                     </div>
                                 </div>
                             </div>
+                            
                             <!-- Meta Audience Network specific section -->
                             <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm mt-6">
                                 <h3 class="text-sm font-bold text-slate-800 uppercase tracking-widest mb-4 flex items-center gap-2">
@@ -505,6 +512,10 @@
                                     <div class="space-y-2">
                                         <label class="text-xs font-bold text-slate-600 block">Interstitial ID</label>
                                         <input type="text" id="setting-inmobiInterstitialId" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:border-brand-500 outline-none" placeholder="YOUR_PLACEMENT_ID">
+                                    </div>
+                                    <div class="space-y-2">
+                                        <label class="text-xs font-bold text-slate-600 block">Native Ad ID</label>
+                                        <input type="text" id="setting-inmobiNativeId" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-sm focus:border-brand-500 outline-none" placeholder="YOUR_PLACEMENT_ID">
                                     </div>
                                     <div class="space-y-2">
                                         <label class="text-xs font-bold text-slate-600 block">Banner ID</label>
@@ -688,7 +699,15 @@
                     <input type="text" id="cat-name" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:border-brand-500 outline-none transition" placeholder="e.g. Science Fiction">
                 </div>
 
-                
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 uppercase mb-2">Cover Image URL</label>
+                    <div class="flex gap-4 items-center">
+                        <div class="w-14 h-14 bg-slate-100 border border-slate-200 rounded-xl flex-shrink-0 overflow-hidden">
+                            <img id="cat-img-preview" src="https://placehold.co/100" class="w-full h-full object-cover">
+                        </div>
+                        <input type="url" id="cat-url" required class="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm focus:border-brand-500 outline-none transition" placeholder="Paste image link here...">
+                    </div>
+                </div>
 
                 <div class="pt-2">
                     <button type="submit" id="cat-submit-btn" class="w-full bg-brand-600 hover:bg-brand-700 text-white font-bold py-3.5 rounded-xl shadow-lg transition active:scale-95 flex justify-center items-center gap-2">
@@ -1007,6 +1026,19 @@
             if (!firebase.apps.length) {
                 firebase.initializeApp(config);
             }
+            
+            // --- App Check ReCAPTCHA Setup Start ---
+            try {
+                const appCheck = firebase.appCheck();
+                appCheck.activate(
+                  '6Ld1gY8tAAAAAEQclVD5PDBzHnGs5E8I1szRnFz7',
+                  true // allows auto refresh of the token
+                );
+            } catch (e) {
+                console.error("App Check failed to initialize", e);
+            }
+            // --- App Check ReCAPTCHA Setup End ---
+
             db = firebase.firestore();
 
             // Listen to auth state
@@ -1025,27 +1057,13 @@
         ======================== */
         function startDataListeners() {
             // CATEGORIES
-            db.collection("categories").onSnapshot((snapshot) => {
+            db.collection("categories").orderBy("createdAt", "asc").onSnapshot((snapshot) => {
                 categories = [];
                 snapshot.forEach(doc => categories.push({ id: doc.id, ...doc.data() }));
-                
-                // Sort locally by order, fallback to createdAt or name
-                categories.sort((a, b) => {
-                    if (a.order !== undefined && b.order !== undefined) {
-                        return a.order - b.order;
-                    }
-                    if (a.createdAt && b.createdAt) {
-                        return (a.createdAt?.seconds || 0) - (b.createdAt?.seconds || 0);
-                    }
-                    return (a.name || '').localeCompare(b.name || '');
-                });
-                
                 updateCategoriesSelect();
                 renderCategoriesTable();
                 document.getElementById('stat-categories').textContent = categories.length;
-            }, (err) => {
-                showToast("Error reading categories.", "error");
-            });
+            }, (err) => showToast("Error reading categories.", "error"));
 
             // PROMPTS
             db.collection("prompts").onSnapshot((snapshot) => {
@@ -1124,6 +1142,7 @@
 
         function bindLivePreviews() {
             const binders = [
+                { inp: 'cat-url', pre: 'cat-img-preview' },
                 { inp: 'prompt-url', pre: 'prompt-img-preview' },
                 { inp: 'inp-logo', pre: 'preview-logo' },
                 { inp: 'inp-splash', pre: 'preview-splash' },
@@ -1145,7 +1164,6 @@
         /* ======================== 
            CATEGORIES LOGIC
         ======================== */
-        let sortableInstance = null;
         function renderCategoriesTable() {
             const tbody = document.getElementById('categories-table-body');
             tbody.innerHTML = '';
@@ -1157,9 +1175,11 @@
 
             categories.forEach(cat => {
                 tbody.innerHTML += `
-                    <tr class="hover:bg-slate-50/50 transition category-row" data-id="${cat.id}">
-                        <td class="p-4 w-12 text-center">
-                            <i class="fa-solid fa-grip-vertical text-slate-300 cursor-grab drag-handle text-lg"></i>
+                    <tr class="hover:bg-slate-50/50 transition">
+                        <td class="p-4 w-20">
+                            <div class="w-12 h-12 rounded-xl bg-slate-100 overflow-hidden border border-slate-200">
+                                <img src="${cat.logoUrl || 'https://placehold.co/100'}" class="w-full h-full object-cover">
+                            </div>
                         </td>
                         <td class="p-4">
                             <p class="font-bold text-slate-800">${cat.name}</p>
@@ -1171,35 +1191,6 @@
                     </tr>
                 `;
             });
-            
-            if (sortableInstance) {
-                sortableInstance.destroy();
-            }
-            sortableInstance = new Sortable(tbody, {
-                handle: '.drag-handle',
-                animation: 150,
-                onEnd: function () {
-                    saveCategoryOrder();
-                }
-            });
-        }
-        
-        async function saveCategoryOrder() {
-            const rows = document.querySelectorAll('.category-row');
-            const batch = db.batch();
-            
-            rows.forEach((row, index) => {
-                const id = row.getAttribute('data-id');
-                const ref = db.collection('categories').doc(id);
-                batch.update(ref, { order: index });
-            });
-            
-            try {
-                await batch.commit();
-                showToast("Category order updated!");
-            } catch(err) {
-                showToast(`Failed to update order: ${err.message}`, "error");
-            }
         }
 
         function editCategoryById(id) {
@@ -1213,6 +1204,8 @@
             document.getElementById('cat-modal-title').textContent = "Add Category";
             document.getElementById('cat-edit-id').value = '';
             document.getElementById('cat-name').value = '';
+            document.getElementById('cat-url').value = '';
+            document.getElementById('cat-img-preview').src = 'https://placehold.co/100';
             openModal('modal-category');
         }
 
@@ -1220,6 +1213,8 @@
             document.getElementById('cat-modal-title').textContent = "Edit Category";
             document.getElementById('cat-edit-id').value = cat.id;
             document.getElementById('cat-name').value = cat.name || '';
+            document.getElementById('cat-url').value = cat.logoUrl || '';
+            document.getElementById('cat-img-preview').src = cat.logoUrl || 'https://placehold.co/100';
             openModal('modal-category');
         }
 
@@ -1227,7 +1222,7 @@
             e.preventDefault();
             const id = document.getElementById('cat-edit-id').value;
             const name = document.getElementById('cat-name').value.trim();
-            const url = '';
+            const url = document.getElementById('cat-url').value.trim() || 'https://placehold.co/100';
             
             const btn = document.getElementById('cat-submit-btn');
             btn.disabled = true;
@@ -1235,12 +1230,9 @@
 
             try {
                 const docId = id || name.toLowerCase().replace(/[^a-z0-9]/g, "_");
-                const payload = { name: name };
-                if (url) payload.logoUrl = url;
-                
+                const payload = { name: name, logoUrl: url };
                 if (!id) {
                     payload.createdAt = firebase.firestore.FieldValue.serverTimestamp();
-                    payload.order = categories.length; // Add to the end
                 }
                 await db.collection('categories').doc(docId).set(payload, { merge: true });
                 showToast(`Category ${name} saved successfully.`);
@@ -1541,6 +1533,7 @@
                     metaRewardedId: document.getElementById('setting-metaRewardedId').value.trim(),
                     inmobiAccountId: document.getElementById('setting-inmobiAccountId').value.trim(),
                     inmobiInterstitialId: document.getElementById('setting-inmobiInterstitialId').value.trim(),
+                    inmobiNativeId: document.getElementById('setting-inmobiNativeId').value.trim(),
                     inmobiBannerId: document.getElementById('setting-inmobiBannerId').value.trim(),
                     inmobiRewardedId: document.getElementById('setting-inmobiRewardedId').value.trim()
                 };
