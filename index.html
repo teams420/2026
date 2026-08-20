@@ -20,7 +20,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
     
     <!-- Firebase App Check -->
-    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-appcheck-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-check-compat.js"></script>
 
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -1027,11 +1027,13 @@
                 firebase.initializeApp(config);
             }
             
+            self.FIREBASE_APPCHECK_DEBUG_TOKEN = true;
+            
             // --- App Check ReCAPTCHA Setup Start ---
             try {
                 const appCheck = firebase.appCheck();
                 appCheck.activate(
-                  new firebase.appCheck.ReCaptchaV3Provider('6Ld1gY8tAAAAAEQclVD5PDBzHnGs5E8I1szRnFz7'),
+                  new firebase.appCheck.ReCaptchaV3Provider('6Ld1gY8tAAAAAEQcIVD5PDBzHnGs5E8I1szRnFz7'),
                   true // allows auto refresh of the token
                 );
             } catch (e) {
